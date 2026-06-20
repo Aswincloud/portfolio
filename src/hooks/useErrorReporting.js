@@ -81,7 +81,7 @@ export const useErrorReporting = () => {
 
       // Create standardized error object
       const errorData = {
-        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+        id: `${Date.now().toString(36)}-${crypto.randomUUID()}`,
         timestamp: new Date().toISOString(),
         message: error.message || 'Unknown error',
         stack: error.stack || '',
@@ -173,7 +173,7 @@ export const useErrorReporting = () => {
   // Track user action
   const trackUserAction = useCallback((action, context = {}) => {
     const actionData = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      id: `${Date.now().toString(36)}-${crypto.randomUUID()}`,
       timestamp: new Date().toISOString(),
       action,
       context,
@@ -252,7 +252,8 @@ export const useErrorReporting = () => {
 const getSessionId = () => {
   let sessionId = sessionStorage.getItem('portfolio_session_id');
   if (!sessionId) {
-    sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    // Non-security correlation ID for grouping error reports by session.
+    sessionId = crypto.randomUUID();
     sessionStorage.setItem('portfolio_session_id', sessionId);
   }
   return sessionId;

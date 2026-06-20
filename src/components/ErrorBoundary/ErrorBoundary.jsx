@@ -99,7 +99,8 @@ class ErrorAnalytics {
   static getSessionId() {
     let sessionId = sessionStorage.getItem('portfolio_session_id');
     if (!sessionId) {
-      sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+      // Non-security correlation ID for grouping error reports by session.
+      sessionId = crypto.randomUUID();
       sessionStorage.setItem('portfolio_session_id', sessionId);
     }
     return sessionId;
@@ -133,7 +134,7 @@ class ErrorBoundary extends React.Component {
     return {
       hasError: true,
       error,
-      errorId: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      errorId: `${Date.now().toString(36)}-${crypto.randomUUID()}`,
     };
   }
 
