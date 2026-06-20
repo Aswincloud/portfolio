@@ -16,6 +16,8 @@ import {
   ExternalLink,
   ChevronDown,
   Circle,
+  Github,
+  Package,
 } from 'lucide-react';
 import { featuredProjects, allProjects } from '../../data/projects.jsx';
 import { use3DTilt, tiltPresets } from '../../hooks/use3DTilt.jsx';
@@ -75,7 +77,7 @@ const ProjectCard = ({ project, index, inView }) => {
               </div>
             </div>
 
-            <div className='flex justify-center lg:justify-start'>
+            <div className='flex flex-col items-center lg:items-start gap-4'>
               <a
                 href={project.link}
                 target='_blank'
@@ -91,6 +93,35 @@ const ProjectCard = ({ project, index, inView }) => {
                 <div className='absolute inset-0 bg-linear-to-r from-white/5 via-white/10 to-white/5 rounded-2xl opacity-0 group-hover/button:opacity-100 transition-opacity duration-300'></div>
                 <div className='absolute inset-0 bg-linear-to-br from-transparent via-secondary-300/20 to-accent-300/20 rounded-2xl opacity-0 group-hover/button:opacity-100 transition-opacity duration-500'></div>
               </a>
+
+              {(project.repo || project.pypi) && (
+                <div className='flex flex-wrap items-center justify-center lg:justify-start gap-3'>
+                  {project.repo && (
+                    <a
+                      href={project.repo}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      aria-label={`${project.title} source code on GitHub`}
+                      className='inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-xl hover:border-secondary-300 hover:text-secondary-600 hover:shadow-xs transition-all duration-200'
+                    >
+                      <Github size={16} />
+                      Source
+                    </a>
+                  )}
+                  {project.pypi && (
+                    <a
+                      href={project.pypi}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      aria-label={`${project.title} package on PyPI`}
+                      className='inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-xl hover:border-secondary-300 hover:text-secondary-600 hover:shadow-xs transition-all duration-200'
+                    >
+                      <Package size={16} />
+                      PyPI
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

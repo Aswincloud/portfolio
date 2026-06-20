@@ -1,6 +1,26 @@
-import { Brain, Zap, Gamepad2, Activity } from 'lucide-react';
+import { Brain, Zap, Gamepad2, Activity, Gauge } from 'lucide-react';
 
 export const featuredProjects = [
+  {
+    id: 'ttperf',
+    title: 'ttperf — TT-Metal Performance Profiler',
+    domain: 'ttperf.aswincloud.com',
+    description:
+      "A streamlined CLI tool for profiling Tenstorrent's TT-Metal tests and extracting device kernel performance metrics. It wraps the TT-Metal profiler with pytest, parses the result CSVs, and reports total device kernel duration — with a showcase site documenting usage. Published on PyPI: `pip install ttperf`.",
+    technologies: ['Python', 'CLI', 'pytest', 'PyPI', 'Tenstorrent TT-Metal'],
+    features: [
+      'Automated TT-Metal profiler runs via pytest',
+      'Operation-based profiling (e.g. `ttperf add`)',
+      'Automatic CSV parsing → total device kernel duration',
+      'Configurable tensor shape, dtype, and layout',
+      'Config-file defaults (~/.ttperf.yaml) + CI-friendly --quiet/--verbose',
+    ],
+    icon: <Gauge size={48} />,
+    link: 'https://ttperf.aswincloud.com',
+    repo: 'https://github.com/Aswincloud/ttperf',
+    pypi: 'https://pypi.org/project/ttperf/',
+    status: 'Live',
+  },
   {
     id: 'ttnn-eltwise-performance',
     title: 'TTNN Eltwise Performance Tracker',
