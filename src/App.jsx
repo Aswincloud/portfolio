@@ -5,13 +5,10 @@
  * @description Main application component with routing and modular architecture
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation.jsx';
-import SearchModal from './components/SearchModal.jsx';
-import NotFound from './components/NotFound.jsx';
-import PrivacyPolicy from './components/PrivacyPolicy.jsx';
-import TermsConditions from './components/TermsConditions.jsx';
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 import {
   HeroSection,
   AboutSection,
@@ -29,6 +26,13 @@ import {
   GlobalErrorHandler,
 } from './components/ErrorBoundary/';
 import ScrollProgress from './components/ScrollProgress.jsx';
+
+// Off-home routes are split into their own chunks — most visitors only ever
+// see the home page, so the legal pages and 404 shouldn't ride in the
+// first-paint bundle. They load on demand when their route is hit.
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy.jsx'));
+const TermsConditions = lazy(() => import('./components/TermsConditions.jsx'));
+const NotFound = lazy(() => import('./components/NotFound.jsx'));
 
 const getBasename = () => import.meta.env.BASE_URL || '/';
 
@@ -113,10 +117,6 @@ const Layout = ({ children }) => {
       </ErrorBoundary>
 
       {children}
-
-      <ErrorBoundary level='component' fallbackComponent='Search Modal'>
-        <SearchModal />
-      </ErrorBoundary>
     </div>
   );
 };
@@ -135,33 +135,37 @@ const App = () => {
           future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
         >
           <Layout>
-            <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route
-                path='/privacy'
-                element={
-                  <ErrorBoundary level='page' fallbackComponent='Privacy Policy'>
-                    <PrivacyPolicy />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='/terms'
-                element={
-                  <ErrorBoundary level='page' fallbackComponent='Terms & Conditions'>
-                    <TermsConditions />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='*'
-                element={
-                  <ErrorBoundary level='page' fallbackComponent='404 Page'>
-                    <NotFound />
-                  </ErrorBoundary>
-                }
-              />
-            </Routes>
+            <Suspense
+              fallback={<LoadingSpinner size='lg' text='Loading…' className='min-h-screen' />}
+            >
+              <Routes>
+                <Route path='/' element={<HomePage />} />
+                <Route
+                  path='/privacy'
+                  element={
+                    <ErrorBoundary level='page' fallbackComponent='Privacy Policy'>
+                      <PrivacyPolicy />
+                    </ErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/terms'
+                  element={
+                    <ErrorBoundary level='page' fallbackComponent='Terms & Conditions'>
+                      <TermsConditions />
+                    </ErrorBoundary>
+                  }
+                />
+                <Route
+                  path='*'
+                  element={
+                    <ErrorBoundary level='page' fallbackComponent='404 Page'>
+                      <NotFound />
+                    </ErrorBoundary>
+                  }
+                />
+              </Routes>
+            </Suspense>
           </Layout>
         </Router>
       </ErrorBoundary>
