@@ -22,7 +22,7 @@ const ExperienceSection = () => {
 
   return (
     <section id='experience' className='section-padding relative overflow-hidden'>
-      {/* Subtle background tint — section colour without the decoration noise. */}
+      {/* Subtle background tint — section color without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/60 to-indigo-50/70'></div>
 
       <div className='container-custom relative z-10'>

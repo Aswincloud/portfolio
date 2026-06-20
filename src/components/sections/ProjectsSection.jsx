@@ -179,7 +179,7 @@ const ProjectsSection = () => {
       className='section-padding relative overflow-hidden transition-colors duration-300'
       ref={ref}
     >
-      {/* Subtle background tint — section colour without the decoration noise. */}
+      {/* Subtle background tint — section color without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100'></div>
 
       <div className='container-custom relative z-10'>

@@ -63,7 +63,7 @@ const TechnologiesSection = () => {
 
   return (
     <section id='technologies' className='section-padding relative overflow-hidden'>
-      {/* Subtle background tint — section colour without the decoration noise. */}
+      {/* Subtle background tint — section color without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50'></div>
 
       <div className='container-custom relative z-10'>

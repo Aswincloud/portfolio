@@ -47,7 +47,7 @@ const SkillsSection = () => {
 
   return (
     <section id='skills' className='section-padding bg-white relative overflow-hidden'>
-      {/* Subtle background tint — section colour without the decoration noise. */}
+      {/* Subtle background tint — section color without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'></div>
 
       <div className='container-custom relative z-10'>
