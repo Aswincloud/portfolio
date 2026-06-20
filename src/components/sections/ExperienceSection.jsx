@@ -22,29 +22,8 @@ const ExperienceSection = () => {
 
   return (
     <section id='experience' className='section-padding relative overflow-hidden'>
-      {/* Enhanced Background Effects */}
+      {/* Subtle background tint — section colour without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/60 to-indigo-50/70'></div>
-      <div className='absolute top-0 left-0 w-full h-full'>
-        <div className='absolute top-32 left-16 w-72 h-72 bg-gradient-to-br from-blue-400/15 to-indigo-400/15 rounded-full blur-3xl'></div>
-        <div className='absolute bottom-32 right-16 w-80 h-80 bg-gradient-to-br from-indigo-400/12 to-blue-400/12 rounded-full blur-3xl'></div>
-        <div className='absolute top-1/2 left-1/3 w-48 h-48 bg-gradient-to-br from-slate-400/10 to-blue-400/10 rounded-full blur-2xl'></div>
-        <div className='absolute top-20 right-1/3 w-32 h-32 bg-gradient-to-br from-blue-300/8 to-indigo-300/8 rounded-full blur-xl'></div>
-      </div>
-
-      {/* More Prominent Floating Elements */}
-      <div className='absolute inset-0 pointer-events-none'>
-        <div className='absolute top-20 right-20 w-12 h-12 border-2 border-blue-200/40 rounded-full opacity-60'></div>
-        <div className='absolute bottom-40 left-32 w-8 h-8 bg-indigo-200/30 rounded-full opacity-70'></div>
-        <div className='absolute top-1/3 right-1/4 w-6 h-6 bg-blue-300/40 rounded-full opacity-60'></div>
-        <div className='absolute bottom-1/4 left-1/4 w-10 h-10 border border-indigo-200/35 rounded-lg opacity-50 rotate-45'></div>
-        <div className='absolute top-1/4 right-1/3 w-4 h-4 bg-blue-200/40 rounded-full opacity-65'></div>
-      </div>
-
-      {/* Additional Mesh Pattern */}
-      <div className='absolute inset-0 opacity-30'>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1)_0%,transparent_50%)]'></div>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(99,102,241,0.08)_0%,transparent_50%)]'></div>
-      </div>
 
       <div className='container-custom relative z-10'>
         <motion.div
