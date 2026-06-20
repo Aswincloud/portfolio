@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { AlertTriangle, RefreshCw, SkipForward } from 'lucide-react';
 
 // Section Error Fallback Component

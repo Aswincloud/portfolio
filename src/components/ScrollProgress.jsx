@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'motion/react';
 
 const ScrollProgress = () => {
   const { scrollYProgress } = useScroll();

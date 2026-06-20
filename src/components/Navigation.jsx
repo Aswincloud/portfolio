@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Mail, Search, Code, Home, User, Briefcase, Folder } from 'lucide-react';
 import SearchModal from './SearchModal.jsx';
 import { useThrottledScroll, usePageTransitions } from '../hooks';

@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Github, Linkedin, Mail, Briefcase, ArrowRight } from 'lucide-react';
 import { useExperienceCalculator, useThrottledScroll, useRipple } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
