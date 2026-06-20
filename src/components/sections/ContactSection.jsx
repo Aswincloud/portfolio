@@ -119,30 +119,6 @@ const ContactSection = () => {
       id='contact'
       className='section-padding bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
     >
-      {/* Enhanced Background Effects */}
-      <div className='absolute top-0 left-0 w-full h-full'>
-        <div className='absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-green-400/12 to-blue-400/12 rounded-full blur-3xl'></div>
-        <div className='absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-green-400/10 rounded-full blur-3xl'></div>
-        <div className='absolute top-1/2 right-1/3 w-48 h-48 bg-gradient-to-br from-green-400/8 to-blue-400/8 rounded-full blur-2xl'></div>
-        <div className='absolute bottom-1/3 left-1/4 w-36 h-36 bg-gradient-to-br from-blue-300/6 to-green-300/6 rounded-full blur-xl'></div>
-      </div>
-
-      {/* More Prominent Floating Elements */}
-      <div className='absolute inset-0 pointer-events-none'>
-        <div className='absolute top-16 left-16 w-12 h-12 border-2 border-green-200/40 rounded-full opacity-55'></div>
-        <div className='absolute bottom-24 right-32 w-16 h-16 bg-blue-200/35 rounded-lg opacity-60 rotate-12'></div>
-        <div className='absolute top-1/3 right-1/4 w-8 h-8 border border-blue-200/35 rounded-lg opacity-55 rotate-45'></div>
-        <div className='absolute bottom-1/3 left-1/4 w-10 h-10 bg-green-200/30 rounded-full opacity-60'></div>
-        <div className='absolute top-1/4 left-1/3 w-6 h-6 bg-blue-200/40 rounded-full opacity-55'></div>
-        <div className='absolute bottom-1/4 right-1/3 w-14 h-14 border border-green-200/25 rounded-lg opacity-45 rotate-30'></div>
-      </div>
-
-      {/* Additional Mesh Pattern */}
-      <div className='absolute inset-0 opacity-25'>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(34,197,94,0.08)_0%,transparent_50%)]'></div>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(59,130,246,0.06)_0%,transparent_50%)]'></div>
-      </div>
-
       <div className='container-custom relative z-10'>
         <motion.div
           ref={ref}

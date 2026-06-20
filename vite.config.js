@@ -11,6 +11,18 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Split rarely-changing vendor code into its own chunk. Vendor deps
+        // change far less often than app code, so an isolated chunk stays in
+        // the browser cache across deploys — visitors only re-download the
+        // (small) app chunk when we ship changes.
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          motion: ['framer-motion'],
+        },
+      },
+    },
   },
   define: {
     'process.env': {},

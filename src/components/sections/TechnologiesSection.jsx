@@ -63,12 +63,8 @@ const TechnologiesSection = () => {
 
   return (
     <section id='technologies' className='section-padding relative overflow-hidden'>
-      {/* Modern Background */}
+      {/* Subtle background tint — section color without the decoration noise. */}
       <div className='absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50'></div>
-      <div className='absolute top-0 left-0 w-full h-full'>
-        <div className='absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-2xl'></div>
-        <div className='absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-br from-purple-400/10 to-indigo-400/10 rounded-full blur-2xl'></div>
-      </div>
 
       <div className='container-custom relative z-10'>
         <motion.div

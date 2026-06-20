@@ -27,12 +27,12 @@
     
     <!-- Title with gradient -->
     <text x="0" y="140" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="600" fill="url(#text)">
-      Software Developer Engineer
+      Software Engineer
     </text>
-    
+
     <!-- Subtitle -->
     <text x="0" y="180" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="400" fill="#94a3b8">
-      Specializing in software development, performance optimization, and cloud infrastructure
+      Making AI accelerators go faster — profiling, benchmarking, throughput
     </text>
     
     <!-- Location -->

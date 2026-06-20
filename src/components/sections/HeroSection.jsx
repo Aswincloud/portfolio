@@ -87,8 +87,9 @@ const HeroSection = React.memo(function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              I build efficient software with a focus on performance and cloud infrastructure. Based
-              in Pondicherry, with {experience} of professional experience.
+              I make AI accelerators go faster. At MulticoreWare I profile, benchmark, and optimize
+              the software that runs on next-generation AI hardware. Based in Pondicherry, with{' '}
+              {experience} of professional experience.
             </motion.p>
 
             <motion.div
