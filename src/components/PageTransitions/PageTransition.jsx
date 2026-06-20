@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { pageTransitionVariants, staggerVariants } from './pageTransitionVariants';
 
 // Page transition component

@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import { Cloud, Monitor, Wifi, Server } from 'lucide-react';
 

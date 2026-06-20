@@ -19,7 +19,7 @@ export default defineConfig({
         // (small) app chunk when we ship changes.
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          motion: ['framer-motion'],
+          motion: ['motion'],
         },
       },
     },
