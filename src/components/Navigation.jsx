@@ -86,7 +86,7 @@ const Navigation = React.memo(function Navigation() {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <Code size={28} className='text-secondary-500' />
             </motion.div>
-            <span className='bg-gradient-to-r from-secondary-500 to-accent-500 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-secondary-500 to-accent-500 bg-clip-text text-transparent'>
               Portfolio
             </span>
           </Link>
@@ -109,8 +109,8 @@ const Navigation = React.memo(function Navigation() {
                       className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
                         isActive
                           ? !isHomePage || scrolled
-                            ? 'bg-secondary-100 text-secondary-700 shadow-sm'
-                            : 'bg-white/20 text-white shadow-sm'
+                            ? 'bg-secondary-100 text-secondary-700 shadow-xs'
+                            : 'bg-white/20 text-white shadow-xs'
                           : !isHomePage || scrolled
                             ? 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
                             : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -195,7 +195,7 @@ const Navigation = React.memo(function Navigation() {
                           onClick={e => handleNavClick(e, `#${item.section}`)}
                           className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left ${
                             isActive
-                              ? 'bg-secondary-100 text-secondary-700 shadow-sm'
+                              ? 'bg-secondary-100 text-secondary-700 shadow-xs'
                               : 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
                           }`}
                         >

@@ -15,7 +15,7 @@ const SectionErrorFallback = ({ errorId, onRetry, onSkip, sectionName }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className='section-padding bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl'
+      className='section-padding bg-linear-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl'
     >
       <div className='container-custom'>
         <div className='text-center py-12'>
@@ -39,7 +39,7 @@ const SectionErrorFallback = ({ errorId, onRetry, onSkip, sectionName }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onRetry}
-              className='flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200'
+              className='flex items-center justify-center space-x-2 bg-linear-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200'
             >
               <RefreshCw size={18} />
               <span>Try Again</span>

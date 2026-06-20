@@ -40,7 +40,7 @@ const AboutSection = React.memo(() => {
   return (
     <section
       id='about'
-      className='section-padding bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
+      className='section-padding bg-linear-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
     >
       <div className='container-custom relative z-10'>
         <motion.div
@@ -54,7 +54,7 @@ const AboutSection = React.memo(() => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
           >
             <Circle size={8} className='text-blue-500 fill-current' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
@@ -63,7 +63,7 @@ const AboutSection = React.memo(() => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent'>
               Where software meets silicon
             </span>
           </h2>
@@ -81,7 +81,7 @@ const AboutSection = React.memo(() => {
           >
             <div className='space-y-6 text-lg text-gray-700 leading-relaxed'>
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-blue-500 to-purple-500 rounded-full'></div>
                 <p className='pl-8'>
                   I'm a <span className='font-semibold text-blue-600'>performance engineer</span>{' '}
                   based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
@@ -92,7 +92,7 @@ const AboutSection = React.memo(() => {
               </div>
 
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-purple-500 to-pink-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-purple-500 to-pink-500 rounded-full'></div>
                 <p className='pl-8'>
                   The work I enjoy lives close to the metal — where a data layout, a kernel choice,
                   or a scheduling decision is the difference between fast and{' '}
@@ -102,7 +102,7 @@ const AboutSection = React.memo(() => {
               </div>
 
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-pink-500 to-emerald-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-pink-500 to-emerald-500 rounded-full'></div>
                 <p className='pl-8'>
                   Off the clock, I run{' '}
                   <span className='font-semibold text-emerald-600'>my own cloud</span> — self-hosted
@@ -133,19 +133,19 @@ const AboutSection = React.memo(() => {
                 {/* Simplified gradient background */}
                 <div className='absolute inset-0 opacity-20'>
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-30`}
+                    className={`absolute inset-0 bg-linear-to-br ${stat.color} opacity-30`}
                   ></div>
-                  <div className='absolute inset-0 bg-gradient-to-r from-white/40 via-transparent to-white/10'></div>
+                  <div className='absolute inset-0 bg-linear-to-r from-white/40 via-transparent to-white/10'></div>
                 </div>
 
                 {/* Hover gradient */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                  className={`absolute inset-0 bg-linear-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
                 ></div>
 
                 {/* Icon */}
                 <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} mb-3 text-white shadow-lg`}
+                  className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${stat.color} mb-3 text-white shadow-lg`}
                 >
                   {stat.icon}
                 </div>
@@ -153,7 +153,7 @@ const AboutSection = React.memo(() => {
                 {/* Content */}
                 <div className='relative z-10'>
                   <div
-                    className={`text-3xl font-black mb-1 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+                    className={`text-3xl font-black mb-1 bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}
                   >
                     {stat.number}
                   </div>

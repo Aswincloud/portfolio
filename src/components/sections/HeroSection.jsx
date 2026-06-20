@@ -41,7 +41,7 @@ const HeroSection = React.memo(function HeroSection() {
     >
       <AnimatedMeshGradient />
 
-      <div className='absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none'></div>
+      <div className='absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-slate-900 to-transparent pointer-events-none'></div>
 
       <div className='container-custom relative z-10'>
         <div className='flex items-center justify-center'>
@@ -67,7 +67,7 @@ const HeroSection = React.memo(function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <span className='bg-gradient-to-r from-secondary-400 to-accent-400 bg-clip-text text-transparent'>
+              <span className='bg-linear-to-r from-secondary-400 to-accent-400 bg-clip-text text-transparent'>
                 Aswin
               </span>
             </motion.h1>
@@ -104,7 +104,7 @@ const HeroSection = React.memo(function HeroSection() {
                 onClick={handleContactClick}
                 whileHover={variants.buttonHover}
                 whileTap={variants.buttonTap}
-                className='group relative px-8 py-4 bg-gradient-to-r from-secondary-500 to-accent-500 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:shadow-secondary-500/20 transition-shadow duration-300 overflow-hidden'
+                className='group relative px-8 py-4 bg-linear-to-r from-secondary-500 to-accent-500 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:shadow-secondary-500/20 transition-shadow duration-300 overflow-hidden'
                 aria-label='Navigate to contact section'
               >
                 <span className='relative z-10 flex items-center justify-center space-x-2'>

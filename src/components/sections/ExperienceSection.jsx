@@ -23,7 +23,7 @@ const ExperienceSection = () => {
   return (
     <section id='experience' className='section-padding relative overflow-hidden'>
       {/* Subtle background tint — section color without the decoration noise. */}
-      <div className='absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/60 to-indigo-50/70'></div>
+      <div className='absolute inset-0 bg-linear-to-br from-slate-50 via-blue-50/60 to-indigo-50/70'></div>
 
       <div className='container-custom relative z-10'>
         <motion.div
@@ -37,7 +37,7 @@ const ExperienceSection = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-blue-500/10 to-indigo-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
           >
             <Briefcase size={16} className='text-blue-500' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
@@ -46,7 +46,7 @@ const ExperienceSection = () => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent'>
               Experience
             </span>
           </h2>

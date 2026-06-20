@@ -99,7 +99,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                 placeholder='Search sections...'
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                className='flex-1 text-lg outline-none placeholder-gray-400'
+                className='flex-1 text-lg outline-hidden placeholder-gray-400'
               />
               <button
                 onClick={onClose}
@@ -137,7 +137,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                         {index === selectedIndex && (
                           <div className='flex items-center gap-1 text-xs'>
                             <span>Press</span>
-                            <kbd className='px-2 py-1 bg-gray-100 rounded text-gray-600'>Enter</kbd>
+                            <kbd className='px-2 py-1 bg-gray-100 rounded-sm text-gray-600'>Enter</kbd>
                           </div>
                         )}
                       </div>
@@ -163,12 +163,12 @@ const SearchModal = ({ isOpen, onClose }) => {
                   <span>Navigate</span>
                 </div>
                 <div className='flex items-center gap-1'>
-                  <kbd className='px-2 py-1 bg-white rounded text-gray-600'>Enter</kbd>
+                  <kbd className='px-2 py-1 bg-white rounded-sm text-gray-600'>Enter</kbd>
                   <span>Select</span>
                 </div>
               </div>
               <div className='flex items-center gap-1'>
-                <kbd className='px-2 py-1 bg-white rounded text-gray-600'>Esc</kbd>
+                <kbd className='px-2 py-1 bg-white rounded-sm text-gray-600'>Esc</kbd>
                 <span>Close</span>
               </div>
             </div>
