@@ -7,7 +7,7 @@ export const getExperienceData = experience => [
     location: 'Chennai, India',
     logo: '/MulticoreWare_Logo.jpg',
     description:
-      'Working on software development projects focusing on performance optimization, profiling, and benchmarking. Responsible for developing efficient software solutions and analyzing performance metrics to improve application performance.',
+      'Performance engineering for AI accelerator hardware — profiling and benchmarking tensor operations, identifying bottlenecks across the software stack, and optimizing the code paths that drive throughput on next-generation AI silicon.',
     experience: experience,
     delay: 0.1,
   },

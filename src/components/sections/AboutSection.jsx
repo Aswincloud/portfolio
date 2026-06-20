@@ -88,11 +88,11 @@ const AboutSection = React.memo(() => {
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
             <span className='bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent'>
-              Crafting Digital Excellence
+              Where software meets silicon
             </span>
           </h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
-            Passionate about building innovative solutions that make a difference
+            Chasing microseconds on AI hardware — and running my own cloud for the fun of it
           </p>
         </motion.div>
 
@@ -107,35 +107,32 @@ const AboutSection = React.memo(() => {
               <div className='relative'>
                 <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-500 rounded-full'></div>
                 <p className='pl-8'>
-                  I'm a passionate{' '}
-                  <span className='font-semibold text-blue-600'>Software Developer Engineer</span>{' '}
-                  based in Pondicherry, specializing in software development and modern application
-                  architecture. My expertise lies in developing efficient software solutions,
-                  building scalable applications, and implementing best practices in software
-                  engineering.
+                  I'm a <span className='font-semibold text-blue-600'>performance engineer</span>{' '}
+                  based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
+                  <span className='font-semibold text-blue-600'>AI accelerator hardware</span>. Most
+                  days that means profiling tensor operations, hunting bottlenecks, and turning
+                  benchmark numbers into something faster.
                 </p>
               </div>
 
               <div className='relative'>
                 <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-purple-500 to-pink-500 rounded-full'></div>
                 <p className='pl-8'>
-                  I have a keen interest in{' '}
-                  <span className='font-semibold text-purple-600'>cloud technologies</span> and
-                  enjoy exploring modern deployment strategies. I combine software engineering
-                  skills with cloud infrastructure to create high-quality, scalable applications
-                  that leverage the power of{' '}
-                  <span className='font-semibold text-pink-600'>cloud computing</span>.
+                  The work I enjoy lives close to the metal — where a data layout, a kernel choice,
+                  or a scheduling decision is the difference between fast and{' '}
+                  <span className='font-semibold text-purple-600'>genuinely fast</span>. I care
+                  about measuring before optimizing, and about making the optimization stick.
                 </p>
               </div>
 
               <div className='relative'>
                 <div className='absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-pink-500 to-emerald-500 rounded-full'></div>
                 <p className='pl-8'>
-                  My approach focuses on{' '}
-                  <span className='font-semibold text-emerald-600'>continuous learning</span> and
-                  staying updated with the latest industry trends. I believe in writing clean,
-                  maintainable code and creating solutions that not only work efficiently but also
-                  provide excellent user experiences and long-term value.
+                  Off the clock, I run{' '}
+                  <span className='font-semibold text-emerald-600'>my own cloud</span> — self-hosted
+                  services behind Cloudflare tunnels, from this site to a support desk to an AI
+                  chat. It's where I get to be the ops team, the security team, and the person who
+                  gets paged, all at once.
                 </p>
               </div>
             </div>
