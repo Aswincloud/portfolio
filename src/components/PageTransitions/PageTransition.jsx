@@ -2,7 +2,7 @@
  * @file PageTransition.jsx
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
- * @description Page transition system with Framer Motion for smooth animations
+ * @description Page transition system built on Motion (motion/react) for smooth animations
  */
 
 import React from 'react';

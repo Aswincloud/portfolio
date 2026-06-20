@@ -4,9 +4,9 @@ A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 
 ## 🚀 Features
 
-- **Modern React Architecture**: Built with React 18, Vite, and Tailwind CSS
+- **Modern React Architecture**: Built with React 19, Vite, and Tailwind CSS v4
 - **Responsive Design**: Optimized for all devices and screen sizes
-- **Smooth Animations**: Powered by Framer Motion
+- **Smooth Animations**: Powered by Motion (motion/react)
 - **Contact Form**: Working contact form with email notifications
 - **Professional Email**: Auto-replies and notification system
 - **SEO Optimized**: Sitemap, robots.txt, and structured data
@@ -25,7 +25,7 @@ A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion
+- **Frontend**: React 19, Vite, Tailwind CSS v4, Motion
 - **Backend**: Cloudflare Workers, MailChannels
 - **Deployment**: Cloudflare Workers with Workers Assets
 - **Version Control**: Git + GitHub

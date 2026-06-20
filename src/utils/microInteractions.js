@@ -48,7 +48,7 @@ export const createRipple = (event, element) => {
   }, 600);
 };
 
-// Framer Motion variants for common micro-interactions
+// Motion (motion/react) variants for common micro-interactions
 export const microInteractionVariants = {
   // Button interactions
   buttonHover: {

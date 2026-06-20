@@ -137,7 +137,9 @@ const SearchModal = ({ isOpen, onClose }) => {
                         {index === selectedIndex && (
                           <div className='flex items-center gap-1 text-xs'>
                             <span>Press</span>
-                            <kbd className='px-2 py-1 bg-gray-100 rounded-sm text-gray-600'>Enter</kbd>
+                            <kbd className='px-2 py-1 bg-gray-100 rounded-sm text-gray-600'>
+                              Enter
+                            </kbd>
                           </div>
                         )}
                       </div>

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite",
     "dev:host": "vite --host",
@@ -31,7 +34,6 @@
     "analyze": "npm run build:analyze && npx vite-bundle-analyzer dist"
   },
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.5.0",
     "lucide-react": "^0.577.0",
     "motion": "^12.40.0",
     "react": "^19.2.0",
