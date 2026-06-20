@@ -78,7 +78,7 @@ const HeroSection = React.memo(function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Performance Engineer
+              Software Engineer
             </motion.p>
 
             <motion.p
