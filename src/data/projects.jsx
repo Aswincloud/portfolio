@@ -6,11 +6,11 @@ export const featuredProjects = [
     title: 'ttperf — TT-Metal Performance Profiler',
     domain: 'ttperf.aswincloud.com',
     description:
-      "A streamlined CLI tool for profiling Tenstorrent's TT-Metal tests and extracting device kernel performance metrics. It wraps the TT-Metal profiler with pytest, parses the result CSVs, and reports total device kernel duration — with a showcase site documenting usage. Published on PyPI: `pip install ttperf`.",
+      "A streamlined CLI tool for profiling Tenstorrent's TT-Metal tests and extracting device kernel performance metrics. It wraps the TT-Metal profiler with pytest, parses the result CSVs, and reports total device kernel duration — with a showcase site documenting usage. Published on PyPI (pip install ttperf).",
     technologies: ['Python', 'CLI', 'pytest', 'PyPI', 'Tenstorrent TT-Metal'],
     features: [
       'Automated TT-Metal profiler runs via pytest',
-      'Operation-based profiling (e.g. `ttperf add`)',
+      'Operation-based profiling (e.g. ttperf add)',
       'Automatic CSV parsing → total device kernel duration',
       'Configurable tensor shape, dtype, and layout',
       'Config-file defaults (~/.ttperf.yaml) + CI-friendly --quiet/--verbose',
