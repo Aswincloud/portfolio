@@ -15,7 +15,8 @@ permissions:
   contents: read
 
 jobs:
-  # ── Install once, share node_modules with downstream jobs via cache ──────────
+  # ── Warm the npm cache once so the parallel jobs below restore instead of
+  #    racing to populate it. Each job still runs its own `npm ci`. ────────────
   setup:
     name: 📦 Setup
     runs-on: ubuntu-latest

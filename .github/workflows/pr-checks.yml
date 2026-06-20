@@ -13,13 +13,16 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write # bundle-size + lighthouse jobs comment on the PR
 
 jobs:
   # ── Block PRs that introduce vulnerable or disallowed-license deps ───────────
   dependency-review:
     name: 🛡️ Dependency Review
     runs-on: ubuntu-latest
+    # Only this job needs to write to the PR (its failure summary comment).
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - name: Dependency Review
@@ -47,6 +50,13 @@ jobs:
         uses: browser-actions/setup-chrome@v1
       - name: Run Lighthouse CI
         run: npx --yes @lhci/cli@0.14.x autorun
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7
 
   # ── Bundle size: report gzipped JS/CSS so bloat is visible on the PR ─────────
   bundle-size:
