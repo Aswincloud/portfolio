@@ -117,7 +117,7 @@ const ContactSection = () => {
   return (
     <section
       id='contact'
-      className='section-padding bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
+      className='section-padding bg-linear-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
     >
       <div className='container-custom relative z-10'>
         <motion.div
@@ -131,7 +131,7 @@ const ContactSection = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-green-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-green-500/10 to-blue-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-green-200/30'
           >
             <Mail size={16} className='text-green-500' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
@@ -140,7 +140,7 @@ const ContactSection = () => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-gradient-to-r from-green-600 via-blue-600 to-green-600 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-green-600 via-blue-600 to-green-600 bg-clip-text text-transparent'>
               Let's Work Together
             </span>
           </h2>
@@ -177,12 +177,12 @@ const ContactSection = () => {
                     {/* 3D Tilt Glare Effect */}
                     <div style={glareElementStyle} />
                     {/* Background gradient */}
-                    <div className='absolute inset-0 bg-gradient-to-br from-blue-50/50 to-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                    <div className='absolute inset-0 bg-linear-to-br from-blue-50/50 to-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
 
                     {/* Icon */}
                     <div className='flex items-start space-x-4'>
                       <motion.div
-                        className='flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-500'
+                        className='shrink-0 w-14 h-14 bg-linear-to-br from-blue-500 to-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-500'
                         whileHover={variants.iconHover}
                         whileTap={variants.iconTap}
                       >
@@ -224,11 +224,11 @@ const ContactSection = () => {
             className='relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20 overflow-hidden order-1 lg:order-2'
           >
             {/* Background gradient */}
-            <div className='absolute inset-0 bg-gradient-to-br from-blue-50/30 to-green-50/30'></div>
+            <div className='absolute inset-0 bg-linear-to-br from-blue-50/30 to-green-50/30'></div>
 
             {/* Optimized decorative elements */}
-            <div className='absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-500/8 to-green-500/8 rounded-full blur-lg'></div>
-            <div className='absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-green-500/8 to-blue-500/8 rounded-full blur-lg'></div>
+            <div className='absolute -top-4 -right-4 w-20 h-20 bg-linear-to-br from-blue-500/8 to-green-500/8 rounded-full blur-lg'></div>
+            <div className='absolute -bottom-4 -left-4 w-16 h-16 bg-linear-to-br from-green-500/8 to-blue-500/8 rounded-full blur-lg'></div>
 
             <div className='relative z-10'>
               <form onSubmit={handleSubmit} className='space-y-6'>
@@ -236,7 +236,7 @@ const ContactSection = () => {
                 {submitStatus === 'success' && (
                   <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
                     <div className='flex items-center'>
-                      <div className='flex-shrink-0'>
+                      <div className='shrink-0'>
                         <span className='text-green-400 text-xl'>✓</span>
                       </div>
                       <div className='ml-3'>
@@ -255,7 +255,7 @@ const ContactSection = () => {
                 {submitStatus === 'error' && (
                   <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
                     <div className='flex items-center'>
-                      <div className='flex-shrink-0'>
+                      <div className='shrink-0'>
                         <span className='text-red-400 text-xl'>⚠</span>
                       </div>
                       <div className='ml-3'>
@@ -286,7 +286,7 @@ const ContactSection = () => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder='Enter your full name'
-                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-sm hover:shadow-md'
+                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-xs hover:shadow-md'
                     required
                     disabled={isSubmitting}
                   />
@@ -305,7 +305,7 @@ const ContactSection = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder='Enter your email address'
-                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-sm hover:shadow-md'
+                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-xs hover:shadow-md'
                     required
                     disabled={isSubmitting}
                   />
@@ -324,7 +324,7 @@ const ContactSection = () => {
                     onChange={handleChange}
                     placeholder='Tell me about your project or idea...'
                     rows={5}
-                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-sm hover:shadow-md'
+                    className='w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed text-base shadow-xs hover:shadow-md'
                     required
                     disabled={isSubmitting}
                   ></textarea>
@@ -336,7 +336,7 @@ const ContactSection = () => {
                   aria-label='Send contact message'
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className='relative w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-green-500 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 overflow-hidden'
+                  className='relative w-full px-8 py-4 bg-linear-to-r from-blue-500 to-green-500 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 overflow-hidden'
                   style={{ position: 'relative' }}
                 >
                   {isSubmitting ? (

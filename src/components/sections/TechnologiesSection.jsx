@@ -64,7 +64,7 @@ const TechnologiesSection = () => {
   return (
     <section id='technologies' className='section-padding relative overflow-hidden'>
       {/* Subtle background tint — section color without the decoration noise. */}
-      <div className='absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50'></div>
+      <div className='absolute inset-0 bg-linear-to-br from-indigo-50 via-purple-50 to-indigo-50'></div>
 
       <div className='container-custom relative z-10'>
         <motion.div
@@ -78,7 +78,7 @@ const TechnologiesSection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className='inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-indigo-200/50'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-indigo-500/10 to-purple-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-indigo-200/50'
           >
             <Monitor size={16} className='text-indigo-500' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
@@ -87,7 +87,7 @@ const TechnologiesSection = () => {
           </motion.div>
 
           <h2 className='text-4xl md:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent'>
               Technologies & Platforms
             </span>
           </h2>
@@ -113,11 +113,11 @@ const TechnologiesSection = () => {
                 {/* Glassmorphism Card */}
                 <div className='relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden'>
                   {/* Animated Background Gradient */}
-                  <div className='absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
+                  <div className='absolute inset-0 bg-linear-to-br from-indigo-500/5 via-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
 
                   {/* Floating Orbs */}
-                  <div className='absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                  <div className='absolute -bottom-16 -left-16 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700'></div>
+                  <div className='absolute -top-16 -right-16 w-32 h-32 bg-linear-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                  <div className='absolute -bottom-16 -left-16 w-24 h-24 bg-linear-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700'></div>
 
                   {/* Category Header */}
                   <div className='relative z-10 mb-6'>
@@ -126,7 +126,7 @@ const TechnologiesSection = () => {
                       transition={{ duration: 0.2 }}
                       className='flex items-center mb-4'
                     >
-                      <div className='relative p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl text-white shadow-lg mr-4'>
+                      <div className='relative p-3 bg-linear-to-br from-indigo-500 to-purple-500 rounded-2xl text-white shadow-lg mr-4'>
                         <IconComponent className='w-6 h-6' />
                         <div className='absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200'></div>
                       </div>
@@ -147,9 +147,9 @@ const TechnologiesSection = () => {
                           duration: 0.4,
                           delay: categoryIndex * 0.1 + itemIndex * 0.05,
                         }}
-                        className='flex items-start space-x-4 p-4 rounded-2xl bg-gradient-to-r from-white/80 to-gray-50/80 border border-gray-100/50 hover:shadow-md transition-all duration-200 backdrop-blur-sm'
+                        className='flex items-start space-x-4 p-4 rounded-2xl bg-linear-to-r from-white/80 to-gray-50/80 border border-gray-100/50 hover:shadow-md transition-all duration-200 backdrop-blur-sm'
                       >
-                        <div className='flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center border border-indigo-200/50'>
+                        <div className='shrink-0 w-10 h-10 bg-linear-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center border border-indigo-200/50'>
                           <IconComponent className='w-5 h-5 text-indigo-600' />
                         </div>
                         <div className='flex-1'>
@@ -173,7 +173,7 @@ const TechnologiesSection = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className='text-center mt-12'
         >
-          <div className='relative bg-gradient-to-r from-indigo-500 to-purple-500 p-8 rounded-3xl text-white shadow-xl overflow-hidden'>
+          <div className='relative bg-linear-to-r from-indigo-500 to-purple-500 p-8 rounded-3xl text-white shadow-xl overflow-hidden'>
             {/* Background Pattern */}
             <div className='absolute inset-0 bg-white/10 rounded-3xl'></div>
             <div className='absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl'></div>

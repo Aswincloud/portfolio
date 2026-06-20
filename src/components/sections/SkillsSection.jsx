@@ -48,7 +48,7 @@ const SkillsSection = () => {
   return (
     <section id='skills' className='section-padding bg-white relative overflow-hidden'>
       {/* Subtle background tint — section color without the decoration noise. */}
-      <div className='absolute inset-0 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'></div>
+      <div className='absolute inset-0 bg-linear-to-br from-white via-purple-50/50 to-pink-50/50'></div>
 
       <div className='container-custom relative z-10'>
         <motion.div
@@ -62,7 +62,7 @@ const SkillsSection = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-purple-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-purple-200/30'
           >
             <Sparkles size={16} className='text-purple-500' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
@@ -71,7 +71,7 @@ const SkillsSection = () => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent'>
+            <span className='bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent'>
               What I Do Best
             </span>
           </h2>
@@ -91,16 +91,16 @@ const SkillsSection = () => {
             >
               {/* Simplified background gradient overlay */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${skill.bgColor} opacity-0 group-hover:opacity-80 transition-opacity duration-300`}
+                className={`absolute inset-0 bg-linear-to-br ${skill.bgColor} opacity-0 group-hover:opacity-80 transition-opacity duration-300`}
               ></div>
 
               {/* Optimized floating background elements */}
-              <div className='absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br from-gray-200/15 to-gray-300/15 rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-200'></div>
-              <div className='absolute -bottom-4 -left-4 w-8 h-8 bg-gradient-to-br from-gray-100/20 to-gray-200/20 rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-200'></div>
+              <div className='absolute -top-4 -right-4 w-12 h-12 bg-linear-to-br from-gray-200/15 to-gray-300/15 rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-200'></div>
+              <div className='absolute -bottom-4 -left-4 w-8 h-8 bg-linear-to-br from-gray-100/20 to-gray-200/20 rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-200'></div>
 
               {/* Icon container */}
               <div
-                className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${skill.color} mb-6 text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br ${skill.color} mb-6 text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
                 {skill.icon}
               </div>

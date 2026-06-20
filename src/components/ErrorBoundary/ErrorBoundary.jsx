@@ -203,11 +203,11 @@ User Agent: ${navigator.userAgent}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className='min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4'
+          className='min-h-screen bg-linear-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4'
         >
           <div className='max-w-2xl w-full bg-white rounded-3xl shadow-2xl border border-red-100 overflow-hidden'>
             {/* Header */}
-            <div className='bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white'>
+            <div className='bg-linear-to-r from-red-500 to-orange-500 p-6 text-white'>
               <div className='flex items-center space-x-4'>
                 <div className='p-3 bg-white/20 rounded-full'>
                   <AlertTriangle size={32} />
@@ -243,7 +243,7 @@ User Agent: ${navigator.userAgent}
                   whileTap={{ scale: 0.98 }}
                   onClick={this.handleRetry}
                   disabled={isRetrying}
-                  className='flex-1 flex items-center justify-center space-x-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50'
+                  className='flex-1 flex items-center justify-center space-x-3 bg-linear-to-r from-blue-500 to-purple-600 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50'
                 >
                   <RefreshCw size={20} className={isRetrying ? 'animate-spin' : ''} />
                   <span>{isRetrying ? 'Retrying...' : 'Try Again'}</span>
@@ -253,7 +253,7 @@ User Agent: ${navigator.userAgent}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={this.handleGoHome}
-                  className='flex-1 flex items-center justify-center space-x-3 bg-gradient-to-r from-green-500 to-teal-600 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200'
+                  className='flex-1 flex items-center justify-center space-x-3 bg-linear-to-r from-green-500 to-teal-600 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200'
                 >
                   <Home size={20} />
                   <span>Go Home</span>
@@ -305,20 +305,20 @@ User Agent: ${navigator.userAgent}
                     <div className='space-y-4 text-sm'>
                       <div>
                         <span className='font-medium text-gray-600'>Message:</span>
-                        <p className='text-gray-800 font-mono bg-white p-2 rounded mt-1'>
+                        <p className='text-gray-800 font-mono bg-white p-2 rounded-sm mt-1'>
                           {error?.message || 'Unknown error'}
                         </p>
                       </div>
                       <div>
                         <span className='font-medium text-gray-600'>Stack Trace:</span>
-                        <pre className='text-gray-800 font-mono bg-white p-2 rounded mt-1 overflow-x-auto text-xs'>
+                        <pre className='text-gray-800 font-mono bg-white p-2 rounded-sm mt-1 overflow-x-auto text-xs'>
                           {error?.stack || 'No stack trace available'}
                         </pre>
                       </div>
                       {errorInfo?.componentStack && (
                         <div>
                           <span className='font-medium text-gray-600'>Component Stack:</span>
-                          <pre className='text-gray-800 font-mono bg-white p-2 rounded mt-1 overflow-x-auto text-xs'>
+                          <pre className='text-gray-800 font-mono bg-white p-2 rounded-sm mt-1 overflow-x-auto text-xs'>
                             {errorInfo.componentStack}
                           </pre>
                         </div>

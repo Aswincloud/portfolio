@@ -93,15 +93,15 @@ function ExperienceEntryComponent({
         <div style={glareElementStyle} />
         {/* Simplified background gradient overlay */}
         <div
-          className={`absolute inset-0 bg-gradient-to-br ${theme.bgGradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
+          className={`absolute inset-0 bg-linear-to-br ${theme.bgGradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
         ></div>
 
         {/* Simplified decorative elements - Removed blur for performance */}
         <div
-          className={`absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br ${theme.gradient} opacity-5 rounded-full group-hover:opacity-10 transition-opacity duration-300`}
+          className={`absolute -top-4 -right-4 w-16 h-16 bg-linear-to-br ${theme.gradient} opacity-5 rounded-full group-hover:opacity-10 transition-opacity duration-300`}
         ></div>
         <div
-          className={`absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br ${theme.gradient} opacity-5 rounded-full group-hover:opacity-10 transition-opacity duration-300`}
+          className={`absolute -bottom-4 -left-4 w-12 h-12 bg-linear-to-br ${theme.gradient} opacity-5 rounded-full group-hover:opacity-10 transition-opacity duration-300`}
         ></div>
 
         {/* Content */}
@@ -121,7 +121,7 @@ function ExperienceEntryComponent({
                 scale: 1.05,
                 transition: { duration: 0.2, ease: 'easeOut' },
               }}
-              className='flex-shrink-0 self-center sm:self-start'
+              className='shrink-0 self-center sm:self-start'
             >
               <img
                 src={logo}
@@ -148,7 +148,7 @@ function ExperienceEntryComponent({
 
             {/* Company theme icon - Better mobile positioning */}
             <div
-              className={`p-3 rounded-xl bg-gradient-to-br ${theme.gradient} text-white shadow-lg self-center sm:self-start`}
+              className={`p-3 rounded-xl bg-linear-to-br ${theme.gradient} text-white shadow-lg self-center sm:self-start`}
             >
               {theme.icon}
             </div>
@@ -162,7 +162,7 @@ function ExperienceEntryComponent({
           {/* Experience badge with theme colors - Centered on mobile */}
           <div className='flex flex-col sm:flex-row items-center sm:justify-between gap-4'>
             <div
-              className={`inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r ${theme.gradient} text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-shadow duration-200`}
+              className={`inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r ${theme.gradient} text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-shadow duration-200`}
             >
               <Zap size={16} />
               <span>{experience}</span>
@@ -170,7 +170,7 @@ function ExperienceEntryComponent({
 
             {/* Simplified decorative corner element */}
             <div
-              className={`w-8 h-8 rounded-full bg-gradient-to-br ${theme.gradient} opacity-15 group-hover:opacity-25 transition-opacity duration-200`}
+              className={`w-8 h-8 rounded-full bg-linear-to-br ${theme.gradient} opacity-15 group-hover:opacity-25 transition-opacity duration-200`}
             ></div>
           </div>
         </div>

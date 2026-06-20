@@ -12,8 +12,8 @@ const AnimatedMeshGradient = () => {
   return (
     <div className='absolute inset-0 overflow-hidden'>
       {/* Base gradient layers */}
-      <div className='absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' />
-      <div className='absolute inset-0 bg-gradient-to-tr from-blue-900/40 via-transparent to-pink-900/40' />
+      <div className='absolute inset-0 bg-linear-to-br from-slate-900 via-purple-900 to-slate-900' />
+      <div className='absolute inset-0 bg-linear-to-tr from-blue-900/40 via-transparent to-pink-900/40' />
 
       {/* Animated gradient orbs */}
       <motion.div

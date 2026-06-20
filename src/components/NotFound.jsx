@@ -27,7 +27,7 @@ const NotFound = () => {
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             className='mb-8'
           >
-            <div className='inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-full text-white mb-6'>
+            <div className='inline-flex items-center justify-center w-24 h-24 bg-linear-to-r from-secondary-500 to-accent-500 rounded-full text-white mb-6'>
               <AlertTriangle size={48} />
             </div>
           </motion.div>
@@ -70,7 +70,7 @@ const NotFound = () => {
           >
             <Link
               to='/'
-              className='inline-flex items-center px-6 py-3 bg-gradient-to-r from-secondary-600 to-accent-600 text-white rounded-lg hover:from-secondary-700 hover:to-accent-700 transition-all duration-300 transform hover:scale-105 shadow-lg'
+              className='inline-flex items-center px-6 py-3 bg-linear-to-r from-secondary-600 to-accent-600 text-white rounded-lg hover:from-secondary-700 hover:to-accent-700 transition-all duration-300 transform hover:scale-105 shadow-lg'
               aria-label='Go back to homepage'
             >
               <Home size={20} className='mr-2' />
