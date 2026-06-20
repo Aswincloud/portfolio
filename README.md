@@ -1,5 +1,11 @@
 # Aswin's Portfolio
 
+[![CI](https://github.com/Aswincloud/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aswincloud/portfolio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Deployed on Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://www.aswincloud.com)
+
 A modern, responsive portfolio website built with React, Vite, and Tailwind CSS. Deployed on Cloudflare Workers with automated email functionality.
 
 ## 🚀 Features

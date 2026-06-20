@@ -1,0 +1,95 @@
+name: PR Checks
+
+# Heavier, PR-only checks: performance, bundle size, dependency review,
+# accessibility. These run on pull requests against main, where their
+# feedback is actionable before merge.
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Block PRs that introduce vulnerable or disallowed-license deps ───────────
+  dependency-review:
+    name: 🛡️ Dependency Review
+    runs-on: ubuntu-latest
+    # Only this job needs to write to the PR (its failure summary comment).
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+
+  # ── Lighthouse: performance / accessibility / best-practices / SEO ──────────
+  # Lighthouse runs axe-core internally for its accessibility category, so this
+  # one job covers both perf and a11y — no separate (flaky) axe-cli job needed.
+  lighthouse:
+    name: 💡 Lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.14.x autorun
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7
+
+  # ── Bundle size: report gzipped JS/CSS so bloat is visible on the PR ─────────
+  bundle-size:
+    name: 📦 Bundle Size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Measure + report bundle size
+        run: |
+          {
+            echo "### 📦 Bundle size (gzipped)"
+            echo ""
+            echo "| Asset | Raw | Gzipped |"
+            echo "| --- | ---: | ---: |"
+            for f in dist/assets/*.js dist/assets/*.css; do
+              [ -f "$f" ] || continue
+              raw=$(du -k "$f" | cut -f1)
+              gz=$(gzip -c "$f" | wc -c)
+              gzkb=$(( gz / 1024 ))
+              echo "| \`$(basename "$f")\` | ${raw} KB | ${gzkb} KB |"
+            done
+            total_gz=0
+            for f in dist/assets/*.js dist/assets/*.css; do
+              [ -f "$f" ] || continue
+              g=$(gzip -c "$f" | wc -c); total_gz=$(( total_gz + g ))
+            done
+            echo ""
+            echo "**Total gzipped:** $(( total_gz / 1024 )) KB"
+          } >> "$GITHUB_STEP_SUMMARY"
