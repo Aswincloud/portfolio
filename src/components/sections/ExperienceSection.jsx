@@ -6,7 +6,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import { Briefcase } from 'lucide-react';
 import { useExperienceCalculator } from '../../hooks';

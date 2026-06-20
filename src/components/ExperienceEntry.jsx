@@ -6,9 +6,8 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { MapPin, Calendar, Building, Zap, Code, Cpu } from 'lucide-react';
-import PropTypes from 'prop-types';
 import { use3DTilt, tiltPresets } from '../hooks/use3DTilt.jsx';
 
 // Experience Entry Component
@@ -181,18 +180,5 @@ function ExperienceEntryComponent({
 }
 
 const ExperienceEntry = React.memo(ExperienceEntryComponent);
-
-// PropTypes for type safety
-ExperienceEntry.propTypes = {
-  period: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  company: PropTypes.string.isRequired,
-  location: PropTypes.string,
-  logo: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  experience: PropTypes.string.isRequired,
-  inView: PropTypes.bool,
-  delay: PropTypes.number,
-};
 
 export default ExperienceEntry;
