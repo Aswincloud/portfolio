@@ -17,9 +17,30 @@ export default defineConfig({
         // change far less often than app code, so an isolated chunk stays in
         // the browser cache across deploys — visitors only re-download the
         // (small) app chunk when we ship changes.
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          motion: ['motion'],
+        //
+        // A function (not the object form) is used deliberately: the object
+        // form only matched the named entry points, so transitive deps such as
+        // react-dom's `scheduler` leaked into the main chunk (~95 KB gz).
+        // Matching on the node_modules path captures the whole subtree.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          // React core + anything that must share React's module instance:
+          // react-dom pulls in scheduler; router and intersection-observer
+          // import react. Bundling them together avoids duplicate React copies.
+          if (
+            /[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|react-intersection-observer|@remix-run[\\/]router)[\\/]/.test(
+              id
+            )
+          ) {
+            return 'react-vendor';
+          }
+          // motion re-exports from motion-dom / motion-utils; keep the whole
+          // animation runtime in one chunk rather than the catch-all vendor.
+          if (/[\\/]node_modules[\\/](motion|framer-motion|motion-dom|motion-utils)[\\/]/.test(id))
+            return 'motion';
+          if (/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id)) return 'lucide';
+          // Everything else third-party → one cacheable vendor chunk.
+          return 'vendor';
         },
       },
     },
