@@ -17,6 +17,8 @@ export const featuredProjects = [
     ],
     icon: <Gauge size={48} />,
     link: 'https://ttperf.aswincloud.com',
+    repo: 'https://github.com/Aswincloud/ttperf',
+    pypi: 'https://pypi.org/project/ttperf/',
     status: 'Live',
   },
   {
