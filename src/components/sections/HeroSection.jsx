@@ -140,7 +140,7 @@ const HeroSection = React.memo(function HeroSection() {
               transition={{ delay: 0.6 }}
             >
               {[
-                { icon: Github, href: 'https://github.com/Aswin-coder', label: 'GitHub' },
+                { icon: Github, href: 'https://github.com/Aswincloud', label: 'GitHub' },
                 {
                   icon: Linkedin,
                   href: 'https://www.linkedin.com/in/aswin4122001/',

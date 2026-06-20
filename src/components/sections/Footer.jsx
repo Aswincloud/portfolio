@@ -61,7 +61,7 @@ const Footer = () => {
               <Linkedin size={20} />
             </a>
             <a
-              href='https://github.com/Aswin-coder'
+              href='https://github.com/Aswincloud'
               target='_blank'
               rel='noopener noreferrer'
               className='w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-secondary-600 transition-colors duration-200'
