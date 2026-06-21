@@ -20,46 +20,29 @@ import {
   Package,
 } from 'lucide-react';
 import { featuredProjects, allProjects } from '../../data/projects.jsx';
-import { use3DTilt, tiltPresets } from '../../hooks/use3DTilt.jsx';
 import { useRipple } from '../../hooks';
 
-// Project Card with 3D Tilt Effect
+// Project Card
 const ProjectCard = ({ project, index, inView }) => {
-  const { elementRef, tiltStyle, glareElementStyle } = use3DTilt(tiltPresets.card);
-
   return (
     <motion.div
-      ref={elementRef}
       key={project.id}
-      initial={{ opacity: 0, y: 60 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: index * 0.2 }}
-      style={tiltStyle}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
       className='group relative h-full'
     >
-      {/* Optimized Glassmorphism Card with Enhanced Gradient Animation */}
-      <div className='relative h-full bg-white/90 backdrop-blur-sm rounded-3xl p-8 lg:p-10 border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden'>
-        {/* Glare effect */}
-        <div style={glareElementStyle} />
-
-        {/* Enhanced Multi-layer Background Gradients */}
-        <div className='absolute inset-0 bg-linear-to-br from-secondary-500/5 via-accent-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-        <div className='absolute inset-0 bg-linear-to-tl from-blue-500/3 via-purple-500/3 to-teal-500/3 opacity-0 group-hover:opacity-80 transition-opacity duration-700'></div>
-        <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
-
-        {/* Enhanced Floating Orbs with Gradient Animation */}
-        <div className='absolute -top-20 -right-20 w-40 h-40 bg-linear-to-br from-secondary-400/20 via-accent-400/20 to-purple-400/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700'></div>
-        <div className='absolute -bottom-20 -left-20 w-32 h-32 bg-linear-to-br from-emerald-400/20 via-teal-400/20 to-blue-400/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-900'></div>
-        <div className='absolute top-1/2 right-1/4 w-20 h-20 bg-linear-to-br from-pink-400/15 via-violet-400/15 to-cyan-400/15 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-600'></div>
+      {/* Card */}
+      <div className='relative h-full bg-white rounded-3xl p-8 lg:p-10 border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden'>
+        {/* One subtle indigo→sky wash on hover — the single decorative layer. */}
+        <div className='absolute inset-0 bg-linear-to-br from-secondary-500/[0.03] to-accent-500/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
 
         <div className='relative z-10 flex flex-col'>
           {/* Project Icon and Title */}
           <div className='text-center'>
             <div className='flex items-center justify-center mb-6'>
-              <div className='relative p-4 bg-linear-to-br from-secondary-500 via-accent-500 to-purple-600 rounded-2xl text-white shadow-lg group-hover:shadow-xl transition-all duration-300'>
+              <div className='p-4 bg-linear-to-br from-secondary-500 to-accent-500 rounded-2xl text-white shadow-md group-hover:shadow-lg transition-shadow duration-300'>
                 {project.icon}
-                <div className='absolute inset-0 bg-linear-to-br from-white/10 via-white/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
-                <div className='absolute inset-0 bg-linear-to-tl from-transparent via-secondary-300/20 to-accent-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
               </div>
             </div>
 
@@ -232,10 +215,8 @@ const ProjectsSection = () => {
             </span>
           </motion.div>
 
-          <h2 className='text-5xl lg:text-6xl font-black mb-8 text-gray-900 leading-tight'>
-            <span className='bg-linear-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent'>
-              Featured Projects
-            </span>
+          <h2 className='text-5xl lg:text-6xl font-bold mb-8 text-gray-900 leading-tight'>
+            Featured <span className='text-accent-600'>Projects</span>
           </h2>
           <p className='text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed'>
             Innovative solutions powered by machine learning and cutting-edge technology

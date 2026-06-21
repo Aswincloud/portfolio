@@ -12,16 +12,20 @@
   --color-primary-800: #1e293b;
   --color-primary-900: #0f172a;
 
-  --color-secondary-50: #fdf2f8;
-  --color-secondary-100: #fce7f3;
-  --color-secondary-200: #fbcfe8;
-  --color-secondary-300: #f9a8d4;
-  --color-secondary-400: #f472b6;
-  --color-secondary-500: #ec4899;
-  --color-secondary-600: #db2777;
-  --color-secondary-700: #be185d;
-  --color-secondary-800: #9d174d;
-  --color-secondary-900: #831843;
+  /* Secondary = indigo. Retuned from the original pink (#ec4899) so the whole
+     site reads as a cohesive indigo→sky cool palette instead of pink-heavy.
+     Pairs with the sky-blue accent below; updating the token reskins all
+     usages (buttons, badges, gradients) without touching className strings. */
+  --color-secondary-50: #eef2ff;
+  --color-secondary-100: #e0e7ff;
+  --color-secondary-200: #c7d2fe;
+  --color-secondary-300: #a5b4fc;
+  --color-secondary-400: #818cf8;
+  --color-secondary-500: #6366f1;
+  --color-secondary-600: #4f46e5;
+  --color-secondary-700: #4338ca;
+  --color-secondary-800: #3730a3;
+  --color-secondary-900: #312e81;
 
   --color-accent-50: #f0f9ff;
   --color-accent-100: #e0f2fe;
@@ -57,7 +61,7 @@
   --color-warning-900: #78350f;
 
   --font-sans: Inter, system-ui, sans-serif;
-  --font-display: Cal Sans, Inter, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', Inter, system-ui, sans-serif;
 
   --animate-float: float 3s ease-in-out infinite;
   --animate-fadeInUp: fadeInUp 0.8s ease-out;
@@ -72,9 +76,6 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
-  --background-image-gradient-modern: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --background-image-gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --background-image-gradient-accent: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
 
   --backdrop-blur-xs: 2px;
 
@@ -251,6 +252,16 @@
     padding: 0;
     position: relative;
     scroll-behavior: smooth;
+  }
+
+  /* Headings use the display font (Space Grotesk) with slightly tighter
+     tracking, giving titles typographic character distinct from Inter body.
+     Note: Space Grotesk's heaviest weight is 700 — heading elements use
+     font-bold (700), not font-black (900), to avoid synthetic fake-bold. */
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
   }
 
   #root {
