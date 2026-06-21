@@ -233,9 +233,7 @@ const ProjectsSection = () => {
           </motion.div>
 
           <h2 className='text-5xl lg:text-6xl font-black mb-8 text-gray-900 leading-tight'>
-            <span className='bg-linear-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent'>
-              Featured Projects
-            </span>
+            Featured <span className='text-accent-600'>Projects</span>
           </h2>
           <p className='text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed'>
             Innovative solutions powered by machine learning and cutting-edge technology

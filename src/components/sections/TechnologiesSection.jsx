@@ -87,9 +87,7 @@ const TechnologiesSection = () => {
           </motion.div>
 
           <h2 className='text-4xl md:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent'>
-              Technologies & Platforms
-            </span>
+            Technologies &amp; <span className='text-accent-600'>Platforms</span>
           </h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
             Comprehensive experience across cloud platforms, operating systems, networking, and

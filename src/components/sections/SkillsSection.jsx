@@ -71,9 +71,7 @@ const SkillsSection = () => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent'>
-              What I Do Best
-            </span>
+            What I Do <span className='text-accent-600'>Best</span>
           </h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
             Passionate about technologies that drive innovation and create meaningful impact

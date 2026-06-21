@@ -45,11 +45,7 @@ const ExperienceSection = () => {
             </span>
           </motion.div>
 
-          <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-linear-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent'>
-              Experience
-            </span>
-          </h2>
+          <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>Experience</h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
             Building innovative solutions and driving technological excellence across diverse
             industries

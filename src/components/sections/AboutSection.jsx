@@ -63,9 +63,7 @@ const AboutSection = React.memo(() => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-linear-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent'>
-              Where software meets silicon
-            </span>
+            Where software meets <span className='text-accent-600'>silicon</span>
           </h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
             Chasing microseconds on AI hardware — and running my own cloud for the fun of it
@@ -152,11 +150,7 @@ const AboutSection = React.memo(() => {
 
                 {/* Content */}
                 <div className='relative z-10'>
-                  <div
-                    className={`text-3xl font-black mb-1 bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}
-                  >
-                    {stat.number}
-                  </div>
+                  <div className='text-3xl font-black mb-1 text-accent-600'>{stat.number}</div>
                   <div className='text-gray-600 font-semibold text-base'>{stat.label}</div>
                 </div>
 

@@ -140,9 +140,7 @@ const ContactSection = () => {
           </motion.div>
 
           <h2 className='text-4xl lg:text-5xl font-black mb-6 text-gray-900'>
-            <span className='bg-linear-to-r from-green-600 via-blue-600 to-green-600 bg-clip-text text-transparent'>
-              Let's Work Together
-            </span>
+            Let&apos;s <span className='text-accent-600'>Work</span> Together
           </h2>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
             Ready to bring your ideas to life? Let's discuss your next project and create something
