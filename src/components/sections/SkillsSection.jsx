@@ -26,8 +26,8 @@ const SkillsSection = () => {
       icon: <Zap size={48} />,
       title: 'Performance Optimization',
       description: 'Profiling, benchmarking, and performance analysis for applications',
-      color: 'from-purple-500 to-pink-600',
-      bgColor: 'from-purple-50 to-pink-50',
+      color: 'from-secondary-500 to-secondary-700',
+      bgColor: 'from-secondary-50 to-indigo-100',
     },
     {
       icon: <Cpu size={48} />,
@@ -48,7 +48,7 @@ const SkillsSection = () => {
   return (
     <section id='skills' className='section-padding bg-white relative overflow-hidden'>
       {/* Subtle background tint — section color without the decoration noise. */}
-      <div className='absolute inset-0 bg-linear-to-br from-white via-purple-50/50 to-pink-50/50'></div>
+      <div className='absolute inset-0 bg-linear-to-br from-white via-secondary-50/50 to-accent-50/50'></div>
 
       <div className='container-custom relative z-10'>
         <motion.div
@@ -62,9 +62,9 @@ const SkillsSection = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-purple-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-secondary-500/10 to-accent-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-secondary-200/30'
           >
-            <Sparkles size={16} className='text-purple-500' />
+            <Sparkles size={16} className='text-secondary-500' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
               Skills & Expertise
             </span>

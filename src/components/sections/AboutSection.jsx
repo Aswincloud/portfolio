@@ -21,19 +21,19 @@ const AboutSection = React.memo(() => {
       number: experience,
       label: 'Years Experience',
       icon: <Briefcase size={24} />,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-secondary-500 to-accent-500',
     },
     {
       number: 'Software',
       label: 'Development',
       icon: <Code size={24} />,
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-accent-500 to-secondary-600',
     },
     {
       number: 'Cloud',
       label: 'Technologies',
       icon: <Cloud size={24} />,
-      color: 'from-emerald-500 to-teal-500',
+      color: 'from-secondary-600 to-accent-600',
     },
   ];
 
@@ -54,9 +54,9 @@ const AboutSection = React.memo(() => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
+            className='inline-flex items-center space-x-2 bg-linear-to-r from-secondary-500/10 to-accent-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-secondary-200/30'
           >
-            <Circle size={8} className='text-blue-500 fill-current' />
+            <Circle size={8} className='text-secondary-500 fill-current' />
             <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
               About Me
             </span>
@@ -79,34 +79,35 @@ const AboutSection = React.memo(() => {
           >
             <div className='space-y-6 text-lg text-gray-700 leading-relaxed'>
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-blue-500 to-purple-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-secondary-500 to-accent-500 rounded-full'></div>
                 <p className='pl-8'>
-                  I'm a <span className='font-semibold text-blue-600'>performance engineer</span>{' '}
+                  I'm a{' '}
+                  <span className='font-semibold text-secondary-600'>performance engineer</span>{' '}
                   based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
-                  <span className='font-semibold text-blue-600'>AI accelerator hardware</span>. Most
-                  days that means profiling tensor operations, hunting bottlenecks, and turning
+                  <span className='font-semibold text-secondary-600'>AI accelerator hardware</span>.
+                  Most days that means profiling tensor operations, hunting bottlenecks, and turning
                   benchmark numbers into something faster.
                 </p>
               </div>
 
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-purple-500 to-pink-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-accent-500 to-secondary-500 rounded-full'></div>
                 <p className='pl-8'>
                   The work I enjoy lives close to the metal — where a data layout, a kernel choice,
                   or a scheduling decision is the difference between fast and{' '}
-                  <span className='font-semibold text-purple-600'>genuinely fast</span>. I care
+                  <span className='font-semibold text-secondary-600'>genuinely fast</span>. I care
                   about measuring before optimizing, and about making the optimization stick.
                 </p>
               </div>
 
               <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-pink-500 to-emerald-500 rounded-full'></div>
+                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-secondary-500 to-accent-500 rounded-full'></div>
                 <p className='pl-8'>
                   Off the clock, I run{' '}
-                  <span className='font-semibold text-emerald-600'>my own cloud</span> — self-hosted
-                  services behind Cloudflare tunnels, from this site to a support desk to an AI
-                  chat. It's where I get to be the ops team, the security team, and the person who
-                  gets paged, all at once.
+                  <span className='font-semibold text-secondary-600'>my own cloud</span> —
+                  self-hosted services behind Cloudflare tunnels, from this site to a support desk
+                  to an AI chat. It's where I get to be the ops team, the security team, and the
+                  person who gets paged, all at once.
                 </p>
               </div>
             </div>
@@ -150,7 +151,7 @@ const AboutSection = React.memo(() => {
 
                 {/* Content */}
                 <div className='relative z-10'>
-                  <div className='text-3xl font-black mb-1 text-accent-600'>{stat.number}</div>
+                  <div className='text-3xl font-extrabold mb-1 text-accent-600'>{stat.number}</div>
                   <div className='text-gray-600 font-semibold text-base'>{stat.label}</div>
                 </div>
 
