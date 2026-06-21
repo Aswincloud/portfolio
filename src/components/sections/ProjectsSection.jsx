@@ -35,10 +35,10 @@ const ProjectCard = ({ project, index, inView }) => {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: index * 0.2 }}
       style={tiltStyle}
-      className='group relative'
+      className='group relative h-full'
     >
       {/* Optimized Glassmorphism Card with Enhanced Gradient Animation */}
-      <div className='relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 lg:p-12 border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden'>
+      <div className='relative h-full bg-white/90 backdrop-blur-sm rounded-3xl p-8 lg:p-10 border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden'>
         {/* Glare effect */}
         <div style={glareElementStyle} />
 
@@ -52,10 +52,10 @@ const ProjectCard = ({ project, index, inView }) => {
         <div className='absolute -bottom-20 -left-20 w-32 h-32 bg-linear-to-br from-emerald-400/20 via-teal-400/20 to-blue-400/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-900'></div>
         <div className='absolute top-1/2 right-1/4 w-20 h-20 bg-linear-to-br from-pink-400/15 via-violet-400/15 to-cyan-400/15 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-600'></div>
 
-        <div className='relative z-10 grid lg:grid-cols-5 gap-8 lg:gap-12'>
+        <div className='relative z-10 flex flex-col'>
           {/* Project Icon and Title */}
-          <div className='lg:col-span-2'>
-            <div className='flex items-center justify-center lg:justify-start mb-6'>
+          <div className='text-center'>
+            <div className='flex items-center justify-center mb-6'>
               <div className='relative p-4 bg-linear-to-br from-secondary-500 via-accent-500 to-purple-600 rounded-2xl text-white shadow-lg group-hover:shadow-xl transition-all duration-300'>
                 {project.icon}
                 <div className='absolute inset-0 bg-linear-to-br from-white/10 via-white/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
@@ -63,11 +63,11 @@ const ProjectCard = ({ project, index, inView }) => {
               </div>
             </div>
 
-            <h3 className='text-2xl lg:text-3xl font-bold text-gray-900 mb-3 text-center lg:text-left group-hover:text-secondary-600 transition-colors duration-300'>
+            <h3 className='text-2xl lg:text-3xl font-bold text-gray-900 mb-3 text-center group-hover:text-secondary-600 transition-colors duration-300'>
               {project.title}
             </h3>
 
-            <div className='flex items-center justify-center lg:justify-start space-x-3 mb-6'>
+            <div className='flex items-center justify-center space-x-3 mb-6'>
               <span className='text-sm text-gray-500 font-medium'>{project.domain}</span>
               <div className='flex items-center space-x-1'>
                 <Circle size={8} className='text-green-500 fill-current' />
@@ -77,7 +77,7 @@ const ProjectCard = ({ project, index, inView }) => {
               </div>
             </div>
 
-            <div className='flex flex-col items-center lg:items-start gap-4'>
+            <div className='flex flex-col items-center gap-4 mb-8'>
               <a
                 href={project.link}
                 target='_blank'
@@ -95,7 +95,7 @@ const ProjectCard = ({ project, index, inView }) => {
               </a>
 
               {(project.repo || project.pypi) && (
-                <div className='flex flex-wrap items-center justify-center lg:justify-start gap-3'>
+                <div className='flex flex-wrap items-center justify-center gap-3'>
                   {project.repo && (
                     <a
                       href={project.repo}
@@ -126,7 +126,7 @@ const ProjectCard = ({ project, index, inView }) => {
           </div>
 
           {/* Project Details */}
-          <div className='lg:col-span-3'>
+          <div>
             <p className='text-gray-700 text-lg leading-relaxed mb-8 font-medium'>
               {project.description}
             </p>
@@ -162,7 +162,7 @@ const ProjectCard = ({ project, index, inView }) => {
                 </div>
                 Key Features
               </h4>
-              <div className='grid md:grid-cols-2 gap-3'>
+              <div className='grid grid-cols-1 gap-3'>
                 {project.features.map((feature, featureIndex) => (
                   <motion.div
                     key={featureIndex}
@@ -242,7 +242,7 @@ const ProjectsSection = () => {
           </p>
         </motion.div>
 
-        <div className='grid gap-12' id={projectsSectionListId}>
+        <div className='grid gap-8 lg:grid-cols-2' id={projectsSectionListId}>
           {(showMoreProjects ? allProjects : featuredProjects).map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} inView={inView} />
           ))}
