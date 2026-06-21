@@ -57,7 +57,7 @@
   --color-warning-900: #78350f;
 
   --font-sans: Inter, system-ui, sans-serif;
-  --font-display: Cal Sans, Inter, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', Inter, system-ui, sans-serif;
 
   --animate-float: float 3s ease-in-out infinite;
   --animate-fadeInUp: fadeInUp 0.8s ease-out;
@@ -251,6 +251,14 @@
     padding: 0;
     position: relative;
     scroll-behavior: smooth;
+  }
+
+  /* Headings use the display font (Space Grotesk) with slightly tighter
+     tracking, giving titles typographic character distinct from Inter body. */
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
   }
 
   #root {
