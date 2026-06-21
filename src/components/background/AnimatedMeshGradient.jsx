@@ -12,14 +12,14 @@ const AnimatedMeshGradient = () => {
   return (
     <div className='absolute inset-0 overflow-hidden'>
       {/* Base gradient layers */}
-      <div className='absolute inset-0 bg-linear-to-br from-slate-900 via-purple-900 to-slate-900' />
-      <div className='absolute inset-0 bg-linear-to-tr from-blue-900/40 via-transparent to-pink-900/40' />
+      <div className='absolute inset-0 bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900' />
+      <div className='absolute inset-0 bg-linear-to-tr from-indigo-900/40 via-transparent to-sky-900/40' />
 
       {/* Animated gradient orbs */}
       <motion.div
         className='absolute top-0 left-0 w-[500px] h-[500px] rounded-full'
         style={{
-          background: 'radial-gradient(circle, rgba(236,72,153,0.4) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%)',
           filter: 'blur(80px)',
         }}
         animate={{
@@ -73,7 +73,7 @@ const AnimatedMeshGradient = () => {
       <motion.div
         className='absolute top-1/2 left-1/2 w-[550px] h-[550px] rounded-full'
         style={{
-          background: 'radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(14,165,233,0.25) 0%, transparent 70%)',
           filter: 'blur(85px)',
         }}
         animate={{
@@ -88,13 +88,11 @@ const AnimatedMeshGradient = () => {
         }}
       />
 
-      {/* Mesh pattern overlay */}
+      {/* Mesh pattern overlay — indigo / sky / violet, cohesive cool tones. */}
       <div className='absolute inset-0 opacity-30'>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(236,72,153,0.3)_0%,transparent_50%)]' />
+        <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(99,102,241,0.3)_0%,transparent_50%)]' />
         <div className='absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.3)_0%,transparent_50%)]' />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_60%_80%,rgba(168,85,247,0.25)_0%,transparent_40%)]' />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(34,197,94,0.2)_0%,transparent_35%)]' />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_90%_90%,rgba(251,146,60,0.22)_0%,transparent_45%)]' />
+        <div className='absolute inset-0 bg-[radial-gradient(circle_at_60%_80%,rgba(139,92,246,0.25)_0%,transparent_40%)]' />
       </div>
     </div>
   );
