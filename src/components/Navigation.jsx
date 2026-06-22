@@ -8,15 +8,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Mail, Search, Code, Home, User, Briefcase, Folder } from 'lucide-react';
-import SearchModal from './SearchModal.jsx';
+import { Menu, X, Mail, Code, Home, User, Briefcase, Folder } from 'lucide-react';
 import { useThrottledScroll, usePageTransitions } from '../hooks';
 
 // Performance-optimized Navigation component
 const Navigation = React.memo(function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
   // Page transitions hook for smooth scrolling (only on home page)
@@ -138,20 +136,6 @@ const Navigation = React.memo(function Navigation() {
           </div>
 
           <div className='flex items-center space-x-3'>
-            <motion.button
-              onClick={() => setIsSearchOpen(true)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`p-2 rounded-xl transition-all duration-300 ${
-                !isHomePage || scrolled
-                  ? 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              }`}
-              aria-label='Search'
-            >
-              <Search size={20} />
-            </motion.button>
-
             {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -219,8 +203,6 @@ const Navigation = React.memo(function Navigation() {
           )}
         </AnimatePresence>
       </div>
-
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </nav>
   );
 });
