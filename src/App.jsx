@@ -7,6 +7,7 @@
 
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { MotionConfig } from 'motion/react';
 import Navigation from './components/Navigation.jsx';
 import LoadingSpinner from './components/LoadingSpinner.jsx';
 import {
@@ -128,48 +129,54 @@ const App = () => {
   }, []);
 
   return (
-    <GlobalErrorHandler>
-      <ErrorBoundary level='app' fallbackComponent='Portfolio Application'>
-        <Router
-          basename={getBasename()}
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
-          <Layout>
-            <Suspense
-              fallback={<LoadingSpinner size='lg' text='Loading…' className='min-h-screen' />}
-            >
-              <Routes>
-                <Route path='/' element={<HomePage />} />
-                <Route
-                  path='/privacy'
-                  element={
-                    <ErrorBoundary level='page' fallbackComponent='Privacy Policy'>
-                      <PrivacyPolicy />
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/terms'
-                  element={
-                    <ErrorBoundary level='page' fallbackComponent='Terms & Conditions'>
-                      <TermsConditions />
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path='*'
-                  element={
-                    <ErrorBoundary level='page' fallbackComponent='404 Page'>
-                      <NotFound />
-                    </ErrorBoundary>
-                  }
-                />
-              </Routes>
-            </Suspense>
-          </Layout>
-        </Router>
-      </ErrorBoundary>
-    </GlobalErrorHandler>
+    // reducedMotion="user" makes every motion/react component respect the OS
+    // "reduce motion" setting — animations render instantly for users who asked
+    // for it (the CSS media query only covers CSS animations, not the JS-driven
+    // ones). Outermost so even the ErrorBoundary fallback UI inherits it.
+    <MotionConfig reducedMotion='user'>
+      <GlobalErrorHandler>
+        <ErrorBoundary level='app' fallbackComponent='Portfolio Application'>
+          <Router
+            basename={getBasename()}
+            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+          >
+            <Layout>
+              <Suspense
+                fallback={<LoadingSpinner size='lg' text='Loading…' className='min-h-screen' />}
+              >
+                <Routes>
+                  <Route path='/' element={<HomePage />} />
+                  <Route
+                    path='/privacy'
+                    element={
+                      <ErrorBoundary level='page' fallbackComponent='Privacy Policy'>
+                        <PrivacyPolicy />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='/terms'
+                    element={
+                      <ErrorBoundary level='page' fallbackComponent='Terms & Conditions'>
+                        <TermsConditions />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='*'
+                    element={
+                      <ErrorBoundary level='page' fallbackComponent='404 Page'>
+                        <NotFound />
+                      </ErrorBoundary>
+                    }
+                  />
+                </Routes>
+              </Suspense>
+            </Layout>
+          </Router>
+        </ErrorBoundary>
+      </GlobalErrorHandler>
+    </MotionConfig>
   );
 };
 
