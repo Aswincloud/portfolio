@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Background circle -->
-  <circle cx="16" cy="16" r="16" fill="#ec4899"/>
-  
-  <!-- User head -->
-  <circle cx="16" cy="12" r="6" fill="white"/>
-  
-  <!-- User body -->
-  <path d="M6 26c0-5.5 4.5-10 10-10s10 4.5 10 10" fill="white"/>
-</svg> 
+  <!-- Background — indigo, matching the site palette -->
+  <rect width="32" height="32" rx="7" fill="#4f46e5"/>
+  <!-- Monogram "A" -->
+  <path d="M16 7 L23 25 H19.4 L18.1 21.4 H13.9 L12.6 25 H9 L16 7 Z M16 12.6 L14.7 18.2 H17.3 L16 12.6 Z"
+        fill="white"/>
+</svg>
