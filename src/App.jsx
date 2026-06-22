@@ -129,13 +129,13 @@ const App = () => {
   }, []);
 
   return (
-    <GlobalErrorHandler>
-      <ErrorBoundary level='app' fallbackComponent='Portfolio Application'>
-        {/* reducedMotion="user" makes every motion component respect the OS
-            "reduce motion" setting — animations are stripped to instant for
-            users who asked for it (the CSS media query only covers CSS
-            animations, not Framer Motion's JS-driven ones). */}
-        <MotionConfig reducedMotion='user'>
+    // reducedMotion="user" makes every motion/react component respect the OS
+    // "reduce motion" setting — animations render instantly for users who asked
+    // for it (the CSS media query only covers CSS animations, not the JS-driven
+    // ones). Outermost so even the ErrorBoundary fallback UI inherits it.
+    <MotionConfig reducedMotion='user'>
+      <GlobalErrorHandler>
+        <ErrorBoundary level='app' fallbackComponent='Portfolio Application'>
           <Router
             basename={getBasename()}
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
@@ -174,9 +174,9 @@ const App = () => {
               </Suspense>
             </Layout>
           </Router>
-        </MotionConfig>
-      </ErrorBoundary>
-    </GlobalErrorHandler>
+        </ErrorBoundary>
+      </GlobalErrorHandler>
+    </MotionConfig>
   );
 };
 
