@@ -2,8 +2,9 @@ name: Auto-approve admin PRs
 
 # Automatically approve a pull request when its author is a member of the
 # Aswincloud/admins team. It ONLY approves — it never merges, so you stay in
-# control of when to merge and can push more changes first (a push dismisses
-# the approval and re-fires this workflow).
+# control of when to merge and can push more changes first. This workflow
+# re-fires on each push; whether that dismisses a prior approval depends on the
+# repo's stale-review-dismissal setting (off on this repo).
 #
 # Two identities, split by a hard GitHub constraint:
 #   - Membership read  -> "Aswincloud Bot" GitHub App (short-lived token minted
@@ -22,7 +23,7 @@ on:
   pull_request_target:
     types: [opened, reopened, ready_for_review, synchronize]
 
-permissions: {}   # the App token carries the perms; the built-in token needs none
+permissions: {} # the App token carries the perms; the built-in token needs none
 
 # One run per PR; a newer event supersedes an in-flight one.
 concurrency:
@@ -40,7 +41,7 @@ jobs:
       # AND act on this org's repos.
       - name: Mint app token
         id: app
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -51,9 +52,9 @@ jobs:
         id: member
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
-          AUTHOR:   ${{ github.event.pull_request.user.login }}
-          ORG:      Aswincloud
-          TEAM:     admins
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          ORG: Aswincloud
+          TEAM: admins
         run: |
           set -euo pipefail
           state="$(gh api "orgs/${ORG}/teams/${TEAM}/memberships/${AUTHOR}" \
@@ -72,17 +73,18 @@ jobs:
       #    a ruleset's required-approval count — only a review from a user with
       #    write access satisfies it. The approval is all this step does; it
       #    never merges, so you stay in control of WHEN it merges and can push
-      #    further changes first (a push dismisses the review and re-fires this).
+      #    further changes first. This workflow re-fires on each push; whether a prior
+      #    approval is dismissed depends on the stale-review setting.
       - name: Approve the PR
         if: steps.member.outputs.is_admin == 'true'
         env:
           GH_TOKEN: ${{ secrets.WRITE_ACCESS_PAT }}
-          REPO:     ${{ github.repository }}
-          PR:       ${{ github.event.pull_request.number }}
-          AUTHOR:   ${{ github.event.pull_request.user.login }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          ORG:      Aswincloud
-          TEAM:     admins
+          ORG: Aswincloud
+          TEAM: admins
         run: |
           set -euo pipefail
 
