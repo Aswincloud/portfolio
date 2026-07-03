@@ -41,17 +41,20 @@ A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 ## 📦 Installation & Setup
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/Aswincloud/portfolio.git
    cd portfolio
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -115,3 +118,5 @@ Visit the live portfolio: **[www.aswincloud.com](https://www.aswincloud.com)**
 ---
 
 Built with ❤️ by [Aswin](https://github.com/Aswincloud) | Software Engineer at MulticoreWare
+
+<!-- merge-queue smoke test (retry) 2026-07-03 — throwaway -->
