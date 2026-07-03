@@ -119,4 +119,4 @@ Visit the live portfolio: **[www.aswincloud.com](https://www.aswincloud.com)**
 
 Built with ❤️ by [Aswin](https://github.com/Aswincloud) | Software Engineer at MulticoreWare
 
-<!-- merge-queue smoke test 2026-07-03 — throwaway, safe to revert -->
+<!-- merge-queue smoke test (retry) 2026-07-03 — throwaway -->
