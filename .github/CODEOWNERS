@@ -2,33 +2,33 @@
 # This file defines who owns which parts of the codebase
 
 # Global ownership - Aswin owns everything by default
-* @Aswin-coder @Aswinmcw @Aswincloud/admins
+* @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # Frontend specific files
-/src/ @Aswin-coder @Aswinmcw @Aswincloud/admins
-/public/ @Aswin-coder @Aswinmcw @Aswincloud/admins
-*.html @Aswin-coder @Aswinmcw @Aswincloud/admins
-*.css @Aswin-coder @Aswinmcw @Aswincloud/admins
-*.js @Aswin-coder @Aswincloud/admins
-*.jsx @Aswin-coder @Aswinmcw @Aswincloud/admins
+/src/ @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+/public/ @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.html @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.css @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.js @Aswin-coder @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.jsx @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # Scripts
-/scripts/ @Aswin-coder @Aswinmcw @Aswincloud/admins
+/scripts/ @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # Configuration files
-*.json @Aswin-coder @Aswinmcw @Aswincloud/admins
-*.config.js @Aswin-coder @Aswinmcw @Aswincloud/admins
-*.config.ts @Aswin-coder @Aswinmcw @Aswincloud/admins
-.env* @Aswin-coder @Aswinmcw @Aswincloud/admins
-wrangler.toml @Aswin-coder @Aswinmcw @Aswincloud/admins
+*.json @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.config.js @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+*.config.ts @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+.env* @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+wrangler.toml @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # GitHub Actions and CI/CD
-/.github/ @Aswin-coder @Aswinmcw @Aswincloud/admins
+/.github/ @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # Documentation
-*.md @Aswin-coder @Aswinmcw @Aswincloud/admins
-/docs/ @Aswin-coder @Aswinmcw @Aswincloud/admins
+*.md @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
+/docs/ @Aswin-coder @Aswinmcw @Aswincloud/admins @Aswincloud/codeowners-bypass
 
 # Build and deployment
-/dist/ @Aswin-coder @Aswinmcw
-worker.js @Aswin-coder @Aswinmcw
+/dist/ @Aswin-coder @Aswinmcw @Aswincloud/codeowners-bypass
+worker.js @Aswin-coder @Aswinmcw @Aswincloud/codeowners-bypass
