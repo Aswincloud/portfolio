@@ -31,7 +31,9 @@
     "pre-commit": "lint-staged",
     "validate": "npm run quality:check && npm run build",
     "clean": "rm -rf dist node_modules/.cache",
-    "analyze": "npm run build:analyze && npx vite-bundle-analyzer dist"
+    "analyze": "npm run build:analyze && npx vite-bundle-analyzer dist",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
@@ -43,6 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.61.0",
     "@tailwindcss/postcss": "^4.3.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

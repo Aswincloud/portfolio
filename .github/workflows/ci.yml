@@ -101,3 +101,19 @@ jobs:
       - run: npm ci
       - name: npm audit
         run: npm run security:check
+
+  e2e:
+    name: 🎭 E2E
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.0.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: npm run test:e2e

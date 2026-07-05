@@ -110,3 +110,6 @@ temp/
 
 # Cloudflare Workers
 public/_redirects 
+# Playwright
+test-results/
+playwright-report/
