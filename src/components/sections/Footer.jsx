@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { Mail, Linkedin, Github } from 'lucide-react';
+import { RESUME_URL } from '../../data/links.js';
 
 // Footer Component
 const Footer = () => {
@@ -40,7 +41,7 @@ const Footer = () => {
                 Source Code
               </a>
               <a
-                href='https://github.com/Aswincloud/resume/releases/latest/download/Aswin_Resume.pdf'
+                href={RESUME_URL}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='text-gray-500 hover:text-secondary-600 transition-colors duration-200'

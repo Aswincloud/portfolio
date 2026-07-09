@@ -11,10 +11,7 @@ import { Github, Linkedin, Mail, Briefcase, ArrowRight, FileText } from 'lucide-
 import { useExperienceCalculator, useThrottledScroll, useRipple } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
 import { useMicroInteractions } from '../../utils/microInteractions';
-
-// `/releases/latest/download/…` always resolves to the newest published
-// résumé, so this never goes stale when a new build is cut.
-const RESUME_URL = 'https://github.com/Aswincloud/resume/releases/latest/download/Aswin_Resume.pdf';
+import { RESUME_URL } from '../../data/links.js';
 
 const HeroSection = React.memo(function HeroSection() {
   const experience = useExperienceCalculator();
