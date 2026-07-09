@@ -7,10 +7,11 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Github, Linkedin, Mail, Briefcase, ArrowRight } from 'lucide-react';
+import { Github, Linkedin, Mail, Briefcase, ArrowRight, FileText } from 'lucide-react';
 import { useExperienceCalculator, useThrottledScroll, useRipple } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
 import { useMicroInteractions } from '../../utils/microInteractions';
+import { RESUME_URL } from '../../data/links.js';
 
 const HeroSection = React.memo(function HeroSection() {
   const experience = useExperienceCalculator();
@@ -129,6 +130,21 @@ const HeroSection = React.memo(function HeroSection() {
                     size={18}
                     className='transition-transform duration-200 group-hover:translate-x-1'
                   />
+                </span>
+              </motion.a>
+
+              <motion.a
+                href={RESUME_URL}
+                target='_blank'
+                rel='noopener noreferrer'
+                whileHover={variants.buttonHover}
+                whileTap={variants.buttonTap}
+                className='group relative px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/20 hover:bg-white/20 transition-colors duration-300 overflow-hidden'
+                aria-label='Download résumé (PDF, opens in a new tab)'
+              >
+                <span className='flex items-center justify-center space-x-2'>
+                  <FileText size={20} />
+                  <span>Résumé</span>
                 </span>
               </motion.a>
             </motion.div>
