@@ -10,15 +10,18 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Mail, MapPin, Briefcase, Send, Check, AlertTriangle } from 'lucide-react';
+import { Mail, MapPin, Briefcase, Send, Check, AlertTriangle, Copy } from 'lucide-react';
 import { useRipple } from '../../hooks';
+
+const EMAIL = 'contact@aswincloud.com';
 
 const CONTACT_INFO = [
   {
     icon: <Mail size={20} />,
     title: 'Email',
-    content: 'contact@aswincloud.com',
-    link: 'mailto:contact@aswincloud.com',
+    content: EMAIL,
+    link: `mailto:${EMAIL}`,
+    copyValue: EMAIL,
   },
   { icon: <MapPin size={20} />, title: 'Location', content: 'Pondicherry, India', link: null },
   {
@@ -36,6 +39,30 @@ const ContactSection = () => {
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
   const { createRipple } = useRipple();
   const submitButtonRef = React.useRef(null);
+  const [copied, setCopied] = useState(false);
+
+  // Click-to-copy for the email card. Prefer the async Clipboard API; fall back
+  // to a hidden textarea + execCommand for non-secure contexts / older engines.
+  const copyEmail = React.useCallback(async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(EMAIL);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = EMAIL;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard blocked — the mailto link beside it still works.
+    }
+  }, []);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -141,14 +168,14 @@ const ContactSection = () => {
                 <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300'>
                   {item.icon}
                 </span>
-                <div>
+                <div className='min-w-0 flex-1'>
                   <h3 className='font-mono text-xs uppercase tracking-wider text-slate-500'>
                     {item.title}
                   </h3>
                   {item.link ? (
                     <a
                       href={item.link}
-                      className='mt-1 block font-medium text-slate-200 transition-colors hover:text-brand-300'
+                      className='mt-1 block truncate font-medium text-slate-200 transition-colors hover:text-brand-300'
                     >
                       {item.content}
                     </a>
@@ -156,6 +183,16 @@ const ContactSection = () => {
                     <p className='mt-1 font-medium text-slate-200'>{item.content}</p>
                   )}
                 </div>
+                {item.copyValue && (
+                  <button
+                    type='button'
+                    onClick={copyEmail}
+                    aria-label={copied ? 'Email copied to clipboard' : 'Copy email address'}
+                    className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-surface-2 text-slate-400 transition-colors hover:border-brand-500/40 hover:text-brand-300'
+                  >
+                    {copied ? <Check size={15} className='text-brand-400' /> : <Copy size={15} />}
+                  </button>
+                )}
               </motion.div>
             ))}
           </motion.div>

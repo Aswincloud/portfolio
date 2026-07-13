@@ -1,6 +1,25 @@
-import { Brain, Zap, Gamepad2, Activity, Gauge } from 'lucide-react';
+import { Brain, Zap, Gamepad2, Activity, Gauge, Globe } from 'lucide-react';
 
 export const featuredProjects = [
+  {
+    id: 'portfolio',
+    title: 'aswincloud — This Portfolio',
+    domain: 'www.aswincloud.com',
+    description:
+      'The site you are on — designed and built from scratch as a showcase of the web work I take on. A dark, systems-engineer aesthetic with an accessible, responsive single-page layout, deployed on Cloudflare Workers with a self-hosted contact API and live chat.',
+    technologies: ['React', 'Vite', 'Tailwind CSS', 'Motion', 'Cloudflare Workers'],
+    features: [
+      'Hand-built design system — no UI kit or template',
+      'Lighthouse 96 / 100 / 100 / 100 (perf / a11y / best-practices / SEO)',
+      'Fully responsive, keyboard-accessible, reduced-motion aware',
+      'Cloudflare Workers edge deploy + serverless contact form',
+      'Self-hosted live chat and support desk integration',
+    ],
+    icon: <Globe size={48} />,
+    link: 'https://www.aswincloud.com',
+    repo: 'https://github.com/Aswincloud/portfolio',
+    status: 'Live',
+  },
   {
     id: 'ttperf',
     title: 'ttperf — TT-Metal Performance Profiler',
