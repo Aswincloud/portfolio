@@ -64,7 +64,7 @@ const FOCUS = [
   {
     icon: <Palette size={20} />,
     title: 'Web design & development',
-    desc: 'Fast, modern, hand-built sites — like the one you’re on.',
+    desc: 'Fast, modern, hand-built sites — like the one you\'re on.',
   },
 ];
 
