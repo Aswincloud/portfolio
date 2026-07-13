@@ -82,35 +82,113 @@ const LEGAL_ROUTES = ['/privacy', '/terms'];
 // toggleBubbleVisibility there throws on null.classList inside the SDK. So we
 // gate on both the global AND the bubble element, and swallow any race that
 // slips through with try/catch.
+//
+// Visibility policy:
+//   • Legal routes (/privacy, /terms): always hidden.
+//   • Home on mobile: hidden while the hero is in view, revealed once the user
+//     scrolls past it. The launcher is fixed to the bottom-right and otherwise
+//     floats over the hero stat strip in that corner; keeping the corner clear
+//     (and letting the in-hero "Live chat" button be the entry point up top)
+//     is cleaner than fighting it with padding.
+//   • Everywhere else (home on desktop, 404): always shown.
+const MOBILE_QUERY = '(max-width: 640px)';
+
 const useChatVisibility = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    const onHome = pathname === '/';
+
+    const desiredState = () => {
+      if (LEGAL_ROUTES.includes(pathname)) return 'hide';
+      if (onHome && window.matchMedia(MOBILE_QUERY).matches) {
+        const hero = document.getElementById('home');
+        const threshold = hero ? hero.offsetHeight - 120 : window.innerHeight * 0.7;
+        return window.scrollY > threshold ? 'show' : 'hide';
+      }
+      return 'show';
+    };
+
+    let applied = null;
     const apply = () => {
       if (!window.$chatwoot) return false;
       const bubble = document.querySelector('.woot-widget-bubble, #cw-bubble-holder');
       if (!bubble) return false;
-      try {
-        window.$chatwoot.toggleBubbleVisibility(LEGAL_ROUTES.includes(pathname) ? 'hide' : 'show');
-        return true;
-      } catch {
-        return false;
+      const want = desiredState();
+      if (want !== applied) {
+        try {
+          window.$chatwoot.toggleBubbleVisibility(want);
+          applied = want;
+        } catch {
+          return false;
+        }
       }
+      return true;
     };
 
-    if (apply()) return undefined;
+    const ready = apply();
 
-    const onReady = () => apply();
-    window.addEventListener('chatwoot:ready', onReady);
-    return () => window.removeEventListener('chatwoot:ready', onReady);
+    // Only the home route needs to react to scroll/resize.
+    let onScroll;
+    if (onHome) {
+      let raf = 0;
+      onScroll = () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          apply();
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+    }
+
+    let onReady;
+    if (!ready) {
+      onReady = () => apply();
+      window.addEventListener('chatwoot:ready', onReady);
+    }
+
+    return () => {
+      if (onScroll) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+      if (onReady) window.removeEventListener('chatwoot:ready', onReady);
+    };
   }, [pathname]);
+};
+
+// When we land on a hashed URL (e.g. /#projects from the 404 page, the footer,
+// or an external link), the target section may not exist yet at the moment the
+// hash is set. Wait for it via rAF, then scroll with the same 80px fixed-header
+// offset used elsewhere. Pathname is a dependency so navigating away and back
+// to the home route with a hash re-triggers the scroll.
+const useHashScroll = () => {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) return undefined;
+    let raf = 0;
+    const attempt = (tries = 0) => {
+      const el = document.getElementById(hash.slice(1));
+      if (el) {
+        window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      } else if (tries < 20) {
+        raf = requestAnimationFrame(() => attempt(tries + 1));
+      }
+    };
+    raf = requestAnimationFrame(() => attempt());
+    return () => cancelAnimationFrame(raf);
+  }, [pathname, hash]);
 };
 
 const Layout = ({ children }) => {
   useChatVisibility();
+  useHashScroll();
 
   return (
-    <div className='min-h-screen bg-white text-gray-900'>
+    <div className='min-h-screen bg-ink text-slate-300'>
       <ScrollProgress />
 
       <ErrorBoundary level='component' fallbackComponent='Navigation'>

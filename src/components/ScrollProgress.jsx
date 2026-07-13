@@ -22,13 +22,13 @@ const ScrollProgress = () => {
     <>
       {/* Top scroll progress bar */}
       <motion.div
-        className='pointer-events-none fixed top-0 left-0 right-0 h-1 origin-left z-9999 bg-linear-to-r from-secondary-500 via-accent-500 to-secondary-600'
+        className='pointer-events-none fixed top-0 left-0 right-0 h-0.5 origin-left z-9999 bg-linear-to-r from-brand-400 via-emerald-300 to-cyan-300'
         style={{ scaleX, opacity }}
       />
 
       {/* Glow effect */}
       <motion.div
-        className='pointer-events-none fixed top-0 left-0 right-0 h-1 origin-left z-9998 bg-linear-to-r from-secondary-500/50 via-accent-500/50 to-secondary-600/50 blur-xs'
+        className='pointer-events-none fixed top-0 left-0 right-0 h-0.5 origin-left z-9998 bg-linear-to-r from-brand-400/60 via-emerald-300/60 to-cyan-300/60 blur-[3px]'
         style={{ scaleX, opacity }}
       />
     </>

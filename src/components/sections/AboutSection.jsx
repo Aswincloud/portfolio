@@ -2,161 +2,127 @@
  * @file AboutSection.jsx
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
- * @description Modern about section component showcasing professional background and statistics
+ * @description About section — dark editorial two-column with narrative copy
+ *   and a focus-areas panel.
  */
 
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Briefcase, Code, Cloud, Circle } from 'lucide-react';
-import { useExperienceCalculator } from '../../hooks';
+import { Cpu, Cloud, Gauge } from 'lucide-react';
 
-// Modern About Section Component
+const PARAGRAPHS = [
+  {
+    body: (
+      <>
+        I&apos;m a <span className='font-semibold text-slate-100'>software engineer</span> based in
+        Pondicherry, working at MulticoreWare on the software that runs on{' '}
+        <span className='font-semibold text-slate-100'>AI accelerator hardware</span>. Most days
+        that means profiling tensor operations, hunting bottlenecks, and turning benchmark numbers
+        into something faster.
+      </>
+    ),
+  },
+  {
+    body: (
+      <>
+        The work I enjoy lives close to the metal — where a data layout, a kernel choice, or a
+        scheduling decision is the difference between fast and{' '}
+        <span className='font-semibold text-slate-100'>genuinely fast</span>. I care about measuring
+        before optimizing, and about making the optimization stick.
+      </>
+    ),
+  },
+  {
+    body: (
+      <>
+        Off the clock, I run <span className='font-semibold text-slate-100'>my own cloud</span> —
+        self-hosted services behind Cloudflare tunnels, from this site to a support desk to an AI
+        chat. It&apos;s where I get to be the ops team, the security team, and the person who gets
+        paged, all at once.
+      </>
+    ),
+  },
+];
+
+const FOCUS = [
+  {
+    icon: <Gauge size={20} />,
+    title: 'Profiling & benchmarking',
+    desc: 'Measure first. Find the bottleneck. Prove the win with numbers.',
+  },
+  {
+    icon: <Cpu size={20} />,
+    title: 'Close-to-the-metal optimization',
+    desc: 'Data layout, kernel choice, and scheduling on AI silicon.',
+  },
+  {
+    icon: <Cloud size={20} />,
+    title: 'Self-hosted infrastructure',
+    desc: 'A personal cloud of services behind Cloudflare tunnels.',
+  },
+];
+
 const AboutSection = React.memo(() => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const experience = useExperienceCalculator();
-
-  const stats = [
-    {
-      number: experience,
-      label: 'Years Experience',
-      icon: <Briefcase size={24} />,
-      color: 'from-secondary-500 to-accent-500',
-    },
-    {
-      number: 'Software',
-      label: 'Development',
-      icon: <Code size={24} />,
-      color: 'from-accent-500 to-secondary-600',
-    },
-    {
-      number: 'Cloud',
-      label: 'Technologies',
-      icon: <Cloud size={24} />,
-      color: 'from-secondary-600 to-accent-600',
-    },
-  ];
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
 
   return (
-    <section
-      id='about'
-      className='section-padding bg-linear-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'
-    >
+    <section id='about' className='section-padding relative overflow-hidden bg-canvas'>
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className='text-center mb-16'
-        >
+        <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:gap-20'>
+          {/* Narrative */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-linear-to-r from-secondary-500/10 to-accent-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-secondary-200/30'
+            ref={ref}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7 }}
           >
-            <Circle size={8} className='text-secondary-500 fill-current' />
-            <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
-              About Me
-            </span>
-          </motion.div>
+            <p className='eyebrow mb-5'>
+              <span className='text-slate-600'>01 /</span> About
+            </p>
+            <h2 className='text-4xl font-bold leading-tight sm:text-5xl'>
+              Where software meets <span className='gradient-text'>silicon</span>
+            </h2>
 
-          <h2 className='text-4xl lg:text-5xl font-bold mb-6 text-gray-900'>
-            Where software meets <span className='text-accent-600'>silicon</span>
-          </h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
-            Chasing microseconds on AI hardware — and running my own cloud for the fun of it
-          </p>
-        </motion.div>
-
-        <div className='grid lg:grid-cols-2 gap-16 items-start'>
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className='relative h-full flex flex-col justify-center'
-          >
-            <div className='space-y-6 text-lg text-gray-700 leading-relaxed'>
-              <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-secondary-500 to-accent-500 rounded-full'></div>
-                <p className='pl-8'>
-                  I'm a{' '}
-                  <span className='font-semibold text-secondary-600'>performance engineer</span>{' '}
-                  based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
-                  <span className='font-semibold text-secondary-600'>AI accelerator hardware</span>.
-                  Most days that means profiling tensor operations, hunting bottlenecks, and turning
-                  benchmark numbers into something faster.
-                </p>
-              </div>
-
-              <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-accent-500 to-secondary-500 rounded-full'></div>
-                <p className='pl-8'>
-                  The work I enjoy lives close to the metal — where a data layout, a kernel choice,
-                  or a scheduling decision is the difference between fast and{' '}
-                  <span className='font-semibold text-secondary-600'>genuinely fast</span>. I care
-                  about measuring before optimizing, and about making the optimization stick.
-                </p>
-              </div>
-
-              <div className='relative'>
-                <div className='absolute -left-4 top-0 w-1 h-full bg-linear-to-b from-secondary-500 to-accent-500 rounded-full'></div>
-                <p className='pl-8'>
-                  Off the clock, I run{' '}
-                  <span className='font-semibold text-secondary-600'>my own cloud</span> —
-                  self-hosted services behind Cloudflare tunnels, from this site to a support desk
-                  to an AI chat. It's where I get to be the ops team, the security team, and the
-                  person who gets paged, all at once.
-                </p>
-              </div>
-            </div>
-
-            {/* Removed decorative elements that were causing layout issues */}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className='grid grid-cols-1 gap-6'
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                className='group relative bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-white/20 overflow-hidden'
-              >
-                {/* Simplified gradient background */}
-                <div className='absolute inset-0 opacity-20'>
-                  <div
-                    className={`absolute inset-0 bg-linear-to-br ${stat.color} opacity-30`}
-                  ></div>
-                  <div className='absolute inset-0 bg-linear-to-r from-white/40 via-transparent to-white/10'></div>
-                </div>
-
-                {/* Hover gradient */}
-                <div
-                  className={`absolute inset-0 bg-linear-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
-                ></div>
-
-                {/* Icon */}
-                <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${stat.color} mb-3 text-white shadow-lg`}
+            <div className='mt-8 space-y-6 border-l border-hairline pl-6'>
+              {PARAGRAPHS.map((p, i) => (
+                <motion.p
+                  key={i}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.15 + i * 0.12 }}
+                  className='text-lg leading-relaxed text-slate-400'
                 >
-                  {stat.icon}
-                </div>
+                  {p.body}
+                </motion.p>
+              ))}
+            </div>
+          </motion.div>
 
-                {/* Content */}
-                <div className='relative z-10'>
-                  <div className='text-3xl font-extrabold mb-1 text-accent-600'>{stat.number}</div>
-                  <div className='text-gray-600 font-semibold text-base'>{stat.label}</div>
+          {/* Focus areas */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className='flex flex-col gap-4 lg:pt-16'
+          >
+            {FOCUS.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                className='group card-surface p-6 transition-colors duration-300 hover:border-brand-500/30 hover:bg-surface-2'
+              >
+                <div className='flex items-start gap-4'>
+                  <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300 transition-transform duration-300 group-hover:scale-105'>
+                    {f.icon}
+                  </span>
+                  <div>
+                    <h3 className='text-base font-semibold text-white'>{f.title}</h3>
+                    <p className='mt-1 text-sm leading-relaxed text-slate-400'>{f.desc}</p>
+                  </div>
                 </div>
-
-                {/* Simplified decorative elements */}
-                <div className='absolute top-3 right-3 w-6 h-6 border border-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300'></div>
               </motion.div>
             ))}
           </motion.div>
