@@ -8,8 +8,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Mail, Code, Home, User, Briefcase, Folder } from 'lucide-react';
+import { Menu, X, Terminal } from 'lucide-react';
 import { useThrottledScroll, usePageTransitions } from '../hooks';
+import { RESUME_URL } from '../data/links.js';
 
 // Performance-optimized Navigation component
 const Navigation = React.memo(function Navigation() {
@@ -17,187 +18,162 @@ const Navigation = React.memo(function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // Page transitions hook for smooth scrolling (only on home page)
   const { navigateToSection, currentSection } = usePageTransitions();
-
-  // Check if we're on the home page
   const isHomePage = location.pathname === '/';
 
-  // Optimized scroll handler with throttling
   const handleScroll = React.useCallback(() => {
-    const isScrolled = window.scrollY > 50;
-    setScrolled(isScrolled);
+    setScrolled(window.scrollY > 40);
   }, []);
 
   useThrottledScroll(handleScroll);
 
-  // Handle navigation click - either route navigation or section scrolling
   const handleNavClick = React.useCallback(
     (e, href) => {
       if (href.startsWith('#') && isHomePage) {
-        // Section navigation on home page
         e.preventDefault();
-        const sectionId = href.replace('#', '');
-        navigateToSection(sectionId);
-        setIsMenuOpen(false);
-      } else if (href.startsWith('#') && !isHomePage) {
-        // Navigate to home page with section
-        // React Router will handle this, no preventDefault needed
+        navigateToSection(href.replace('#', ''));
         setIsMenuOpen(false);
       } else {
-        // Regular route navigation
         setIsMenuOpen(false);
       }
     },
     [navigateToSection, isHomePage]
   );
 
-  // Memoized navigation items
+  // Section labels double as mono nav items — no icons, keeps the bar clean.
   const navigationItems = React.useMemo(
     () => [
-      { href: '/#home', label: 'Home', icon: Home, section: 'home' },
-      { href: '/#about', label: 'About', icon: User, section: 'about' },
-      { href: '/#experience', label: 'Experience', icon: Briefcase, section: 'experience' },
-      { href: '/#skills', label: 'Skills', icon: Code, section: 'skills' },
-      { href: '/#projects', label: 'Projects', icon: Folder, section: 'projects' },
-      { href: '/#contact', label: 'Contact', icon: Mail, section: 'contact' },
+      { section: 'about', label: 'About' },
+      { section: 'experience', label: 'Experience' },
+      { section: 'skills', label: 'Skills' },
+      { section: 'projects', label: 'Projects' },
+      { section: 'technologies', label: 'Stack' },
+      { section: 'contact', label: 'Contact' },
     ],
     []
   );
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        !isHomePage || scrolled
-          ? 'bg-white/85 backdrop-blur-md shadow-lg border-b border-gray-200/20'
-          : 'bg-black/5 backdrop-blur-sm'
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled || !isHomePage
+          ? 'border-b border-hairline bg-ink/80 backdrop-blur-xl'
+          : 'border-b border-transparent bg-transparent'
       }`}
     >
       <div className='container-custom'>
-        <div className='flex items-center justify-between h-16'>
+        <div className='flex h-16 items-center justify-between'>
+          {/* Wordmark */}
           <Link
             to='/'
-            className={`flex items-center space-x-3 text-xl font-bold transition-all duration-200 hover:scale-105 ${
-              !isHomePage || scrolled ? 'text-primary-900' : 'text-white'
-            }`}
+            className='group flex items-center gap-2.5'
+            aria-label='Aswin — home'
+            onClick={e => handleNavClick(e, '#home')}
           >
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <Code size={28} className='text-secondary-500' />
-            </motion.div>
-            <span className='bg-linear-to-r from-secondary-500 to-accent-500 bg-clip-text text-transparent'>
-              Portfolio
+            <span className='flex h-9 w-9 items-center justify-center rounded-lg border border-brand-500/30 bg-brand-500/10 text-brand-300 transition-colors group-hover:border-brand-400/60'>
+              <Terminal size={18} />
+            </span>
+            <span className='font-mono text-sm font-semibold text-white'>
+              aswin<span className='text-brand-400'>.dev</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className='hidden md:flex items-center space-x-1 transition-all duration-300'>
-            {navigationItems.map((item, index) => {
+          {/* Desktop links */}
+          <div className='hidden items-center gap-1 md:flex'>
+            {navigationItems.map(item => {
               const isActive = isHomePage && currentSection === item.section;
-
-              return (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+              const cls = `relative rounded-lg px-3.5 py-2 font-mono text-[13px] transition-colors ${
+                isActive ? 'text-white' : 'text-slate-400 hover:text-white'
+              }`;
+              return isHomePage ? (
+                <button
+                  key={item.section}
+                  onClick={e => handleNavClick(e, `#${item.section}`)}
+                  className={cls}
                 >
-                  {isHomePage ? (
-                    <button
-                      onClick={e => handleNavClick(e, `#${item.section}`)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
-                        isActive
-                          ? !isHomePage || scrolled
-                            ? 'bg-secondary-100 text-secondary-700 shadow-xs'
-                            : 'bg-white/20 text-white shadow-xs'
-                          : !isHomePage || scrolled
-                            ? 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                            : 'text-white/90 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <item.icon size={16} />
-                      <span>{item.label}</span>
-                    </button>
-                  ) : (
-                    <Link
-                      to={item.href}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
-                        !isHomePage || scrolled
-                          ? 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                          : 'text-white/90 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <item.icon size={16} />
-                      <span>{item.label}</span>
-                    </Link>
+                  {isActive && (
+                    <motion.span
+                      layoutId='nav-active'
+                      className='absolute inset-0 -z-10 rounded-lg border border-brand-500/30 bg-brand-500/10'
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
                   )}
-                </motion.div>
+                  {item.label}
+                </button>
+              ) : (
+                <Link key={item.section} to={`/#${item.section}`} className={cls}>
+                  {item.label}
+                </Link>
               );
             })}
           </div>
 
-          <div className='flex items-center space-x-3'>
-            {/* Mobile Menu Button */}
-            <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`md:hidden p-2 rounded-xl transition-all duration-200 ${
-                !isHomePage || scrolled
-                  ? 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              }`}
-              aria-label='Toggle menu'
+          <div className='flex items-center gap-2'>
+            <a
+              href={RESUME_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='hidden rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-2 font-mono text-[13px] font-medium text-brand-300 transition-colors hover:bg-brand-500/20 hover:text-brand-200 sm:inline-flex'
             >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </motion.button>
+              Résumé
+            </a>
+
+            <button
+              onClick={() => setIsMenuOpen(v => !v)}
+              className='rounded-lg p-2 text-slate-300 transition-colors hover:bg-white/5 hover:text-white md:hidden'
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+            >
+              {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
 
-        {/* Optimized Mobile Menu */}
+        {/* Mobile sheet */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className='md:hidden border-t border-gray-200/20 bg-white/90 backdrop-blur-sm'
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className='overflow-hidden border-t border-hairline md:hidden'
             >
-              <div className='py-4 space-y-2'>
-                {navigationItems.map((item, index) => {
+              <div className='space-y-1 py-4'>
+                {navigationItems.map(item => {
                   const isActive = isHomePage && currentSection === item.section;
-
-                  return (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                  const cls = `flex w-full items-center rounded-lg px-4 py-3 font-mono text-sm transition-colors ${
+                    isActive
+                      ? 'bg-brand-500/10 text-brand-200'
+                      : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                  }`;
+                  return isHomePage ? (
+                    <button
+                      key={item.section}
+                      onClick={e => handleNavClick(e, `#${item.section}`)}
+                      className={cls}
                     >
-                      {isHomePage ? (
-                        <button
-                          onClick={e => handleNavClick(e, `#${item.section}`)}
-                          className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left ${
-                            isActive
-                              ? 'bg-secondary-100 text-secondary-700 shadow-xs'
-                              : 'text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                          }`}
-                        >
-                          <item.icon size={18} />
-                          <span className='font-medium'>{item.label}</span>
-                        </button>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          className='flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left text-gray-700 hover:text-secondary-600 hover:bg-secondary-50'
-                        >
-                          <item.icon size={18} />
-                          <span className='font-medium'>{item.label}</span>
-                        </Link>
-                      )}
-                    </motion.div>
+                      {item.label}
+                    </button>
+                  ) : (
+                    <Link
+                      key={item.section}
+                      to={`/#${item.section}`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={cls}
+                    >
+                      {item.label}
+                    </Link>
                   );
                 })}
+                <a
+                  href={RESUME_URL}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='mt-2 flex items-center rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-3 font-mono text-sm font-medium text-brand-300'
+                >
+                  Download Résumé
+                </a>
               </div>
             </motion.div>
           )}

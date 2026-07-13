@@ -1,234 +1,85 @@
 @import 'tailwindcss';
 
+/*
+  Dark "systems-engineer" theme.
+  Canvas: deep navy. Signature accent: emerald→cyan.
+  Display: Space Grotesk. Body: Inter. Technical labels: JetBrains Mono.
+  Tailwind v4 ships slate/emerald/cyan/zinc by default — we lean on those and
+  add only a few brand conveniences here so classNames stay portable.
+*/
 @theme {
-  --color-primary-50: #f8fafc;
-  --color-primary-100: #f1f5f9;
-  --color-primary-200: #e2e8f0;
-  --color-primary-300: #cbd5e1;
-  --color-primary-400: #94a3b8;
-  --color-primary-500: #64748b;
-  --color-primary-600: #475569;
-  --color-primary-700: #334155;
-  --color-primary-800: #1e293b;
-  --color-primary-900: #0f172a;
+  /* Brand accent aliases (emerald → cyan). Kept as `brand-*` so intent reads
+     clearly in markup; values track Tailwind's emerald ramp. */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
 
-  /* Secondary = indigo. Retuned from the original pink (#ec4899) so the whole
-     site reads as a cohesive indigo→sky cool palette instead of pink-heavy.
-     Pairs with the sky-blue accent below; updating the token reskins all
-     usages (buttons, badges, gradients) without touching className strings. */
-  --color-secondary-50: #eef2ff;
-  --color-secondary-100: #e0e7ff;
-  --color-secondary-200: #c7d2fe;
-  --color-secondary-300: #a5b4fc;
-  --color-secondary-400: #818cf8;
-  --color-secondary-500: #6366f1;
-  --color-secondary-600: #4f46e5;
-  --color-secondary-700: #4338ca;
-  --color-secondary-800: #3730a3;
-  --color-secondary-900: #312e81;
-
-  --color-accent-50: #f0f9ff;
-  --color-accent-100: #e0f2fe;
-  --color-accent-200: #bae6fd;
-  --color-accent-300: #7dd3fc;
-  --color-accent-400: #38bdf8;
-  --color-accent-500: #0ea5e9;
-  --color-accent-600: #0284c7;
-  --color-accent-700: #0369a1;
-  --color-accent-800: #075985;
-  --color-accent-900: #0c4a6e;
-
-  --color-success-50: #f0fdf4;
-  --color-success-100: #dcfce7;
-  --color-success-200: #bbf7d0;
-  --color-success-300: #86efac;
-  --color-success-400: #4ade80;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-success-700: #15803d;
-  --color-success-800: #166534;
-  --color-success-900: #14532d;
-
-  --color-warning-50: #fffbeb;
-  --color-warning-100: #fef3c7;
-  --color-warning-200: #fde68a;
-  --color-warning-300: #fcd34d;
-  --color-warning-400: #fbbf24;
-  --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
-  --color-warning-700: #b45309;
-  --color-warning-800: #92400e;
-  --color-warning-900: #78350f;
+  /* Surface scale — hand-tuned navy so cards separate from the canvas without
+     looking gray. ink = page background, surface = card, elevated = hover. */
+  --color-ink: #060a13;
+  --color-canvas: #0a0f1c;
+  --color-surface: #0f1626;
+  --color-surface-2: #131c2e;
+  --color-elevated: #1a2437;
+  --color-hairline: #1e2a40;
 
   --font-sans: Inter, system-ui, sans-serif;
   --font-display: 'Space Grotesk', Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --animate-float: float 3s ease-in-out infinite;
-  --animate-fadeInUp: fadeInUp 0.8s ease-out;
-  --animate-fadeInLeft: fadeInLeft 0.8s ease-out;
-  --animate-fadeInRight: fadeInRight 0.8s ease-out;
-  --animate-spin-slow: spin 3s linear infinite;
-  --animate-bounce-slow: bounce 2s infinite;
-  --animate-pulse-slow: pulse 3s infinite;
+  --animate-aurora: aurora 24s ease-in-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-pulse-slow: pulseSlow 3s ease-in-out infinite;
 
-  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-  --background-image-gradient-conic: conic-gradient(
-    from 180deg at 50% 50%,
-    var(--tw-gradient-stops)
-  );
-
-  --backdrop-blur-xs: 2px;
-
-  @keyframes float {
+  @keyframes aurora {
     0%,
     100% {
-      transform: translateY(0px);
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(6%, -4%, 0) scale(1.1);
+    }
+    66% {
+      transform: translate3d(-5%, 5%, 0) scale(0.95);
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes pulseSlow {
+    0%,
+    100% {
+      opacity: 1;
     }
     50% {
-      transform: translateY(-10px);
-    }
-  }
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes fadeInLeft {
-    0% {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  @keyframes fadeInRight {
-    0% {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
+      opacity: 0.45;
     }
   }
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+/* Tailwind v4 changed the default border color to `currentColor`; pin it to a
+   navy hairline so borders read consistently across the dark UI. */
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
-@utility btn {
-  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-base transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-hidden focus:ring-2 focus:ring-offset-2;
-}
-
-@utility btn-primary {
-  @apply bg-linear-to-r from-secondary-600 to-accent-600 text-white hover:from-secondary-700 hover:to-accent-700 shadow-lg hover:shadow-xl focus:ring-secondary-500;
-}
-
-@utility btn-secondary {
-  @apply bg-white text-secondary-600 border-2 border-secondary-600 hover:bg-secondary-50 shadow-md hover:shadow-lg focus:ring-secondary-500;
-}
-
-@utility btn-outline {
-  @apply bg-transparent text-white border-2 border-white/30 hover:bg-white/10 hover:border-white/50 backdrop-blur-sm;
-}
-
-@utility section-padding {
-  @apply py-20 lg:py-32;
-}
-
-@utility container-custom {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-@utility gradient-text {
-  @apply bg-linear-to-r from-secondary-500 to-accent-500 bg-clip-text text-transparent;
-}
-
-@utility card {
-  @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
-}
-
-@utility navbar-glass {
-  @apply bg-white/95 backdrop-blur-lg border-b border-gray-200/50;
-}
-
-@utility text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-@utility text-shadow-lg {
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-@utility animation-delay-200 {
-  animation-delay: 200ms;
-}
-
-@utility animation-delay-400 {
-  animation-delay: 400ms;
-}
-
-@utility animation-delay-600 {
-  animation-delay: 600ms;
-}
-
-@utility animation-delay-800 {
-  animation-delay: 800ms;
-}
-
-@layer utilities {
-  html {
-    scroll-behavior: smooth;
+    border-color: var(--color-hairline);
   }
 
-  /* Focus styles for better accessibility */
-  *:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #2563eb, #7c3aed);
-  }
-}
-
-@layer base {
   * {
     margin: 0;
     padding: 0;
@@ -237,347 +88,92 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px; /* Account for fixed header */
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
+    scroll-padding-top: 88px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply font-sans text-gray-900 antialiased bg-white;
+    @apply font-sans text-slate-300 antialiased;
+    background-color: var(--color-ink);
     overflow-x: hidden;
-    min-height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    scroll-behavior: smooth;
+    min-height: 100dvh;
   }
 
-  /* Headings use the display font (Space Grotesk) with slightly tighter
-     tracking, giving titles typographic character distinct from Inter body.
-     Note: Space Grotesk's heaviest weight is 700 — heading elements use
-     font-bold (700), not font-black (900), to avoid synthetic fake-bold. */
   h1,
   h2,
-  h3 {
-    @apply font-display tracking-tight;
+  h3,
+  h4 {
+    @apply font-display tracking-tight text-white;
   }
 
-  #root {
-    min-height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
-  .App {
-    min-height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
-  /* Ensure all sections take full width */
-  section {
-    width: 100vw !important;
-    margin: 0 !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Fix any container issues */
-  .container-custom {
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .container-custom {
-      padding: 0 1.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container-custom {
-      padding: 0 2rem;
-    }
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #a78bfa, #e879f9);
+  /* Accessible, on-brand focus ring for keyboard users. */
+  *:focus-visible {
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 2px;
     border-radius: 4px;
   }
 
+  ::selection {
+    background: rgb(16 185 129 / 0.25);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-elevated);
+    border-radius: 999px;
+    border: 2px solid var(--color-ink);
+  }
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #8b5cf6, #d946ef);
+    background: #26324a;
   }
 }
 
-/* Loading animation for images */
-.image-loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+@utility container-custom {
+  @apply max-w-6xl mx-auto px-5 sm:px-8 lg:px-8;
 }
 
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+@utility section-padding {
+  @apply py-24 lg:py-32;
 }
 
-/* Intersection Observer fade-in animation */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
+/* Eyebrow label: mono, uppercase, tracked — the recurring "technical" motif. */
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand-300;
 }
 
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* Card surface used across every section for a single, coherent card system. */
+@utility card-surface {
+  background-color: var(--color-surface);
+  @apply rounded-2xl border border-hairline;
 }
 
-.fade-in-left {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
+@utility gradient-text {
+  @apply bg-linear-to-r from-brand-300 via-emerald-200 to-cyan-300 bg-clip-text text-transparent;
 }
 
-.fade-in-left.visible {
-  opacity: 1;
-  transform: translateX(0);
+/* Faint dotted-grid texture for section backgrounds. */
+@utility grid-bg {
+  background-image: radial-gradient(rgb(148 163 184 / 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
-.fade-in-right {
-  opacity: 0;
-  transform: translateX(20px);
-  transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
-}
-
-.fade-in-right.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .section-padding {
-    @apply py-12 lg:py-20;
-  }
-
-  .container-custom {
-    @apply px-4;
-  }
-
-  /* Better touch targets for mobile */
-  .btn {
-    @apply min-h-[44px] min-w-[44px] px-4 py-3;
-  }
-
-  /* Optimize text sizes for mobile */
-  h1 {
-    @apply text-3xl lg:text-4xl;
-  }
-
-  h2 {
-    @apply text-2xl lg:text-3xl;
-  }
-
-  h3 {
-    @apply text-xl lg:text-2xl;
-  }
-
-  /* Improve spacing for mobile */
-  .card {
-    @apply p-4 lg:p-6;
-  }
-
-  /* Better mobile navigation */
-  .mobile-nav {
-    @apply fixed inset-0 bg-white z-50;
-  }
-
-  /* Mobile experience section improvements */
-  #experience .container-custom {
-    @apply px-3;
-  }
-
-  #experience .max-w-4xl {
-    @apply max-w-full;
-  }
-
-  /* Mobile hero section fixes */
-  #home {
-    height: 100vh !important; /* Fixed height exactly to viewport */
-    min-height: 100vh !important;
-    max-height: 100vh !important; /* Constrain height to viewport */
-    padding-top: 1rem !important; /* Minimal top padding */
-    padding-bottom: 3rem !important; /* More bottom padding for scroll indicator */
-    overflow: hidden !important; /* Prevent gradient overflow */
-    position: relative !important; /* Ensure contained positioning */
-  }
-
-  /* Ensure content fits in viewport */
-  .hero-content {
-    max-height: calc(100vh - 4rem); /* Adjusted for minimal top padding */
-    height: calc(100vh - 4rem); /* Fixed height to contain content */
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  /* Mobile button spacing — allow wrapping now that there are three CTAs, so a
-     375px screen reflows them instead of squeezing everything onto one row. */
-  .hero-buttons {
-    gap: 0.5rem !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .hero-buttons a,
-  .hero-buttons button {
-    font-size: 0.875rem;
-    padding: 0.75rem 1.25rem;
-    justify-content: center;
-  }
-
-  /* Reduce mobile spacing for better fit */
-  #home h1 {
-    margin-bottom: 0.5rem !important;
-  }
-
-  #home .text-xl {
-    margin-bottom: 0.5rem !important;
-  }
-
-  #home p {
-    margin-bottom: 0.75rem !important;
-  }
-
-  /* Reduce social links spacing */
-  #home .mb-8 {
-    margin-bottom: 0.25rem !important; /* Almost no gap between social links and scroll indicator */
-  }
-
-  /* Reduce buttons spacing */
-  #home .hero-buttons {
-    margin-bottom: 1rem !important;
-  }
-
-  /* Ensure gradient backgrounds are contained within hero section */
-  #home .absolute.inset-0 {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    overflow: hidden !important;
-  }
-}
-
-/* Desktop hero section - restore original behavior */
-@media (min-width: 769px) {
-  #home {
-    min-height: 100vh !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  .hero-content {
-    max-height: none !important;
-    overflow-y: visible !important;
-  }
-
-  .hero-buttons {
-    flex-direction: row !important;
-    gap: 1rem !important;
-    align-items: center !important;
-  }
-
-  .hero-buttons a,
-  .hero-buttons button {
-    width: auto !important;
-    max-width: none !important;
-  }
-
-  /* Restore desktop spacing */
-  #home .hero-buttons {
-    margin-bottom: 2rem !important;
-  }
-
-  #home .flex.items-center.gap-4 {
-    gap: 1.5rem !important;
-    margin-bottom: 4rem !important;
-  }
-
-  /* Optimize animations for mobile performance */
+@layer utilities {
   @media (prefers-reduced-motion: reduce) {
-    * {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
-  }
-}
-
-/* Ensure full coverage - override any potential issues */
-html,
-body,
-#root,
-.App {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100vw !important;
-  min-height: 100vh !important;
-  overflow-x: hidden !important;
-}
-
-/* Fix any potential horizontal scroll issues.
-   NB: kept in @layer base so Tailwind's max-w-* utilities (which live in
-   @layer utilities) win over this default. In v3 this bare rule happened to
-   sit below the utilities; v4's cascade layers make unlayered CSS beat
-   utilities, so an unlayered `* { max-width: 100vw }` would clobber every
-   max-w-* and stretch content to the full viewport. */
-@layer base {
-  * {
-    max-width: 100vw;
-    box-sizing: border-box;
-  }
-}
-
-/* Fix viewport issues */
-@media screen and (max-width: 100vw) {
-  html,
-  body,
-  #root,
-  .App {
-    width: 100vw !important;
-    overflow-x: hidden !important;
   }
 }

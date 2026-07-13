@@ -10,23 +10,26 @@ import { Link } from 'react-router-dom';
 
 const Section = ({ title, children }) => (
   <div className='mt-8'>
-    <h2 className='text-xl font-semibold mb-3 text-gray-800'>{title}</h2>
-    <div className='text-gray-700 leading-relaxed space-y-3'>{children}</div>
+    <h2 className='text-xl font-semibold mb-3 text-white'>{title}</h2>
+    <div className='text-slate-400 leading-relaxed space-y-3'>{children}</div>
   </div>
 );
 
 const PrivacyPolicy = () => (
-  <div className='min-h-screen bg-gray-50 py-20 px-4 sm:px-6'>
-    <div className='max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8'>
-      <h1 className='text-3xl font-bold mb-2 text-gray-900'>Privacy Policy</h1>
-      <p className='text-sm text-gray-500 mb-6'>Last updated: May 26, 2026</p>
+  <div className='min-h-screen bg-ink py-24 px-4 sm:px-6'>
+    <div className='max-w-3xl mx-auto card-surface p-6 sm:p-8'>
+      <h1 className='text-3xl font-bold mb-2 text-white'>Privacy Policy</h1>
+      <p className='text-sm text-slate-500 mb-6'>Last updated: May 26, 2026</p>
 
-      <p className='text-gray-700 leading-relaxed'>
+      <p className='text-slate-400 leading-relaxed'>
         This page explains what information is collected when you visit{' '}
         <span className='font-medium'>aswincloud.com</span>, how it is used, and the choices you
         have. This is a personal portfolio site operated by Aswin (&quot;I&quot;, &quot;me&quot;).
         If anything here is unclear, email{' '}
-        <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+        <a
+          href='mailto:contact@aswincloud.com'
+          className='text-brand-300 underline transition-colors hover:text-brand-200'
+        >
           contact@aswincloud.com
         </a>
         .
@@ -52,9 +55,15 @@ const PrivacyPolicy = () => (
         </p>
         <p>
           <span className='font-medium'>Local browser storage.</span> The site may write a small
-          diagnostic record (key <code className='font-mono text-sm'>portfolio_errors</code>) to
-          your browser&apos;s <code className='font-mono text-sm'>localStorage</code> if a runtime
-          error occurs. This stays on your device and is not transmitted anywhere.
+          diagnostic record (key{' '}
+          <code className='rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[13px] text-brand-200'>
+            portfolio_errors
+          </code>
+          ) to your browser&apos;s{' '}
+          <code className='rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[13px] text-brand-200'>
+            localStorage
+          </code>{' '}
+          if a runtime error occurs. This stays on your device and is not transmitted anywhere.
         </p>
       </Section>
 
@@ -87,7 +96,7 @@ const PrivacyPolicy = () => (
               href='https://www.cloudflare.com/privacypolicy/'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-secondary-600 underline'
+              className='text-brand-300 underline transition-colors hover:text-brand-200'
             >
               privacy policy
             </a>
@@ -100,7 +109,7 @@ const PrivacyPolicy = () => (
               href='https://resend.com/legal/privacy-policy'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-secondary-600 underline'
+              className='text-brand-300 underline transition-colors hover:text-brand-200'
             >
               privacy policy
             </a>
@@ -113,7 +122,7 @@ const PrivacyPolicy = () => (
               href='https://policies.google.com/privacy'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-secondary-600 underline'
+              className='text-brand-300 underline transition-colors hover:text-brand-200'
             >
               privacy policy
             </a>
@@ -128,9 +137,16 @@ const PrivacyPolicy = () => (
 
       <Section title='Cookies and similar technologies'>
         <p>
-          Google Analytics sets cookies (typically <code className='font-mono text-sm'>_ga</code>{' '}
-          and <code className='font-mono text-sm'>_ga_*</code>) used to distinguish unique visitors
-          and sessions. No advertising or cross-site tracking cookies are set by this site.
+          Google Analytics sets cookies (typically{' '}
+          <code className='rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[13px] text-brand-200'>
+            _ga
+          </code>{' '}
+          and{' '}
+          <code className='rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[13px] text-brand-200'>
+            _ga_*
+          </code>
+          ) used to distinguish unique visitors and sessions. No advertising or cross-site tracking
+          cookies are set by this site.
         </p>
         <p>
           You can block analytics cookies via your browser&apos;s settings, a tracking-prevention
@@ -165,7 +181,10 @@ const PrivacyPolicy = () => (
         </p>
         <p>
           To exercise any of these rights, email{' '}
-          <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+          <a
+            href='mailto:contact@aswincloud.com'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             contact@aswincloud.com
           </a>
           . I respond to requests within a reasonable time, generally under 30 days.
@@ -185,7 +204,10 @@ const PrivacyPolicy = () => (
           Reasonable technical safeguards are in place &mdash; HTTPS everywhere, secret keys held
           server-side, and minimum-necessary data collection. No website can guarantee absolute
           security; if you suspect a vulnerability, please report it to{' '}
-          <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+          <a
+            href='mailto:contact@aswincloud.com'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             contact@aswincloud.com
           </a>
           .
@@ -204,16 +226,22 @@ const PrivacyPolicy = () => (
       <Section title='Contact'>
         <p>
           Questions, deletion requests, or anything else &mdash;{' '}
-          <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+          <a
+            href='mailto:contact@aswincloud.com'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             contact@aswincloud.com
           </a>
           .
         </p>
       </Section>
 
-      <p className='mt-10 text-sm text-gray-500'>
+      <p className='mt-10 text-sm text-slate-500'>
         See also:{' '}
-        <Link to='/terms' className='text-secondary-600 underline'>
+        <Link
+          to='/terms'
+          className='text-brand-300 underline transition-colors hover:text-brand-200'
+        >
           Terms &amp; Conditions
         </Link>
         .

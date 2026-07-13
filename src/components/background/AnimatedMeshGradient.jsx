@@ -2,98 +2,60 @@
  * @file AnimatedMeshGradient.jsx
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
- * @description Advanced animated mesh gradient background for hero section
+ * @description Hero backdrop: deep-navy canvas with a dotted grid, three slow
+ *   aurora glows (emerald + cyan + indigo), and a radial vignette. Purely
+ *   decorative, so it is aria-hidden and its motion collapses under
+ *   prefers-reduced-motion via the global CSS override.
  */
 
 import React from 'react';
-import { motion } from 'motion/react';
 
 const AnimatedMeshGradient = () => {
   return (
-    <div className='absolute inset-0 overflow-hidden'>
-      {/* Base gradient layers */}
-      <div className='absolute inset-0 bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900' />
-      <div className='absolute inset-0 bg-linear-to-tr from-indigo-900/40 via-transparent to-sky-900/40' />
+    <div aria-hidden='true' className='absolute inset-0 overflow-hidden bg-ink'>
+      {/* Dotted engineering grid */}
+      <div className='absolute inset-0 grid-bg opacity-70' />
 
-      {/* Animated gradient orbs */}
-      <motion.div
-        className='absolute top-0 left-0 w-[500px] h-[500px] rounded-full'
+      {/* Aurora glow — emerald */}
+      <div
+        className='absolute -top-32 -left-24 h-[42rem] w-[42rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        animate={{
-          x: [0, 100, 0],
-          y: [0, 50, 0],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: 'easeInOut',
+          background: 'radial-gradient(circle, rgba(16,185,129,0.20) 0%, transparent 62%)',
+          filter: 'blur(40px)',
         }}
       />
 
-      <motion.div
-        className='absolute top-1/4 right-0 w-[600px] h-[600px] rounded-full'
+      {/* Aurora glow — cyan */}
+      <div
+        className='absolute top-10 right-[-8rem] h-[40rem] w-[40rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)',
-          filter: 'blur(90px)',
-        }}
-        animate={{
-          x: [0, -100, 0],
-          y: [0, 100, 0],
-          scale: [1, 1.3, 1],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: 'easeInOut',
+          background: 'radial-gradient(circle, rgba(34,211,238,0.16) 0%, transparent 62%)',
+          filter: 'blur(48px)',
+          animationDelay: '-8s',
         }}
       />
 
-      <motion.div
-        className='absolute bottom-0 left-1/3 w-[450px] h-[450px] rounded-full'
+      {/* Aurora glow — indigo, low + center for depth */}
+      <div
+        className='absolute bottom-[-14rem] left-1/3 h-[36rem] w-[36rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 70%)',
-          filter: 'blur(70px)',
-        }}
-        animate={{
-          x: [0, -50, 0],
-          y: [0, -75, 0],
-          scale: [1, 1.15, 1],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: 'easeInOut',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 65%)',
+          filter: 'blur(56px)',
+          animationDelay: '-16s',
         }}
       />
 
-      <motion.div
-        className='absolute top-1/2 left-1/2 w-[550px] h-[550px] rounded-full'
+      {/* Radial vignette to keep edges dark and focus the center */}
+      <div
+        className='absolute inset-0'
         style={{
-          background: 'radial-gradient(circle, rgba(14,165,233,0.25) 0%, transparent 70%)',
-          filter: 'blur(85px)',
-        }}
-        animate={{
-          x: [0, 75, 0],
-          y: [0, -50, 0],
-          scale: [1, 1.25, 1],
-        }}
-        transition={{
-          duration: 22,
-          repeat: Infinity,
-          ease: 'easeInOut',
+          background:
+            'radial-gradient(120% 90% at 50% 0%, transparent 40%, rgba(6,10,19,0.65) 100%)',
         }}
       />
 
-      {/* Mesh pattern overlay — indigo / sky / violet, cohesive cool tones. */}
-      <div className='absolute inset-0 opacity-30'>
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(99,102,241,0.3)_0%,transparent_50%)]' />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.3)_0%,transparent_50%)]' />
-        <div className='absolute inset-0 bg-[radial-gradient(circle_at_60%_80%,rgba(139,92,246,0.25)_0%,transparent_40%)]' />
-      </div>
+      {/* Bottom fade into the next section */}
+      <div className='absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-ink to-transparent' />
     </div>
   );
 };

@@ -7,7 +7,6 @@
 
 export { useExperienceCalculator } from './useExperienceCalculator.js';
 export { useThrottledScroll } from './useThrottledScroll.js';
-export { use3DTilt, with3DTilt, tiltPresets } from './use3DTilt.jsx';
 export {
   default as useErrorReporting,
   ERROR_SEVERITY,

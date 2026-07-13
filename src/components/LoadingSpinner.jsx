@@ -30,7 +30,7 @@ const LoadingSpinner = ({ size = 'md', showText = true, text = 'Loading...', cla
         {[0, 1, 2].map(index => (
           <motion.div
             key={index}
-            className={`absolute ${dotSizes[size]} bg-linear-to-r from-secondary-500 to-accent-500 rounded-full`}
+            className={`absolute ${dotSizes[size]} bg-linear-to-r from-brand-400 to-cyan-400 rounded-full`}
             style={{
               left: `${index * 25}%`,
               top: '50%',
@@ -56,7 +56,7 @@ const LoadingSpinner = ({ size = 'md', showText = true, text = 'Loading...', cla
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className='text-gray-600 text-sm font-medium'
+          className='text-slate-400 text-sm font-medium font-mono'
         >
           {text}
         </motion.p>

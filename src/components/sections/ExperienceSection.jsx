@@ -2,65 +2,45 @@
  * @file ExperienceSection.jsx
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
- * @description Professional experience section component with timeline and dynamic content
+ * @description Professional experience — dark timeline with dynamic tenure.
  */
 
 import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Briefcase } from 'lucide-react';
 import { useExperienceCalculator } from '../../hooks';
 import { getExperienceData } from '../../data/experienceData.js';
 import ExperienceEntry from '../ExperienceEntry.jsx';
 
-// Experience Section Component
 const ExperienceSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const experience = useExperienceCalculator();
-
   const experienceData = useMemo(() => getExperienceData(experience), [experience]);
 
   return (
-    <section id='experience' className='section-padding relative overflow-hidden'>
-      {/* Subtle background tint — section color without the decoration noise. */}
-      <div className='absolute inset-0 bg-linear-to-br from-slate-50 via-blue-50/60 to-indigo-50/70'></div>
-
+    <section id='experience' className='section-padding relative overflow-hidden bg-ink'>
       <div className='container-custom relative z-10'>
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className='text-center mb-16'
+          transition={{ duration: 0.7 }}
+          className='mb-14 max-w-2xl'
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className='inline-flex items-center space-x-2 bg-linear-to-r from-blue-500/10 to-indigo-500/10 rounded-full px-6 py-3 mb-6 backdrop-blur-sm border border-blue-200/30'
-          >
-            <Briefcase size={16} className='text-blue-500' />
-            <span className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
-              Professional Journey
-            </span>
-          </motion.div>
-
-          <h2 className='text-4xl lg:text-5xl font-bold mb-6 text-gray-900'>Experience</h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
-            Building innovative solutions and driving technological excellence across diverse
-            industries
+          <p className='eyebrow mb-5'>
+            <span className='text-slate-600'>02 /</span> Experience
+          </p>
+          <h2 className='text-4xl font-bold sm:text-5xl'>Where I&apos;ve worked</h2>
+          <p className='mt-4 text-lg leading-relaxed text-slate-400'>
+            Building performance-critical software and shipping across hardware and cloud.
           </p>
         </motion.div>
 
-        <div className='max-w-4xl mx-auto'>
-          <div className='relative' style={{ minHeight: '400px' }}>
-            {/* Timeline line - Hidden on mobile, visible on desktop */}
-            <div
-              className='hidden md:block absolute left-6 top-8 w-0.5 bg-secondary-200'
-              style={{ height: 'calc(100% - 4rem)', bottom: '2rem' }}
-            ></div>
+        <div className='relative mx-auto max-w-4xl'>
+          {/* Timeline rail (desktop) */}
+          <div className='absolute left-[25px] top-4 bottom-4 hidden w-px bg-linear-to-b from-brand-500/40 via-hairline to-transparent md:block' />
 
-            {/* Experience Entries */}
+          <div className='space-y-6 md:space-y-8'>
             {experienceData.map(entry => (
               <ExperienceEntry
                 key={`${entry.company}-${entry.period}`}

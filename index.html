@@ -76,37 +76,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#060a13" />
     <style>
+      /* Pre-paint background so the first frame is the dark canvas, not white
+         (avoids a flash before the CSS bundle loads). */
+      html {
+        background-color: #060a13;
+        scroll-behavior: smooth;
+      }
+      body {
+        overflow-x: hidden;
+      }
+
       @media (max-width: 768px) {
-        /* Prevent zoom on input focus */
+        /* Prevent iOS auto-zoom on input focus */
         input,
         textarea,
         select {
           font-size: 16px !important;
         }
-
-        /* Better touch targets */
-        button,
-        a {
-          min-height: 44px;
-          min-width: 44px;
-        }
-      }
-
-      body {
-        overflow-x: hidden;
-      }
-
-      html {
-        scroll-behavior: smooth;
       }
     </style>
   </head>

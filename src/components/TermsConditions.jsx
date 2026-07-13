@@ -10,18 +10,18 @@ import { Link } from 'react-router-dom';
 
 const Section = ({ title, children }) => (
   <div className='mt-8'>
-    <h2 className='text-xl font-semibold mb-3 text-gray-800'>{title}</h2>
-    <div className='text-gray-700 leading-relaxed space-y-3'>{children}</div>
+    <h2 className='text-xl font-semibold mb-3 text-white'>{title}</h2>
+    <div className='text-slate-400 leading-relaxed space-y-3'>{children}</div>
   </div>
 );
 
 const TermsConditions = () => (
-  <div className='min-h-screen bg-gray-50 py-20 px-4 sm:px-6'>
-    <div className='max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8'>
-      <h1 className='text-3xl font-bold mb-2 text-gray-900'>Terms &amp; Conditions</h1>
-      <p className='text-sm text-gray-500 mb-6'>Last updated: May 26, 2026</p>
+  <div className='min-h-screen bg-ink py-24 px-4 sm:px-6'>
+    <div className='max-w-3xl mx-auto card-surface p-6 sm:p-8'>
+      <h1 className='text-3xl font-bold mb-2 text-white'>Terms &amp; Conditions</h1>
+      <p className='text-sm text-slate-500 mb-6'>Last updated: May 26, 2026</p>
 
-      <p className='text-gray-700 leading-relaxed'>
+      <p className='text-slate-400 leading-relaxed'>
         These terms govern your use of <span className='font-medium'>aswincloud.com</span> (the
         &quot;site&quot;), a personal portfolio operated by Aswin (&quot;I&quot;, &quot;me&quot;).
         By using the site you agree to the terms below. If you do not agree, please do not use the
@@ -32,7 +32,10 @@ const TermsConditions = () => (
         <p>
           Accessing or browsing the site, submitting the contact form, or interacting with any
           feature provided here constitutes acceptance of these terms and the{' '}
-          <Link to='/privacy' className='text-secondary-600 underline'>
+          <Link
+            to='/privacy'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             Privacy Policy
           </Link>
           . These terms may be updated from time to time; the &quot;Last updated&quot; date above
@@ -58,7 +61,7 @@ const TermsConditions = () => (
             href='https://github.com/Aswincloud/portfolio'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-secondary-600 underline'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
           >
             GitHub
           </a>{' '}
@@ -87,7 +90,10 @@ const TermsConditions = () => (
         </ul>
         <p>
           Submissions are forwarded to me by email via Resend; see the{' '}
-          <Link to='/privacy' className='text-secondary-600 underline'>
+          <Link
+            to='/privacy'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             Privacy Policy
           </Link>{' '}
           for how that data is handled. I may decline to respond to any message, and I may block
@@ -110,7 +116,10 @@ const TermsConditions = () => (
           as performance numbers, dates, and project status can change; I do not warrant that every
           detail is current or error-free at every moment. If you spot a mistake, please let me know
           at{' '}
-          <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+          <a
+            href='mailto:contact@aswincloud.com'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             contact@aswincloud.com
           </a>
           .
@@ -166,16 +175,22 @@ const TermsConditions = () => (
       <Section title='11. Contact'>
         <p>
           For questions about these terms, email{' '}
-          <a href='mailto:contact@aswincloud.com' className='text-secondary-600 underline'>
+          <a
+            href='mailto:contact@aswincloud.com'
+            className='text-brand-300 underline transition-colors hover:text-brand-200'
+          >
             contact@aswincloud.com
           </a>
           .
         </p>
       </Section>
 
-      <p className='mt-10 text-sm text-gray-500'>
+      <p className='mt-10 text-sm text-slate-500'>
         See also:{' '}
-        <Link to='/privacy' className='text-secondary-600 underline'>
+        <Link
+          to='/privacy'
+          className='text-brand-300 underline transition-colors hover:text-brand-200'
+        >
           Privacy Policy
         </Link>
         .
