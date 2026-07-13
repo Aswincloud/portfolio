@@ -74,7 +74,7 @@ const Navigation = React.memo(function Navigation() {
               <Terminal size={18} />
             </span>
             <span className='font-mono text-sm font-semibold text-white'>
-              aswin<span className='text-brand-400'>.dev</span>
+              aswin<span className='text-brand-400'>cloud</span>
             </span>
           </Link>
 
