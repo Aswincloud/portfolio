@@ -38,7 +38,7 @@ const Footer = () => {
                 <Terminal size={18} />
               </span>
               <span className='font-mono text-sm font-semibold text-white'>
-                aswin<span className='text-brand-400'>.dev</span>
+                aswin<span className='text-brand-400'>cloud</span>
               </span>
             </div>
             <p className='mt-4 text-sm leading-relaxed text-slate-500'>
