@@ -24,7 +24,7 @@ const CONTACT_INFO = [
   {
     icon: <Briefcase size={20} />,
     title: 'Work',
-    content: 'Open to consulting & collaboration',
+    content: 'Web design & builds, consulting & collaboration',
     link: null,
   },
 ];

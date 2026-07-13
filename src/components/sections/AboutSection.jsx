@@ -9,7 +9,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Cpu, Cloud, Gauge } from 'lucide-react';
+import { Cpu, Cloud, Gauge, Palette } from 'lucide-react';
 
 const PARAGRAPHS = [
   {
@@ -60,6 +60,11 @@ const FOCUS = [
     icon: <Cloud size={20} />,
     title: 'Self-hosted infrastructure',
     desc: 'A personal cloud of services behind Cloudflare tunnels.',
+  },
+  {
+    icon: <Palette size={20} />,
+    title: 'Web design & development',
+    desc: 'Fast, modern, hand-built sites — like the one you’re on.',
   },
 ];
 
