@@ -18,7 +18,7 @@ const ProjectCard = ({ project, index, inView }) => {
     <motion.article
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay: (index % 2) * 0.1 }}
+      transition={{ duration: 0.55, delay: (index % 3) * 0.08 }}
       className='group relative flex h-full flex-col card-surface p-7 transition-colors duration-300 hover:border-slate-600 hover:bg-surface-2 lg:p-8'
     >
       {/* Top row: icon + status */}
@@ -132,7 +132,7 @@ const ProjectsSection = () => {
           </p>
         </motion.div>
 
-        <div id={listId} className='grid gap-6 lg:grid-cols-2'>
+        <div id={listId} className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {(showMore ? allProjects : featuredProjects).map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} inView={inView} />
           ))}
