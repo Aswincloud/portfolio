@@ -56,6 +56,7 @@ export const featuredProjects = [
     ],
     icon: <Activity size={48} />,
     link: 'https://ttnn-eltwise-performance.aswincloud.com',
+    repo: 'https://github.com/Aswincloud/ttnn-performance-dashboard',
     status: 'Live',
   },
 ];
