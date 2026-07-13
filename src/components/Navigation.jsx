@@ -56,7 +56,7 @@ const Navigation = React.memo(function Navigation() {
   return (
     <nav
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled || !isHomePage
+        scrolled || !isHomePage || isMenuOpen
           ? 'border-b border-hairline bg-ink/80 backdrop-blur-xl'
           : 'border-b border-transparent bg-transparent'
       }`}
