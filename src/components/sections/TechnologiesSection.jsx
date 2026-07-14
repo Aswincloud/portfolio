@@ -9,7 +9,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Cloud, Monitor, Wifi, Server, Code2 } from 'lucide-react';
+import { Cloud, Monitor, Wifi, Code2 } from 'lucide-react';
 
 const TECHNOLOGIES = [
   {
@@ -24,13 +24,14 @@ const TECHNOLOGIES = [
     ],
   },
   {
-    category: 'Cloud Platforms',
+    category: 'Cloud & Infrastructure',
     icon: Cloud,
     items: [
+      { name: 'Cloudflare', description: 'CDN, DNS, Workers, and edge compute' },
       { name: 'Microsoft Azure', description: 'Cloud computing services and solutions' },
-      { name: 'Cloudflare', description: 'CDN, DNS, and edge computing platform' },
-      { name: 'Vercel', description: 'Frontend deployment and hosting platform' },
-      { name: 'Koyeb', description: 'Serverless deployment platform' },
+      { name: 'Vercel & Koyeb', description: 'Frontend and serverless deployment' },
+      { name: 'VPS & Server Admin', description: 'Self-hosting, setup, and maintenance' },
+      { name: 'DevOps & IaC', description: 'CI/CD and automated infrastructure' },
     ],
   },
   {
@@ -51,16 +52,6 @@ const TECHNOLOGIES = [
       { name: 'VPN', description: 'Virtual Private Network setup and management' },
       { name: 'OpenWrt', description: 'Open-source router firmware and networking' },
       { name: 'Network Administration', description: 'Network infrastructure and protocols' },
-    ],
-  },
-  {
-    category: 'Infrastructure',
-    icon: Server,
-    items: [
-      { name: 'VPS Management', description: 'Virtual Private Server setup and maintenance' },
-      { name: 'Server Administration', description: 'Server deployment and management' },
-      { name: 'Infrastructure as Code', description: 'Automated infrastructure deployment' },
-      { name: 'DevOps Practices', description: 'CI/CD and deployment automation' },
     ],
   },
 ];
