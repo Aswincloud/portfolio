@@ -1,7 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Background — indigo, matching the site palette -->
-  <rect width="32" height="32" rx="7" fill="#4f46e5"/>
-  <!-- Monogram "A" -->
-  <path d="M16 7 L23 25 H19.4 L18.1 21.4 H13.9 L12.6 25 H9 L16 7 Z M16 12.6 L14.7 18.2 H17.3 L16 12.6 Z"
-        fill="white"/>
+  <!-- Terminal ">_" mark on an emerald→cyan square — matches the nav/footer
+       wordmark glyph and the OG card so the brand reads the same everywhere. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#g)"/>
+  <path d="M9 11 L15 16 L9 21 M17 22 L23 22" fill="none" stroke="#060a13"
+        stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
