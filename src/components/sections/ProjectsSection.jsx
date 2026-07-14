@@ -9,7 +9,8 @@
 import React, { useState, useId, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, ChevronDown, Github, Package, Check } from 'lucide-react';
+import { ExternalLink, ChevronDown, Package, Check } from 'lucide-react';
+import { Github } from '../icons/BrandIcons.jsx';
 import { featuredProjects, allProjects } from '../../data/projects.jsx';
 import { useRipple } from '../../hooks';
 

@@ -8,7 +8,8 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Linkedin, Github, Terminal, ArrowUp } from 'lucide-react';
+import { Mail, Terminal, ArrowUp } from 'lucide-react';
+import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { RESUME_URL } from '../../data/links.js';
 
 const LINKS = [
