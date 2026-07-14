@@ -18,3 +18,4 @@ export {
   useStaggeredAnimations,
 } from './usePageTransitions.js';
 export { useRipple } from './useRipple.jsx';
+export { useCountUp } from './useCountUp.js';

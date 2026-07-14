@@ -79,7 +79,7 @@ const Footer = () => {
                   {link.label}
                 </a>
               ) : (
-                <Link key={link.label} to={link.href} className={cls}>
+                <Link key={link.label} to={link.href} viewTransition className={cls}>
                   {link.label}
                 </Link>
               );

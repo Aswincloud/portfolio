@@ -8,6 +8,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
+import { useInView } from 'react-intersection-observer';
 import {
   Github,
   Linkedin,
@@ -17,10 +18,30 @@ import {
   ArrowDown,
   MessageCircle,
 } from 'lucide-react';
-import { useExperienceCalculator, useThrottledScroll, useRipple } from '../../hooks';
+import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
 import { useMicroInteractions } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
+
+// One stat cell. Split into its own component so each can own a useCountUp
+// call (hooks can't run inside the parent's .map). `start` flips true when the
+// strip scrolls into view, kicking off the 0→value climb once.
+const StatCell = ({ value, label, start }) => {
+  // Hold the climb until the strip's entrance fade (delay 0.55s + 0.6s) has
+  // mostly played, so the whole 0→value count is visible rather than finishing
+  // behind the fade-in.
+  const display = useCountUp(value, start, { delay: 750, duration: 1500 });
+  return (
+    <div className='bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
+      <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>
+        {label}
+      </dt>
+      <dd className='order-1 font-display text-xl font-bold tabular-nums text-white sm:text-3xl'>
+        {display}
+      </dd>
+    </div>
+  );
+};
 
 const SOCIALS = [
   { icon: Github, href: 'https://github.com/Aswincloud', label: 'GitHub' },
@@ -34,6 +55,10 @@ const HeroSection = React.memo(function HeroSection() {
   const { variants } = useMicroInteractions();
   const { createRipple } = useRipple();
   const contactButtonRef = useRef(null);
+  // Trigger the stat count-up once the strip is on screen (triggerOnce so it
+  // never re-runs on scroll-back). On first paint the hero is already in view,
+  // so it fires right after mount.
+  const [statsRef, statsInView] = useInView({ triggerOnce: true, threshold: 0.4 });
 
   const handleScrollIndicator = React.useCallback(() => {
     setShowScrollIndicator(window.scrollY <= 50);
@@ -203,23 +228,14 @@ const HeroSection = React.memo(function HeroSection() {
 
         {/* Stat strip */}
         <motion.dl
+          ref={statsRef}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55 }}
           className='mx-auto mt-5 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:mt-7'
         >
           {stats.map(stat => (
-            <div
-              key={stat.label}
-              className='bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'
-            >
-              <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>
-                {stat.label}
-              </dt>
-              <dd className='order-1 font-display text-xl font-bold text-white sm:text-3xl'>
-                {stat.value}
-              </dd>
-            </div>
+            <StatCell key={stat.label} value={stat.value} label={stat.label} start={statsInView} />
           ))}
         </motion.dl>
       </div>

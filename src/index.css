@@ -237,3 +237,15 @@
     }
   }
 }
+
+/* Cross-fade between routes (privacy / terms / home) via the View Transitions
+   API — opted in per-navigation by `viewTransition` on the route-change Links.
+   A short, symmetric fade reads as a deliberate page swap without delaying the
+   content. Browsers without the API ignore these rules and navigate instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 260ms;
+    animation-timing-function: ease;
+  }
+}
