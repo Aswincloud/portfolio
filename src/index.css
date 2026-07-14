@@ -34,9 +34,10 @@
   --font-display: 'Space Grotesk', Inter, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --animate-aurora: aurora 24s ease-in-out infinite;
+  --animate-aurora: aurora 16s ease-in-out infinite;
   --animate-marquee: marquee 40s linear infinite;
   --animate-pulse-slow: pulseSlow 3s ease-in-out infinite;
+  --animate-text-shimmer: textShimmer 6s ease-in-out infinite;
 
   @keyframes aurora {
     0%,
@@ -44,10 +45,10 @@
       transform: translate3d(0, 0, 0) scale(1);
     }
     33% {
-      transform: translate3d(6%, -4%, 0) scale(1.1);
+      transform: translate3d(12%, -8%, 0) scale(1.15);
     }
     66% {
-      transform: translate3d(-5%, 5%, 0) scale(0.95);
+      transform: translate3d(-10%, 10%, 0) scale(0.9);
     }
   }
   @keyframes marquee {
@@ -65,6 +66,19 @@
     }
     50% {
       opacity: 0.45;
+    }
+  }
+  /* A highlight glint sweeps left→right across a gradient text fill, then
+     rests off-screen for most of the cycle. Drives background-position, so it
+     only shows on an element whose background is oversized (see the utility). */
+  @keyframes textShimmer {
+    0%,
+    45%,
+    100% {
+      background-position: 150% 0;
+    }
+    70% {
+      background-position: -50% 0;
     }
   }
 }
@@ -157,6 +171,29 @@
 
 @utility gradient-text {
   @apply bg-linear-to-r from-brand-300 via-emerald-200 to-cyan-300 bg-clip-text text-transparent;
+}
+
+/* Living variant of gradient-text: same emerald→cyan fill, plus a soft white
+   highlight band that sweeps across every few seconds. The band is baked into
+   an oversized (200%) background so animating background-position slides it
+   through; at rest it parks off the right edge and reads identically to
+   gradient-text. Reserved for the hero headline so it stays a single accent. */
+@utility gradient-text-shimmer {
+  background-image: linear-gradient(
+    110deg,
+    #6ee7b7 0%,
+    #6ee7b7 30%,
+    #ffffff 45%,
+    #a7f3d0 55%,
+    #67e8f9 75%,
+    #67e8f9 100%
+  );
+  background-size: 200% 100%;
+  background-position: 150% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: var(--animate-text-shimmer);
 }
 
 /* Faint dotted-grid texture for section backgrounds. */
