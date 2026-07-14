@@ -9,9 +9,20 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Cloud, Monitor, Wifi, Server } from 'lucide-react';
+import { Cloud, Monitor, Wifi, Server, Code2 } from 'lucide-react';
 
 const TECHNOLOGIES = [
+  {
+    category: 'Languages & Frameworks',
+    icon: Code2,
+    items: [
+      { name: 'Python', description: 'Tooling, automation, and data/ML work' },
+      { name: 'React', description: 'Component-driven UIs and dashboards' },
+      { name: 'Node.js', description: 'APIs, serverless functions, and tooling' },
+      { name: 'pytest', description: 'Test automation and profiling harnesses' },
+      { name: 'Tailwind CSS', description: 'Design systems and responsive styling' },
+    ],
+  },
   {
     category: 'Cloud Platforms',
     icon: Cloud,
@@ -74,8 +85,8 @@ const TechnologiesSection = () => {
             Technologies &amp; <span className='gradient-text'>platforms</span>
           </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
-            The tools I use to build, ship, and run things — across cloud, OS, networking, and
-            infrastructure.
+            The tools I use to build, ship, and run things — from languages and frameworks to cloud,
+            OS, networking, and infrastructure.
           </p>
         </motion.div>
 
