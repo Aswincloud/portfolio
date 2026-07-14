@@ -104,7 +104,7 @@ const HeroSection = React.memo(function HeroSection() {
           >
             I make AI accelerators
             <br />
-            go <span className='gradient-text'>faster</span>.
+            go <span className='gradient-text-shimmer'>faster</span>.
           </motion.h1>
 
           {/* Sub copy */}

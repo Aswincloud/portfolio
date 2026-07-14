@@ -16,12 +16,15 @@ const AnimatedMeshGradient = () => {
       {/* Dotted engineering grid */}
       <div className='absolute inset-0 grid-bg opacity-70' />
 
-      {/* Aurora glow — emerald */}
+      {/* Aurora glow — emerald. Opacities and drift are tuned so the motion is
+          actually perceptible: a large, softly-blurred glow needs a strong
+          enough tint and a wide enough travel (see the aurora keyframe) to read
+          as "breathing" rather than sitting still. */}
       <div
         className='absolute -top-32 -left-24 h-[42rem] w-[42rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(16,185,129,0.20) 0%, transparent 62%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(16,185,129,0.30) 0%, transparent 62%)',
+          filter: 'blur(36px)',
         }}
       />
 
@@ -29,9 +32,9 @@ const AnimatedMeshGradient = () => {
       <div
         className='absolute top-10 right-[-8rem] h-[40rem] w-[40rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(34,211,238,0.16) 0%, transparent 62%)',
-          filter: 'blur(48px)',
-          animationDelay: '-8s',
+          background: 'radial-gradient(circle, rgba(34,211,238,0.24) 0%, transparent 62%)',
+          filter: 'blur(44px)',
+          animationDelay: '-5s',
         }}
       />
 
@@ -39,9 +42,9 @@ const AnimatedMeshGradient = () => {
       <div
         className='absolute bottom-[-14rem] left-1/3 h-[36rem] w-[36rem] rounded-full animate-aurora'
         style={{
-          background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 65%)',
-          filter: 'blur(56px)',
-          animationDelay: '-16s',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.20) 0%, transparent 65%)',
+          filter: 'blur(52px)',
+          animationDelay: '-10s',
         }}
       />
 
