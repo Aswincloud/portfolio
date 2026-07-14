@@ -15,25 +15,28 @@ const SKILLS = [
     icon: <Code size={22} />,
     title: 'Software Development',
     description:
-      'Full-stack development, application architecture, and clean software engineering.',
+      'Designing for clarity and change — readable code, sensible architecture, and interfaces that age well.',
     tint: 'text-brand-300 border-brand-500/20 bg-brand-500/10',
   },
   {
     icon: <Zap size={22} />,
     title: 'Performance Optimization',
-    description: 'Profiling, benchmarking, and performance analysis across the stack.',
+    description:
+      'Measure before touching anything, find the real bottleneck, and prove the win with numbers.',
     tint: 'text-cyan-300 border-cyan-500/20 bg-cyan-500/10',
   },
   {
     icon: <Cpu size={22} />,
     title: 'System Analysis',
-    description: 'System profiling, resource optimization, and low-level performance tuning.',
+    description:
+      'Reasoning about how the pieces actually behave under load — where time goes and why it stalls.',
     tint: 'text-indigo-300 border-indigo-500/20 bg-indigo-500/10',
   },
   {
     icon: <Cloud size={22} />,
     title: 'Cloud & Infrastructure',
-    description: 'Deployment, self-hosting, and modern edge infrastructure strategies.',
+    description:
+      'Shipping and running services end to end — owning deploys, uptime, and the pager that comes with them.',
     tint: 'text-emerald-300 border-emerald-500/20 bg-emerald-500/10',
   },
 ];
@@ -58,7 +61,15 @@ const SkillsSection = () => {
             What I do <span className='gradient-text'>best</span>
           </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
-            The disciplines I reach for when a system needs to be faster, leaner, or more reliable.
+            The disciplines I reach for when a system needs to be faster, leaner, or more reliable —
+            the specific tools live in the{' '}
+            <a
+              href='#technologies'
+              className='font-medium text-brand-300 underline decoration-brand-500/40 underline-offset-4 transition-colors hover:text-brand-200 hover:decoration-brand-400'
+            >
+              Stack
+            </a>
+            .
           </p>
         </motion.div>
 
