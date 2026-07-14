@@ -150,7 +150,7 @@ const HeroSection = React.memo(function HeroSection() {
                 whileHover={variants.buttonHover}
                 whileTap={variants.buttonTap}
                 className='group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-hairline bg-surface/60 px-5 py-3.5 font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:border-slate-600 hover:bg-surface sm:w-auto sm:px-7'
-                aria-label='Download résumé (PDF, opens in a new tab)'
+                aria-label='View résumé (opens in a new tab)'
               >
                 <FileText size={18} />
                 <span>Résumé</span>

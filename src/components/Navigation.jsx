@@ -172,7 +172,7 @@ const Navigation = React.memo(function Navigation() {
                   rel='noopener noreferrer'
                   className='mt-2 flex items-center rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-3 font-mono text-sm font-medium text-brand-300'
                 >
-                  Download Résumé
+                  View Résumé
                 </a>
               </div>
             </motion.div>
