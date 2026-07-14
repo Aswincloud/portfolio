@@ -34,6 +34,7 @@ const TermsConditions = () => (
           feature provided here constitutes acceptance of these terms and the{' '}
           <Link
             to='/privacy'
+            viewTransition
             className='text-brand-300 underline transition-colors hover:text-brand-200'
           >
             Privacy Policy
@@ -92,6 +93,7 @@ const TermsConditions = () => (
           Submissions are forwarded to me by email via Resend; see the{' '}
           <Link
             to='/privacy'
+            viewTransition
             className='text-brand-300 underline transition-colors hover:text-brand-200'
           >
             Privacy Policy
@@ -189,6 +191,7 @@ const TermsConditions = () => (
         See also:{' '}
         <Link
           to='/privacy'
+          viewTransition
           className='text-brand-300 underline transition-colors hover:text-brand-200'
         >
           Privacy Policy

@@ -240,6 +240,7 @@ const PrivacyPolicy = () => (
         See also:{' '}
         <Link
           to='/terms'
+          viewTransition
           className='text-brand-300 underline transition-colors hover:text-brand-200'
         >
           Terms &amp; Conditions

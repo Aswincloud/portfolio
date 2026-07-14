@@ -66,6 +66,7 @@ const Navigation = React.memo(function Navigation() {
           {/* Wordmark */}
           <Link
             to='/'
+            viewTransition
             className='group flex items-center gap-2.5'
             aria-label='Aswin — home'
             onClick={e => handleNavClick(e, '#home')}
