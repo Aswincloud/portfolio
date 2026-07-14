@@ -42,15 +42,16 @@ function ExperienceEntryComponent({
       transition={{ duration: 0.7, delay }}
       className='relative pl-0 md:pl-20'
     >
-      {/* Timeline node (desktop) */}
+      {/* Timeline node (desktop) — a solid ink disc masks the rail passing
+          behind it, a colored ring gives the halo, and the dot is flex-centred
+          inside so the two can never drift apart. Its centre (left 15 + 10)
+          sits on the rail at left-[25px]. */}
       <span
         aria-hidden='true'
-        className={`absolute left-[19px] top-9 hidden h-3.5 w-3.5 rounded-full ring-4 ring-ink md:block ${theme.dot}`}
-      />
-      <span
-        aria-hidden='true'
-        className={`absolute left-[15px] top-[30px] hidden h-5 w-5 rounded-full ring-2 md:block ${theme.ring}`}
-      />
+        className={`absolute left-[15px] top-[30px] hidden h-5 w-5 items-center justify-center rounded-full bg-ink ring-2 md:flex ${theme.ring}`}
+      >
+        <span className={`h-2.5 w-2.5 rounded-full ${theme.dot}`} />
+      </span>
 
       <div className='group card-surface overflow-hidden p-6 transition-colors duration-300 hover:border-slate-600 md:p-8'>
         {/* Period */}
