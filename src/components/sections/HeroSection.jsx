@@ -9,15 +9,8 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ArrowRight,
-  FileText,
-  ArrowDown,
-  MessageCircle,
-} from 'lucide-react';
+import { Mail, ArrowRight, FileText, ArrowDown, MessageCircle } from 'lucide-react';
+import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
 import { useMicroInteractions } from '../../utils/microInteractions';
