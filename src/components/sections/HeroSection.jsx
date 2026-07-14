@@ -27,7 +27,10 @@ import { RESUME_URL } from '../../data/links.js';
 // call (hooks can't run inside the parent's .map). `start` flips true when the
 // strip scrolls into view, kicking off the 0→value climb once.
 const StatCell = ({ value, label, start }) => {
-  const display = useCountUp(value, start);
+  // Hold the climb until the strip's entrance fade (delay 0.55s + 0.6s) has
+  // mostly played, so the whole 0→value count is visible rather than finishing
+  // behind the fade-in.
+  const display = useCountUp(value, start, { delay: 750, duration: 1500 });
   return (
     <div className='bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
       <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>

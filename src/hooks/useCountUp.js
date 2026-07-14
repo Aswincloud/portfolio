@@ -33,15 +33,21 @@ const prefersReducedMotion = () =>
 /**
  * @param {string|number} value Final display value (may include +, text, etc.)
  * @param {boolean} start When true, run the count-up (once).
- * @param {number} duration Animation length in ms.
+ * @param {object} [opts]
+ * @param {number} [opts.duration=1500] Climb length in ms.
+ * @param {number} [opts.delay=0] Wait before starting — used to hold the climb
+ *   until the element's entrance animation has finished, otherwise most of the
+ *   count happens while the tile is still faded out and only the last digit or
+ *   two is visible.
  * @returns {string} The current display string to render.
  */
-export const useCountUp = (value, start, duration = 1200) => {
+export const useCountUp = (value, start, { duration = 1500, delay = 0 } = {}) => {
   const parsed = parse(value);
   const [display, setDisplay] = useState(() =>
     parsed ? `${parsed.prefix}0${parsed.suffix}` : value
   );
   const rafRef = useRef(0);
+  const timerRef = useRef(0);
   const doneRef = useRef(false);
 
   useEffect(() => {
@@ -61,8 +67,9 @@ export const useCountUp = (value, start, duration = 1200) => {
     const from = 0;
     const { target, prefix, suffix } = parsed;
     let startTs = 0;
-    // easeOutCubic — fast then settling, reads as "counting up" not linear.
-    const ease = t => 1 - Math.pow(1 - t, 3);
+    // easeOutQuad — gentle settle at the end but near-even pacing across the
+    // run, so the digits visibly tick up rather than snapping to the total.
+    const ease = t => 1 - (1 - t) * (1 - t);
 
     const tick = ts => {
       if (!startTs) startTs = ts;
@@ -71,9 +78,16 @@ export const useCountUp = (value, start, duration = 1200) => {
       setDisplay(`${prefix}${current}${suffix}`);
       if (t < 1) rafRef.current = requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(tick);
 
-    return () => cancelAnimationFrame(rafRef.current);
+    // Hold at 0 until the entrance animation is done, then climb.
+    timerRef.current = window.setTimeout(() => {
+      rafRef.current = requestAnimationFrame(tick);
+    }, delay);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      clearTimeout(timerRef.current);
+    };
     // value is intentionally the only content dep; `start` flips once false→true.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, start]);
