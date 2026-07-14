@@ -122,7 +122,7 @@ const ContactSection = () => {
     'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:opacity-50';
 
   return (
-    <section id='contact' className='section-padding relative overflow-hidden bg-ink'>
+    <section id='contact' className='section-padding relative overflow-hidden section-seam bg-ink'>
       {/* soft glow behind the form */}
       <div
         aria-hidden='true'

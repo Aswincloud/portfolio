@@ -117,7 +117,11 @@ const ProjectsSection = () => {
   };
 
   return (
-    <section id='projects' className='section-padding relative overflow-hidden bg-ink' ref={ref}>
+    <section
+      id='projects'
+      className='section-padding relative overflow-hidden section-seam bg-ink'
+      ref={ref}
+    >
       <div className='container-custom relative z-10'>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

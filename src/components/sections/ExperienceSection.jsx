@@ -18,7 +18,10 @@ const ExperienceSection = () => {
   const experienceData = useMemo(() => getExperienceData(experience), [experience]);
 
   return (
-    <section id='experience' className='section-padding relative overflow-hidden bg-ink'>
+    <section
+      id='experience'
+      className='section-padding relative overflow-hidden section-seam bg-ink'
+    >
       <div className='container-custom relative z-10'>
         <motion.div
           ref={ref}
@@ -36,7 +39,7 @@ const ExperienceSection = () => {
           </p>
         </motion.div>
 
-        <div className='relative mx-auto max-w-4xl'>
+        <div className='relative max-w-4xl'>
           {/* Timeline rail (desktop) */}
           <div className='absolute left-[25px] top-4 bottom-4 hidden w-px bg-linear-to-b from-brand-500/40 via-hairline to-transparent md:block' />
 

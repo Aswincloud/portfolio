@@ -60,7 +60,10 @@ const TechnologiesSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section id='technologies' className='section-padding relative overflow-hidden bg-canvas'>
+    <section
+      id='technologies'
+      className='section-padding relative overflow-hidden section-seam bg-canvas'
+    >
       <div className='container-custom relative z-10'>
         <motion.div
           ref={ref}

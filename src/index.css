@@ -165,6 +165,29 @@
   background-size: 22px 22px;
 }
 
+/* Section seam: a centre-weighted hairline at the top edge so consecutive
+   sections read as deliberately separated panels rather than a hard bg swap.
+   Rendered via a pseudo-element so it never affects layout/padding. */
+@utility section-seam {
+  position: relative;
+}
+@utility section-seam {
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-hairline) 20%,
+      var(--color-hairline) 80%,
+      transparent
+    );
+  }
+}
+
 @layer utilities {
   @media (prefers-reduced-motion: reduce) {
     *,
