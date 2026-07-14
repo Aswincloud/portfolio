@@ -18,7 +18,7 @@ const ProjectCard = ({ project, index, inView }) => {
     <motion.article
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay: (index % 2) * 0.1 }}
+      transition={{ duration: 0.55, delay: (index % 3) * 0.08 }}
       className='group relative flex h-full flex-col card-surface p-7 transition-colors duration-300 hover:border-slate-600 hover:bg-surface-2 lg:p-8'
     >
       {/* Top row: icon + status */}
@@ -61,17 +61,19 @@ const ProjectCard = ({ project, index, inView }) => {
         ))}
       </ul>
 
-      {/* Links — pinned to bottom */}
-      <div className='mt-auto flex flex-wrap items-center gap-2.5 pt-7'>
+      {/* Links — pinned to bottom. Tight padding/gaps so a card with all
+          three (View / Source / PyPI) still fits one row at 3-col width;
+          flex-wrap remains a safety net on very narrow screens. */}
+      <div className='mt-auto flex flex-wrap items-center gap-2 pt-7'>
         <a
           href={project.link}
           target='_blank'
           rel='noopener noreferrer'
           aria-label={`Visit ${project.title}`}
-          className='group/btn inline-flex items-center gap-2 rounded-lg bg-linear-to-r from-brand-500 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-ink shadow-md shadow-brand-500/20 transition-shadow hover:shadow-lg hover:shadow-brand-500/30'
+          className='group/btn inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-brand-500 to-cyan-500 px-3.5 py-2.5 text-sm font-semibold text-ink shadow-md shadow-brand-500/20 transition-shadow hover:shadow-lg hover:shadow-brand-500/30'
         >
           <ExternalLink size={15} />
-          View project
+          Visit
         </a>
         {project.repo && (
           <a
@@ -79,7 +81,7 @@ const ProjectCard = ({ project, index, inView }) => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label={`${project.title} source on GitHub`}
-            className='inline-flex items-center gap-2 rounded-lg border border-hairline bg-surface px-3.5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-white'
+            className='inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-white'
           >
             <Github size={15} />
             Source
@@ -91,7 +93,7 @@ const ProjectCard = ({ project, index, inView }) => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label={`${project.title} on PyPI`}
-            className='inline-flex items-center gap-2 rounded-lg border border-hairline bg-surface px-3.5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-white'
+            className='inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-white'
           >
             <Package size={15} />
             PyPI
@@ -132,7 +134,7 @@ const ProjectsSection = () => {
           </p>
         </motion.div>
 
-        <div id={listId} className='grid gap-6 lg:grid-cols-2'>
+        <div id={listId} className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {(showMore ? allProjects : featuredProjects).map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} inView={inView} />
           ))}
