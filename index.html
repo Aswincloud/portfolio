@@ -144,18 +144,19 @@
 
       // Close widget on outside click. The chat panel renders in its own iframe,
       // so clicks inside it never bubble here — any click we see is outside by
-      // definition. We just need to exclude the bubble itself so we don't fight
-      // its own toggle handler.
+      // definition. We just need to (a) act only while the panel is open and
+      // (b) exclude the bubble itself so we don't fight its own toggle handler.
+      //
+      // Open-state is read from the panel holder (#cw-widget-holder): Chatwoot
+      // adds the `woot--hide` class when closed and removes it when open. (An
+      // earlier `.woot-widget-bubble--expanded` selector never matched in this
+      // SDK version, so outside-click close silently never fired.)
       document.addEventListener('click', function (e) {
         if (!window.$chatwoot) return;
-        if (
-          !document.querySelector(
-            '.woot-widget-bubble--expanded, .woot--bubble-holder.woot-widget-bubble--expanded'
-          )
-        )
-          return;
-        var bubble = document.querySelector('.woot-widget-bubble, #cw-bubble-holder');
-        if (bubble && bubble.contains(e.target)) return;
+        var holder = document.querySelector('#cw-widget-holder, .woot-widget-holder');
+        if (!holder || holder.classList.contains('woot--hide')) return; // panel not open
+        var bubble = document.querySelector('#cw-bubble-holder, .woot-widget-bubble');
+        if (bubble && bubble.contains(e.target)) return; // let the bubble toggle itself
         window.$chatwoot.toggle('close');
       });
     </script>
