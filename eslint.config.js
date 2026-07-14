@@ -45,6 +45,14 @@ export default [
       'react/prop-types': 'off',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      // eslint-plugin-react-hooks v7 (pulled in for eslint 10 support) turns on
+      // React-Compiler-oriented rules by default. These two flag intentional,
+      // working patterns here — rAF-driven setState in useCountUp, and the
+      // error-reporting store — that aren't defects, so we opt out of them
+      // rather than refactor sound code. rules-of-hooks + exhaustive-deps (the
+      // rules that catch real hook bugs) stay on.
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/immutability': 'off',
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-is-valid': 'error',
       'react/no-unescaped-entities': 'off',
@@ -54,7 +62,7 @@ export default [
     },
     settings: {
       react: {
-        version: '18.2',
+        version: '19.2',
       },
     },
   },
