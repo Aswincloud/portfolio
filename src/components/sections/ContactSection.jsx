@@ -145,7 +145,7 @@ const ContactSection = () => {
             Let&apos;s <span className='gradient-text'>work</span> together
           </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
-            Have a performance problem, a project, or just want to talk shop? Drop me a line.
+            Have a project, a performance problem, or just want to talk shop? Drop me a line.
           </p>
         </motion.div>
 

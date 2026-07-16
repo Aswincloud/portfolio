@@ -22,15 +22,24 @@ const ProjectCard = ({ project, index, inView }) => {
       transition={{ duration: 0.55, delay: (index % 3) * 0.08 }}
       className='group relative flex h-full flex-col card-surface p-7 transition-colors duration-300 hover:border-slate-600 hover:bg-surface-2 lg:p-8'
     >
-      {/* Top row: icon + status */}
+      {/* Top row: icon + status/metric. The status pill states it's live; the
+          metric chip below gives each card a distinct at-a-glance signal so the
+          grid doesn't read as six identical "Live" badges. */}
       <div className='flex items-start justify-between gap-4'>
         <span className='flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-500/20 bg-brand-500/10 text-brand-300 transition-transform duration-300 group-hover:scale-105 [&_svg]:h-7 [&_svg]:w-7'>
           {project.icon}
         </span>
-        <span className='inline-flex items-center gap-1.5 rounded-full border border-brand-500/20 bg-brand-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-brand-300'>
-          <span className='h-1.5 w-1.5 rounded-full bg-brand-400' />
-          {project.status}
-        </span>
+        <div className='flex flex-col items-end gap-1.5'>
+          <span className='inline-flex items-center gap-1.5 rounded-full border border-brand-500/20 bg-brand-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-brand-300'>
+            <span className='h-1.5 w-1.5 rounded-full bg-brand-400' />
+            {project.status}
+          </span>
+          {project.metric && (
+            <span className='rounded-full border border-hairline bg-surface-2 px-2.5 py-1 font-mono text-[11px] font-medium text-slate-400'>
+              {project.metric}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Title + domain */}

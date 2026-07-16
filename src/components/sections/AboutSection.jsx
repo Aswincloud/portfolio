@@ -89,6 +89,19 @@ const AboutSection = React.memo(() => {
               Where software meets <span className='gradient-text'>silicon</span>
             </h2>
 
+            {/* "Now" line — a live status echoing the hero's availability chip,
+                so the page opens with a current, specific signal of what I'm on. */}
+            <p className='mt-5 inline-flex items-center gap-2.5 font-mono text-sm text-slate-400'>
+              <span className='relative flex h-2 w-2'>
+                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400 opacity-75' />
+                <span className='relative inline-flex h-2 w-2 rounded-full bg-brand-400' />
+              </span>
+              <span>
+                <span className='text-slate-500'>Currently</span> — profiling tensor ops on AI
+                silicon at MulticoreWare
+              </span>
+            </p>
+
             <div className='mt-8 space-y-6 border-l border-hairline pl-6'>
               {PARAGRAPHS.map((p, i) => (
                 <motion.p
