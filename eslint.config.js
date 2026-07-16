@@ -64,4 +64,14 @@ export default [
       'no-unused-vars': 'off',
     },
   },
+  {
+    // Blog post modules intentionally co-locate a `meta` object with their
+    // `Body` component (that's the post-registry contract), so the fast-refresh
+    // "only export components" rule doesn't apply — these are content modules,
+    // not HMR-refreshed component files.
+    files: ['src/data/blog/**/*.jsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ];

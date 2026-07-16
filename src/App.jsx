@@ -33,6 +33,8 @@ import ScrollProgress from './components/ScrollProgress.jsx';
 // first-paint bundle. They load on demand when their route is hit.
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy.jsx'));
 const TermsConditions = lazy(() => import('./components/TermsConditions.jsx'));
+const BlogIndex = lazy(() => import('./components/blog/BlogIndex.jsx'));
+const BlogPost = lazy(() => import('./components/blog/BlogPost.jsx'));
 const NotFound = lazy(() => import('./components/NotFound.jsx'));
 
 const getBasename = () => import.meta.env.BASE_URL || '/';
@@ -247,6 +249,22 @@ const App = () => {
                     element={
                       <ErrorBoundary level='page' fallbackComponent='Terms & Conditions'>
                         <TermsConditions />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='/blog'
+                    element={
+                      <ErrorBoundary level='page' fallbackComponent='Blog'>
+                        <BlogIndex />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='/blog/:slug'
+                    element={
+                      <ErrorBoundary level='page' fallbackComponent='Blog Post'>
+                        <BlogPost />
                       </ErrorBoundary>
                     }
                   />
