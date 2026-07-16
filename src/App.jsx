@@ -189,13 +189,23 @@ const Layout = ({ children }) => {
 
   return (
     <div className='min-h-screen bg-ink text-slate-300'>
+      {/* Skip link — first focusable element on the page. Visually hidden until
+          focused, then anchors keyboard/screen-reader users straight to the
+          main content, past the nav. Pairs with the <main id> landmark below. */}
+      <a
+        href='#main-content'
+        className='sr-only rounded-lg bg-brand-500 px-4 py-2 font-medium text-ink focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[100]'
+      >
+        Skip to content
+      </a>
+
       <ScrollProgress />
 
       <ErrorBoundary level='component' fallbackComponent='Navigation'>
         <Navigation />
       </ErrorBoundary>
 
-      {children}
+      <main id='main-content'>{children}</main>
     </div>
   );
 };

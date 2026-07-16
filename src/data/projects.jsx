@@ -19,6 +19,7 @@ export const featuredProjects = [
     link: 'https://www.aswincloud.com',
     repo: 'https://github.com/Aswincloud/portfolio',
     status: 'Live',
+    metric: 'Lighthouse 96+',
   },
   {
     id: 'ttperf',
@@ -39,6 +40,7 @@ export const featuredProjects = [
     repo: 'https://github.com/Aswincloud/ttperf',
     pypi: 'https://pypi.org/project/ttperf/',
     status: 'Live',
+    metric: 'On PyPI',
   },
   {
     id: 'ttnn-eltwise-performance',
@@ -58,6 +60,7 @@ export const featuredProjects = [
     link: 'https://ttnn-eltwise-performance.aswincloud.com',
     repo: 'https://github.com/Aswincloud/ttnn-performance-dashboard',
     status: 'Live',
+    metric: '13 op categories tracked',
   },
 ];
 
@@ -79,6 +82,7 @@ export const additionalProjects = [
     icon: <Brain size={48} />,
     link: 'https://pr-reviewer.aswincloud.com',
     status: 'Live',
+    metric: 'ML-powered',
   },
   {
     id: 'mirror-download-bot',
@@ -97,6 +101,7 @@ export const additionalProjects = [
     icon: <Zap size={48} />,
     link: 'https://t.me/Testdownload123bot',
     status: 'Live',
+    metric: 'Multi-source queue',
   },
   {
     id: 'word-chain-game-bot',
@@ -115,6 +120,7 @@ export const additionalProjects = [
     icon: <Gamepad2 size={48} />,
     link: 'https://t.me/gamebotbyashbot',
     status: 'Live',
+    metric: 'Multiplayer',
   },
 ];
 
