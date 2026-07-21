@@ -73,7 +73,8 @@
   },
   "overrides": {
     "@babel/core": "^7.29.1",
-    "js-yaml": "^4.1.2"
+    "js-yaml": "^4.3.0",
+    "brace-expansion": "^1.1.16"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
