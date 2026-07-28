@@ -74,12 +74,15 @@
   "overrides": {
     "@babel/core": "^7.29.1",
     "js-yaml": "^4.3.0",
+    "brace-expansion": "^5.0.8",
+    "minimatch": "^10.0.3",
     "eslint-plugin-jsx-a11y": {
       "eslint": "$eslint"
     },
     "eslint-plugin-react": {
       "eslint": "$eslint"
-    }
+    },
+    "react-router": "^8.3.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
