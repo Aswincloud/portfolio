@@ -39,7 +39,7 @@
     "lucide-react": "^1.24.0",
     "motion": "^12.40.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react-dom": "^19.2.8",
     "react-intersection-observer": "^10.1.0",
     "react-router-dom": "^7.18.0"
   },
