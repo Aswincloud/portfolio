@@ -34,18 +34,14 @@ export const useErrorReporting = () => {
     errorsBySeverity: {},
   });
 
-  // Load error statistics from localStorage on mount
-  useEffect(() => {
-    try {
-      const errors = JSON.parse(localStorage.getItem('portfolio_errors') || '[]');
-      const stats = calculateErrorStats(errors);
-      setErrorStats(stats);
-    } catch (e) {
-      console.warn('Failed to load error stats from localStorage:', e);
-    }
-  }, [calculateErrorStats]);
-
   // Calculate error statistics
+  //
+  // Declared before the effect that depends on it, deliberately. `const` bindings are
+  // in their temporal dead zone until this line runs, and React evaluates a dependency
+  // array at the point the useEffect call is made — so an effect placed above this and
+  // listing `calculateErrorStats` as a dep threw `ReferenceError: Cannot access
+  // 'calculateErrorStats' before initialization` on the very first render, taking the
+  // whole hook (and any component calling it) down. Keep definitions above their uses.
   const calculateErrorStats = useCallback(errors => {
     const stats = {
       totalErrors: errors.length,
@@ -66,6 +62,16 @@ export const useErrorReporting = () => {
 
     return stats;
   }, []);
+
+  // Load error statistics from localStorage on mount
+  useEffect(() => {
+    try {
+      const errors = JSON.parse(readStorage(localStorage, 'portfolio_errors') || '[]');
+      setErrorStats(calculateErrorStats(errors));
+    } catch (e) {
+      console.warn('Failed to load error stats from localStorage:', e);
+    }
+  }, [calculateErrorStats]);
 
   // Report error function
   const reportError = useCallback(
@@ -89,7 +95,7 @@ export const useErrorReporting = () => {
         category,
         context,
         tags,
-        userId: userId || localStorage.getItem('portfolio_user_id') || 'anonymous',
+        userId: userId || getUserId(),
         sessionId: getSessionId(),
         url: window.location.href,
         userAgent: navigator.userAgent,
@@ -120,23 +126,26 @@ export const useErrorReporting = () => {
       }
 
       // Store in localStorage
+      let errors = [];
       try {
-        const errors = JSON.parse(localStorage.getItem('portfolio_errors') || '[]');
-        errors.push(errorData);
-
-        // Keep only last 100 errors
-        if (errors.length > 100) {
-          errors.splice(0, errors.length - 100);
-        }
-
-        localStorage.setItem('portfolio_errors', JSON.stringify(errors));
-
-        // Update error stats
-        const stats = calculateErrorStats(errors);
-        setErrorStats(stats);
+        errors = JSON.parse(readStorage(localStorage, 'portfolio_errors') || '[]');
       } catch (e) {
-        console.warn('Failed to store error in localStorage:', e);
+        // Corrupt history — start a fresh buffer rather than losing this report too.
+        console.warn('Failed to read error history; starting a new one:', e);
       }
+
+      errors.push(errorData);
+
+      // Keep only last 100 errors
+      if (errors.length > 100) {
+        errors.splice(0, errors.length - 100);
+      }
+
+      writeStorage(localStorage, 'portfolio_errors', JSON.stringify(errors));
+
+      // Update error stats from the in-memory list, so the DevTools panel still
+      // reflects this report even when persistence was refused.
+      setErrorStats(calculateErrorStats(errors));
 
       // Send to analytics if available
       if (typeof gtag !== 'undefined') {
@@ -177,7 +186,7 @@ export const useErrorReporting = () => {
       timestamp: new Date().toISOString(),
       action,
       context,
-      userId: localStorage.getItem('portfolio_user_id') || 'anonymous',
+      userId: getUserId(),
       sessionId: getSessionId(),
       url: window.location.href,
       userAgent: navigator.userAgent,
@@ -205,7 +214,11 @@ export const useErrorReporting = () => {
 
   // Clear error history
   const clearErrorHistory = useCallback(() => {
-    localStorage.removeItem('portfolio_errors');
+    try {
+      localStorage.removeItem('portfolio_errors');
+    } catch (e) {
+      console.warn('Failed to clear error history:', e);
+    }
     setErrorStats({
       totalErrors: 0,
       lastError: null,
@@ -217,7 +230,7 @@ export const useErrorReporting = () => {
   // Get error history
   const getErrorHistory = useCallback(() => {
     try {
-      return JSON.parse(localStorage.getItem('portfolio_errors') || '[]');
+      return JSON.parse(readStorage(localStorage, 'portfolio_errors') || '[]');
     } catch (e) {
       console.warn('Failed to load error history:', e);
       return [];
@@ -249,15 +262,40 @@ export const useErrorReporting = () => {
 };
 
 // Helper functions
+
+// Web Storage is not always writable: Safari's private mode throws on setItem,
+// browsers block it entirely when cookies are disabled, and an error loop can
+// exhaust the origin quota. That matters more here than in ordinary code —
+// reportError runs *because* something already failed, so a throw from inside it
+// replaces a handled error with an unhandled one and can take the surrounding
+// component down. Every storage touch below degrades to a default instead.
+const readStorage = (storage, key) => {
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writeStorage = (storage, key, value) => {
+  try {
+    storage.setItem(key, value);
+  } catch (e) {
+    console.warn(`Failed to write ${key} to storage:`, e);
+  }
+};
+
 const getSessionId = () => {
-  let sessionId = sessionStorage.getItem('portfolio_session_id');
+  let sessionId = readStorage(sessionStorage, 'portfolio_session_id');
   if (!sessionId) {
     // Non-security correlation ID for grouping error reports by session.
     sessionId = crypto.randomUUID();
-    sessionStorage.setItem('portfolio_session_id', sessionId);
+    writeStorage(sessionStorage, 'portfolio_session_id', sessionId);
   }
   return sessionId;
 };
+
+const getUserId = () => readStorage(localStorage, 'portfolio_user_id') || 'anonymous';
 
 const getPerformanceMetrics = () => {
   if (typeof performance !== 'undefined' && performance.getEntriesByType) {
