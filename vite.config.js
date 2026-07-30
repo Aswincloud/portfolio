@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import securityHeaders from './scripts/vite-plugin-security-headers.js';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), securityHeaders()],
   server: {
     port: 3000,
     open: true,
@@ -10,7 +11,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true,
+    // 'hidden' still writes .map files (so they can be uploaded to an error
+    // tracker) but omits the //# sourceMappingURL comment, so browsers don't
+    // fetch them. Paired with .assetsignore, which keeps them out of the deploy
+    // entirely — previously the full annotated sources were public.
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         // Split rarely-changing vendor code into its own chunk. Vendor deps

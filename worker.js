@@ -1,12 +1,30 @@
-// Security headers configuration
+// Security headers for responses this Worker generates.
+//
+// Scope note: with `run_worker_first = ["/api/*"]` in wrangler.toml, this Worker only
+// ever runs for /api/*. Static assets (and the SPA fallback) are served directly by
+// the assets runtime and get their headers from dist/_headers, generated at build time
+// by scripts/vite-plugin-security-headers.js. A `_headers` file deliberately does not
+// apply to Worker-generated responses, which is why these are declared separately.
+//
+// Everything here is a JSON API response — never a document — so the policy is
+// maximally strict: 'none' throughout means even a response mislabelled with an HTML
+// content type cannot execute or fetch anything.
 const SECURITY_HEADERS = {
-  'Content-Security-Policy':
-    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https:;",
+  'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
+
+// Attach the security headers above to a Response, in place.
+function withSecurityHeaders(response) {
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+  return response;
+}
 
 // Email validation function
 function isValidEmail(email) {
@@ -301,78 +319,6 @@ async function handleApiRoutes(pathname, request, env) {
   return null; // Not an API route
 }
 
-// Helper function to serve static assets
-async function serveStaticAssets(request, env) {
-  try {
-    const asset = await env.ASSETS.fetch(request);
-    if (asset.status !== 404) {
-      // Add security headers to static assets
-      const headers = new Headers(asset.headers);
-
-      // Apply security headers based on content type
-      const contentType = headers.get('content-type') || '';
-
-      if (
-        contentType.includes('text/html') ||
-        contentType.includes('application/javascript') ||
-        contentType.includes('text/css')
-      ) {
-        // Apply full security headers for HTML, JS, and CSS files
-        for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
-          headers.set(key, value);
-        }
-      } else {
-        // Apply basic security headers for other assets (images, fonts, etc.)
-        headers.set('X-Content-Type-Options', 'nosniff');
-        headers.set('X-Frame-Options', 'DENY');
-        headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      }
-
-      return new Response(asset.body, {
-        status: asset.status,
-        statusText: asset.statusText,
-        headers,
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching asset:', error);
-    return new Response('Internal Server Error', { status: 500 });
-  }
-  return null; // Asset not found
-}
-
-// Helper function to serve SPA with security headers
-async function serveSpa(request, env) {
-  const rootRequest = new Request(new URL('/', request.url).toString(), request);
-  const response = await env.ASSETS.fetch(rootRequest);
-
-  if (response.status === 200) {
-    // Add security headers for HTML responses
-    const headers = new Headers(response.headers);
-    for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
-      headers.set(key, value);
-    }
-
-    // For HEAD requests, return only headers and status (no body)
-    if (request.method === 'HEAD') {
-      return new Response(null, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      });
-    }
-
-    // For GET requests, return the full response with body
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-  }
-
-  return null; // SPA not found
-}
-
 // Handle contact form submission
 async function handleContactForm(request, env) {
   try {
@@ -517,38 +463,20 @@ async function handleContactForm(request, env) {
 }
 
 // Main worker event handler
+//
+// `run_worker_first = ["/api/*"]` means only API requests reach this Worker; assets and
+// the SPA fallback are handled by the assets runtime. Anything else arriving here is
+// unexpected, so it is delegated to that runtime rather than reimplemented.
 export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    const pathname = url.pathname;
+  async fetch(request, env) {
+    const { pathname } = new URL(request.url);
 
-    // 1. Handle API routes
     if (pathname.startsWith('/api/')) {
       const apiResponse = await handleApiRoutes(pathname, request, env);
-      if (apiResponse) {
-        return apiResponse;
-      }
-      // Not found in API
-      return new Response('Not Found', { status: 404 });
+      return withSecurityHeaders(apiResponse ?? new Response('Not Found', { status: 404 }));
     }
 
-    // 2. Try to serve static assets
-    const assetResponse = await serveStaticAssets(request, env);
-    if (assetResponse) {
-      return assetResponse;
-    }
-
-    // 3. For GET/HEAD requests, serve SPA with security headers
-    if (request.method === 'GET' || request.method === 'HEAD') {
-      const spaResponse = await serveSpa(request, env);
-      if (spaResponse) {
-        return spaResponse;
-      }
-      // If SPA not found, return 404
-      return new Response('Not Found', { status: 404 });
-    }
-
-    // 4. All other requests: 404
-    return new Response('Not Found', { status: 404 });
+    // Defensive fallback: let the assets runtime serve it (it applies _headers).
+    return env.ASSETS.fetch(request);
   },
 };

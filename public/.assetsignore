@@ -1,0 +1,8 @@
+# Files in the build output that must not be uploaded as public assets.
+# Same syntax as .gitignore; Cloudflare reads this from the assets directory.
+# (Wrangler already excludes _headers, _redirects and this file itself.)
+
+# Source maps. Vite is configured with sourcemap: 'hidden' so nothing references
+# them, but without this they would still be uploaded and publicly fetchable —
+# which is how the full annotated sources were being served.
+*.map
