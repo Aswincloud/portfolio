@@ -26,3 +26,17 @@ not_found_handling = "single-page-application"
 # security headers from dist/_headers (generated at build time), which is both
 # cheaper and lower-latency than routing every request through the script.
 run_worker_first = ["/api/*"]
+
+# Per-IP rate limit for POST /api/contact. Every submission sends two emails (a
+# notification and an auto-reply to an address the caller chooses), so an unthrottled
+# endpoint is both a spam relay and a way to burn the Resend quota.
+#
+# `namespace_id` is an arbitrary positive integer that names the counter — it is not
+# an account resource and does not need provisioning. `simple.period` only accepts
+# 10 or 60. The limiter is per-Cloudflare-location and eventually consistent, so treat
+# 5/minute as an order of magnitude rather than an exact quota; the Worker also fails
+# open if this binding is missing, so a config regression can't take the form offline.
+[[ratelimits]]
+name = "CONTACT_RATE_LIMIT"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }

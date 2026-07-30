@@ -26,14 +26,103 @@ function withSecurityHeaders(response) {
   return response;
 }
 
+// Origins allowed to call the API from a browser. The form is served from the same
+// origin, so it needs no CORS grant at all; this list exists only so the preview
+// deployments keep working. Anything else gets no Access-Control-Allow-Origin, which
+// is what stops third-party pages from POSTing through a visitor's browser.
+export const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/(www\.)?aswincloud\.com$/,
+  /^https:\/\/[a-z0-9-]+\.aswin-portfolio\.workers\.dev$/,
+  /^https:\/\/aswin-portfolio\.workers\.dev$/,
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+];
+
+// Contact form limits. Kept here so validation and the tests agree on one source.
+export const LIMITS = {
+  name: { min: 2, max: 100 },
+  message: { min: 10, max: 1000 },
+  email: { max: 254 }, // RFC 5321 maximum forward-path length
+};
+
 // Email validation function
-function isValidEmail(email) {
+export function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-// HTML email template
-function createEmailHTML(name, email, message) {
+/**
+ * Escape text for interpolation into HTML.
+ *
+ * Visitor-supplied name/email/message are pasted straight into the notification and
+ * auto-reply email bodies. Without escaping, a message containing markup becomes live
+ * HTML in the mail client — at best it mangles the email, at worst it forges content
+ * (e.g. a fake "verified" banner or an <a> pointing somewhere else) in a message that
+ * appears to come from this domain. The auto-reply is delivered to the address the
+ * submitter chose, so this is reachable by anyone.
+ */
+export function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Redact an email for logging: keeps enough to correlate reports without writing
+ * visitors' addresses to the log retention window in plaintext.
+ * `someone@example.com` → `s*****e@example.com`
+ */
+export function redactEmail(email) {
+  const value = String(email ?? '');
+  const at = value.lastIndexOf('@');
+  if (at < 1) return '[redacted]';
+  const local = value.slice(0, at);
+  const domain = value.slice(at);
+  if (local.length <= 2) return `${local[0]}*${domain}`;
+  return `${local[0]}${'*'.repeat(Math.min(local.length - 2, 5))}${local.at(-1)}${domain}`;
+}
+
+/**
+ * Per-IP rate limit for the contact endpoint.
+ *
+ * Fails open: if the binding is missing (older deployment, `wrangler dev` without the
+ * binding) the form keeps working rather than hard-failing for every visitor. A
+ * contact form is not an auth endpoint, so availability wins over strictness here.
+ *
+ * Note Cloudflare's limiter is per-location and eventually consistent, so this raises
+ * the cost of casual abuse rather than enforcing an exact global quota.
+ */
+async function isRateLimited(request, env) {
+  const limiter = env.CONTACT_RATE_LIMIT;
+  if (!limiter?.limit) {
+    console.warn('⚠️ CONTACT_RATE_LIMIT binding unavailable — allowing request');
+    return false;
+  }
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  try {
+    const { success } = await limiter.limit({ key: `contact:${ip}` });
+    return !success;
+  } catch (error) {
+    console.error('⚠️ Rate limit check failed, allowing request:', error.message);
+    return false;
+  }
+}
+
+// HTML email template.
+// Every interpolation below is escaped — see escapeHtml above for why.
+export function createEmailHTML(rawName, rawEmail, rawMessage) {
+  const name = escapeHtml(rawName);
+  const email = escapeHtml(rawEmail);
+  // href="mailto:…" is a URL context, not an HTML text context, so it needs
+  // percent-encoding as well — escapeHtml alone would leave `?`/`&` able to inject
+  // extra mailto headers (e.g. an attacker-chosen cc/bcc) into the reply link.
+  const emailHref = escapeHtml(encodeURIComponent(rawEmail));
+  // Escape first, then convert newlines, so the <br> we add survives but any markup
+  // the visitor typed does not.
+  const message = escapeHtml(rawMessage).replace(/\n/g, '<br>');
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
       <h2 style="color: #2563eb; text-align: center; margin-bottom: 30px;">
@@ -43,20 +132,20 @@ function createEmailHTML(name, email, message) {
       <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
         <h3 style="color: #374151; margin-top: 0;">Contact Details:</h3>
         <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> <a href="mailto:${email}" style="color: #2563eb;">${email}</a></p>
+        <p><strong>Email:</strong> <a href="mailto:${emailHref}" style="color: #2563eb;">${email}</a></p>
         <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
       </div>
       
       <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
         <h3 style="color: #374151; margin-top: 0;">Message:</h3>
-        <p style="line-height: 1.6; color: #4b5563;">${message.replace(/\n/g, '<br>')}</p>
+        <p style="line-height: 1.6; color: #4b5563;">${message}</p>
       </div>
       
       <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
         <p style="color: #6b7280; font-size: 14px;">
           This email was sent from your portfolio contact form.
         </p>
-        <a href="mailto:${email}?subject=Re: Your portfolio inquiry" 
+        <a href="mailto:${emailHref}?subject=Re:%20Your%20portfolio%20inquiry"
            style="display: inline-block; background-color: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">
           Reply to ${name}
         </a>
@@ -65,8 +154,15 @@ function createEmailHTML(name, email, message) {
   `;
 }
 
-// Auto-reply email template
-function createAutoReplyHTML(name, message) {
+// Auto-reply email template.
+// This one is delivered to the address the submitter supplied, so unescaped input here
+// would let anyone forge HTML in a message sent from this domain.
+export function createAutoReplyHTML(rawName, rawMessage) {
+  const name = escapeHtml(rawName);
+  // Truncate before escaping so the 100-char budget counts visitor characters rather
+  // than entity expansions — escaping first could cut an entity in half (`&am`).
+  const excerpt = String(rawMessage ?? '');
+  const message = escapeHtml(excerpt.length > 100 ? `${excerpt.slice(0, 100)}...` : excerpt);
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
       <h2 style="color: #2563eb; text-align: center; margin-bottom: 30px;">
@@ -82,7 +178,7 @@ function createAutoReplyHTML(name, message) {
       <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #374151; margin-top: 0;">Your Message Summary:</h3>
         <p style="color: #6b7280; margin-bottom: 10px;"><strong>Submitted on:</strong> ${new Date().toLocaleString()}</p>
-        <p style="color: #6b7280; font-style: italic;">"${message.length > 100 ? message.substring(0, 100) + '...' : message}"</p>
+        <p style="color: #6b7280; font-style: italic;">"${message}"</p>
       </div>
       
       <p style="font-size: 16px; line-height: 1.6; color: #374151;">
@@ -123,8 +219,10 @@ function createAutoReplyHTML(name, message) {
 // 3. Proper error handling and logging
 //
 async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', env) {
+  // `to` is the visitor's own address on the auto-reply, so every log line below
+  // redacts it. See redactEmail for why.
   console.log('🚀 Starting email send process:', {
-    to,
+    to: redactEmail(to),
     subject,
     hostname,
     timestamp: new Date().toISOString(),
@@ -132,7 +230,7 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
 
   // Validate email format
   if (!isValidEmail(to)) {
-    console.error('❌ Invalid email address:', to);
+    console.error('❌ Invalid email address:', redactEmail(to));
     throw new Error('Invalid email address');
   }
 
@@ -141,7 +239,7 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
   // Check if we're in a preview environment
   if (hostname.includes('workers.dev')) {
     console.log('📧 Preview deployment - email would be sent:', {
-      to,
+      to: redactEmail(to),
       subject,
       from: 'contact@aswincloud.com',
       hostname,
@@ -153,44 +251,6 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
   console.log('🌐 Production environment detected, proceeding with Resend');
 
   try {
-    console.log('📤 Preparing Resend API request...');
-
-    // Prepare the email payload
-    const emailPayload = {
-      personalizations: [
-        {
-          to: [{ email: to }],
-        },
-      ],
-      from: {
-        email: 'contact@aswincloud.com',
-        name: 'Aswin Portfolio',
-      },
-      subject: subject,
-      content: [
-        {
-          type: 'text/html',
-          value: html,
-        },
-        {
-          type: 'text/plain',
-          value: text,
-        },
-      ],
-    };
-
-    console.log('📋 Resend email payload prepared:', {
-      to: emailPayload.personalizations[0].to[0].email,
-      from: emailPayload.from.email,
-      subject: emailPayload.subject,
-      htmlLength: emailPayload.content[0].value.length,
-      textLength: emailPayload.content[1].value.length,
-    });
-
-    // Send email via MailChannels API
-    console.log('🌐 Making request to MailChannels API...');
-
-    // Send email via Resend API
     console.log('🌐 Making request to Resend API...');
 
     // Resend API payload
@@ -202,7 +262,15 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
       text: text,
     };
 
-    console.log('📧 Resend payload:', JSON.stringify(resendPayload, null, 2));
+    // Log shape, not contents: the payload embeds the visitor's address and their
+    // whole message, and Workers logs are readable by anyone with dashboard access.
+    console.log('📧 Resend payload prepared:', {
+      from: resendPayload.from,
+      to: redactEmail(to),
+      subject,
+      htmlLength: html.length,
+      textLength: text.length,
+    });
 
     // You'll need to add your Resend API key as a secret
     const RESEND_API_KEY = env.RESEND_API_KEY || 're_placeholder_key';
@@ -227,23 +295,16 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
       console.error('❌ Resend API error details:', {
         status: response.status,
         statusText: response.statusText,
-        errorText: errorText,
-        headers: Object.fromEntries(response.headers.entries()),
-        url: 'https://api.resend.com/emails',
-        method: 'POST',
+        errorText,
       });
-
-      // Log the full error text separately for better visibility
-      console.error('📄 Full error response:', errorText);
 
       throw new Error(`Resend error: ${response.status} - ${errorText}`);
     }
 
     const responseData = await response.json();
-    console.log('📨 Resend API response body:', responseData);
 
     console.log('✅ Email sent successfully via Resend:', {
-      to,
+      to: redactEmail(to),
       subject,
       id: responseData.id,
       timestamp: new Date().toISOString(),
@@ -254,34 +315,50 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
     console.error('❌ Failed to send email via Resend:', {
       error: error.message,
       stack: error.stack,
-      to,
+      to: redactEmail(to),
       subject,
       timestamp: new Date().toISOString(),
     });
-
-    // Log the full error message separately
-    console.error('📄 Full error message:', error.message);
-    if (error.stack) {
-      console.error('📄 Full error stack:', error.stack);
-    }
 
     throw error;
   }
 }
 
+/**
+ * Resolve the Access-Control-Allow-Origin value for a request, or null when the
+ * origin isn't one of ours.
+ *
+ * Returning null (rather than echoing the origin, or `*`) is the point: it makes the
+ * browser drop the response, so a page on evil.example can't read what this API says
+ * back. Same-origin form submissions send no Origin header on POST from our own page in
+ * some browsers, and CORS isn't consulted at all when it's absent, so `null` here never
+ * breaks the real form.
+ */
+export function resolveAllowedOrigin(request) {
+  const origin = request.headers.get('Origin');
+  if (!origin) return null;
+  return ALLOWED_ORIGIN_PATTERNS.some(pattern => pattern.test(origin)) ? origin : null;
+}
+
 // Helper function to add CORS headers to response
-function addCorsHeaders(response, methods = 'GET, POST, OPTIONS') {
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', methods);
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+function addCorsHeaders(response, request, methods = 'GET, POST, OPTIONS') {
+  const allowedOrigin = resolveAllowedOrigin(request);
+  if (allowedOrigin) {
+    response.headers.set('Access-Control-Allow-Origin', allowedOrigin);
+    response.headers.set('Access-Control-Allow-Methods', methods);
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  // Vary regardless: the response body is identical but the CORS headers are not, so a
+  // cache keyed without Origin could hand an allowed origin's headers to a denied one.
+  response.headers.append('Vary', 'Origin');
   return response;
 }
 
 // Helper function to handle API routes
-async function handleApiRoutes(pathname, request, env) {
+export async function handleApiRoutes(pathname, request, env) {
   if (pathname === '/api/contact' && request.method === 'POST') {
     const response = await handleContactForm(request, env);
-    return addCorsHeaders(response, 'POST, OPTIONS');
+    return addCorsHeaders(response, request, 'POST, OPTIONS');
   }
 
   if (pathname === '/api/health' && request.method === 'GET') {
@@ -293,62 +370,133 @@ async function handleApiRoutes(pathname, request, env) {
       }),
       {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        },
+        headers: { 'Content-Type': 'application/json' },
       }
     );
-    return response;
+    return addCorsHeaders(response, request, 'GET, OPTIONS');
   }
 
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Max-Age': '86400',
-      },
-    });
+    const response = new Response(null, { status: 204 });
+    addCorsHeaders(response, request, 'GET, POST, OPTIONS');
+    if (resolveAllowedOrigin(request)) {
+      response.headers.set('Access-Control-Max-Age', '86400');
+    }
+    return response;
   }
 
   return null; // Not an API route
 }
 
+// JSON response helper — every branch below returns the same shape.
+function jsonResponse(body, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...extraHeaders },
+  });
+}
+
 // Handle contact form submission
-async function handleContactForm(request, env) {
+export async function handleContactForm(request, env) {
   try {
-    const { name, email, message } = await request.json();
+    const payload = await request.json();
+    // `raw*` names deliberately: these are attacker-controlled and of unknown type until
+    // validated below, which rebinds the trimmed strings as `name`/`email`/`message`. The
+    // naming is what stops a later edit from reaching past validation to the raw value.
+    const { name: rawName, email: rawEmail, message: rawMessage, company } = payload;
 
-    // Validate input
+    // Honeypot. `company` is rendered off-screen and left empty by real visitors; bots
+    // that fill every field in the form give themselves away. Answer 200 with the normal
+    // success body so the bot can't distinguish rejection from delivery and retry.
+    if (typeof company === 'string' && company.trim() !== '') {
+      // No IP and no user-agent. The honeypot is a heuristic, not proof of a bot: a
+      // password manager or aggressive autofill can put a value in an off-screen field
+      // that a real person never saw. Logging the address and device string of whoever
+      // trips it writes visitor PII and a fingerprint into the log retention window —
+      // the same thing this change removes from the success path — for someone who may
+      // simply have been misclassified. The count is what's actionable; who it was is not.
+      console.log('🍯 Honeypot triggered — dropping submission', {
+        timestamp: new Date().toISOString(),
+      });
+      return jsonResponse({
+        success: true,
+        message: 'Message sent successfully! Thank you for contacting me.',
+      });
+    }
+
+    // Validate input.
+    //
+    // The type check is load-bearing, not defensive boilerplate: JSON gives the caller
+    // free choice of type, and `!value` only rejects the falsy ones. A number, object or
+    // array is truthy and has no useful `.length`, so `name: 12345` and `message: 42`
+    // both read `.length === undefined`, and every `undefined < min` / `undefined > max`
+    // comparison is false — the bounds below silently pass. `['a@b.co']` even satisfies
+    // the email regex, because RegExp.test stringifies its argument.
+    //
+    // Trim first so the same value is validated, sent and stored: `'  a@b.co  '` fails
+    // isValidEmail untrimmed (the regex forbids whitespace) while `'  ab  '` would pass
+    // the name minimum on padding alone.
+    if (
+      typeof rawName !== 'string' ||
+      typeof rawEmail !== 'string' ||
+      typeof rawMessage !== 'string'
+    ) {
+      return jsonResponse({ success: false, message: 'All fields are required' }, 400);
+    }
+
+    // From here on these shadow the raw values, so every downstream use — the emails, the
+    // log lengths, the Resend recipient — sees exactly what was validated.
+    const name = rawName.trim();
+    const email = rawEmail.trim();
+    const message = rawMessage.trim();
+
     if (!name || !email || !message) {
-      return new Response(JSON.stringify({ success: false, message: 'All fields are required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ success: false, message: 'All fields are required' }, 400);
     }
 
-    if (!isValidEmail(email)) {
-      return new Response(JSON.stringify({ success: false, message: 'Invalid email address' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (!isValidEmail(email) || email.length > LIMITS.email.max) {
+      return jsonResponse({ success: false, message: 'Invalid email address' }, 400);
     }
 
-    if (message.length < 10 || message.length > 1000) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: 'Message must be between 10 and 1000 characters',
-        }),
+    if (name.length < LIMITS.name.min || name.length > LIMITS.name.max) {
+      return jsonResponse(
         {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
+          success: false,
+          message: `Name must be between ${LIMITS.name.min} and ${LIMITS.name.max} characters`,
+        },
+        400
+      );
+    }
+
+    if (message.length < LIMITS.message.min || message.length > LIMITS.message.max) {
+      return jsonResponse(
+        {
+          success: false,
+          message: `Message must be between ${LIMITS.message.min} and ${LIMITS.message.max} characters`,
+        },
+        400
+      );
+    }
+
+    // Rate limit after validation so a flood of malformed requests doesn't consume a
+    // legitimate visitor's quota, but before sending — the limit exists to cap outbound
+    // email, which is the expensive and abusable part.
+    if (await isRateLimited(request, env)) {
+      // This one does keep the IP, unlike the honeypot above. Exceeding the limit is a
+      // measured fact about this address rather than a guess about intent, and the address
+      // is the only actionable output — it's what a WAF or firewall rule would be written
+      // against. The limiter already holds it as its own key, so the log adds no new
+      // category of data.
+      console.warn('🚦 Rate limit exceeded for contact form', {
+        ip: request.headers.get('CF-Connecting-IP') || 'unknown',
+      });
+      return jsonResponse(
+        {
+          success: false,
+          message: 'Too many messages sent. Please try again in a minute.',
+        },
+        429,
+        { 'Retry-After': '60' }
       );
     }
 
@@ -386,22 +534,19 @@ async function handleContactForm(request, env) {
       This is an automated response. Please do not reply to this email directly.
     `;
 
-    // Send both emails via Resend
+    // Send both emails via Resend.
+    // The visitor's name, address and message are deliberately not logged — they are
+    // already delivered by email, and Workers logs are a second, longer-lived copy of
+    // personal data that nothing here needs.
     console.log('📨 Processing contact form submission:', {
-      name,
-      email,
+      email: redactEmail(email),
+      nameLength: name.length,
       messageLength: message.length,
       hostname: request.headers.get('host') || 'aswincloud.com',
-      userAgent: request.headers.get('user-agent'),
       timestamp: new Date().toISOString(),
     });
 
-    console.log('📧 Preparing to send notification email to:', 'contact@aswincloud.com');
-    console.log('📧 Preparing to send auto-reply email to:', email);
-
     try {
-      console.log('🚀 Starting email sending process...');
-
       const [notificationResult, autoReplyResult] = await Promise.all([
         sendEmail(
           'contact@aswincloud.com',
@@ -430,34 +575,21 @@ async function handleContactForm(request, env) {
       console.error('❌ Email processing failed:', {
         error: emailError.message,
         stack: emailError.stack,
-        name,
-        email,
+        email: redactEmail(email),
         timestamp: new Date().toISOString(),
       });
       // Continue with success response even if email fails
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Message sent successfully! Thank you for contacting me.',
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonResponse({
+      success: true,
+      message: 'Message sent successfully! Thank you for contacting me.',
+    });
   } catch (error) {
     console.error('Error handling contact form:', error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: 'Failed to send message. Please try again later.',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
+    return jsonResponse(
+      { success: false, message: 'Failed to send message. Please try again later.' },
+      500
     );
   }
 }
