@@ -2,9 +2,9 @@
  * @file ContactSection.jsx
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
- * @description Contact — dark form + contact cards. Submit logic (POST
- *   /api/contact with graceful offline fallback) is unchanged from the
- *   original; only the presentation is reskinned.
+ * @description Contact — dark form + contact cards. Submits to POST /api/contact
+ *   and distinguishes three outcomes: sent, input rejected (fixable by editing),
+ *   and not delivered (offer the direct address, keep what was typed).
  */
 
 import React, { useState } from 'react';
@@ -32,13 +32,27 @@ const CONTACT_INFO = [
   },
 ];
 
+/**
+ * Distinguishes "the visitor can fix this by editing the form" from "the message did not
+ * get through". They need different copy: a validation checklist is useless advice when
+ * the API is down, and the direct address is noise when the email is simply malformed.
+ */
+class SubmitError extends Error {
+  constructor(kind) {
+    super(`Submit failed: ${kind}`);
+    this.name = 'SubmitError';
+    this.kind = kind; // 'invalid' | 'failed'
+  }
+}
+
 const ContactSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   // `company` is a honeypot — see the hidden field in the form below. It is part of
   // formData purely so the existing JSON.stringify(formData) submits it unchanged.
   const [formData, setFormData] = useState({ name: '', email: '', message: '', company: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  // null | 'success' | 'invalid' (visitor can fix it) | 'failed' (delivery failed)
+  const [submitStatus, setSubmitStatus] = useState(null);
   const { createRipple } = useRipple();
   const submitButtonRef = React.useRef(null);
   const [copied, setCopied] = useState(false);
@@ -74,7 +88,7 @@ const ContactSection = () => {
     }
 
     if (!formData.name || !formData.email || !formData.message) {
-      setSubmitStatus('error');
+      setSubmitStatus('invalid');
       return;
     }
 
@@ -90,27 +104,30 @@ const ContactSection = () => {
         body: JSON.stringify(formData),
       });
 
+      // A non-JSON body (an HTML error page from a proxy, say) throws here and is handled
+      // below as a delivery failure, which is the right classification for it.
       const data = await response.json();
 
       if (response.ok && data.success) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', message: '', company: '' });
-      } else if (data.errors && data.errors.length > 0) {
-        const errorMessages = data.errors.map(err => `${err.param}: ${err.msg}`).join(', ');
-        throw new Error(`Validation failed: ${errorMessages}`);
-      } else {
-        throw new Error(data.message || 'Failed to send message');
+        return;
       }
+
+      // 4xx means the input was rejected and re-editing it can succeed. Anything else —
+      // 5xx, 502 from the Worker when Resend is down — is not the visitor's fault and
+      // retrying the same form won't help, so offer the direct address instead.
+      throw new SubmitError(response.status >= 400 && response.status < 500 ? 'invalid' : 'failed');
     } catch (error) {
       console.error('Error sending message:', error);
 
-      // Fallback: if the backend isn't reachable, don't punish the visitor.
-      if (error instanceof TypeError || error.name === 'NetworkError') {
-        setSubmitStatus('success');
-        setFormData({ name: '', email: '', message: '', company: '' });
-      } else {
-        setSubmitStatus('error');
-      }
+      // Anything that isn't a SubmitError is a transport or runtime failure — notably
+      // fetch()'s TypeError when the request never completed (offline, DNS, CORS). That
+      // case used to be reported as success on the theory that it shouldn't "punish the
+      // visitor", but it told them a message had been sent that had not been, and cleared
+      // the form, so they lost what they wrote and had no reason to follow up. Treat it as
+      // the delivery failure it is and keep their text so the mailto fallback is useful.
+      setSubmitStatus(error instanceof SubmitError ? error.kind : 'failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -119,6 +136,18 @@ const ContactSection = () => {
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  // Pre-fills the visitor's own mail client with what they already typed, so the fallback
+  // costs them a click rather than retyping the message. encodeURIComponent is load-bearing
+  // in both fields: an unencoded `&` or `?` in the body would otherwise terminate it and be
+  // read as further mailto headers.
+  const mailtoFallback = React.useMemo(() => {
+    const subject = encodeURIComponent(
+      formData.name ? `Portfolio enquiry from ${formData.name}` : 'Portfolio enquiry'
+    );
+    const body = encodeURIComponent(formData.message);
+    return `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+  }, [formData.name, formData.message]);
 
   const fieldClass =
     'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:opacity-50';
@@ -247,7 +276,7 @@ const ContactSection = () => {
                 </div>
               )}
 
-              {submitStatus === 'error' && (
+              {submitStatus === 'invalid' && (
                 <div
                   role='alert'
                   className='flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4'
@@ -262,6 +291,34 @@ const ContactSection = () => {
                       <li>Email: a valid email address</li>
                       <li>Message: 10–1000 characters</li>
                     </ul>
+                  </div>
+                </div>
+              )}
+
+              {/* Delivery failed and re-submitting won't help, so the only useful thing to
+                  offer is a route that doesn't depend on this API. The form keeps its
+                  contents; the mailto carries them across so nothing has to be retyped. */}
+              {submitStatus === 'failed' && (
+                <div
+                  role='alert'
+                  className='flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4'
+                >
+                  <AlertTriangle size={18} className='mt-0.5 shrink-0 text-amber-400' />
+                  <div className='min-w-0'>
+                    <p className='text-sm font-medium text-amber-200'>
+                      Your message wasn&apos;t sent.
+                    </p>
+                    <p className='mt-1 text-sm text-slate-400'>
+                      Something went wrong on my end — your text is still here, and nothing reached
+                      me. Email me directly instead:
+                    </p>
+                    <a
+                      href={mailtoFallback}
+                      className='mt-3 inline-flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-100 transition-colors hover:border-amber-400/60 hover:bg-amber-500/20'
+                    >
+                      <Mail size={15} />
+                      {EMAIL}
+                    </a>
                   </div>
                 </div>
               )}
