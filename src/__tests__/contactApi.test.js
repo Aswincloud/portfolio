@@ -319,6 +319,78 @@ describe('contact form validation', () => {
     await handleContactForm(contactRequest({ name: '', email: '', message: '' }), env);
     expect(env.CONTACT_RATE_LIMIT.limit).not.toHaveBeenCalled();
   });
+
+  // JSON lets the caller choose the type. `!value` only rejects the falsy ones, so a
+  // number/object/array is truthy, has no `.length`, and every `undefined < min` and
+  // `undefined > max` comparison below it reads false — the bounds pass by default.
+  // Each of these cleared validation entirely before the type check.
+  it.each([
+    ['a number', { name: 12345 }],
+    ['an object', { name: { toString: () => 'x' } }],
+    ['an array', { name: ['Jane', 'Doe'] }],
+    ['a boolean', { message: true }],
+    ['a number for the message', { message: 42 }],
+    // RegExp.test stringifies, so this satisfies the email pattern by coercion.
+    ['an array for the email', { email: ['jane@example.com'] }],
+    ['null', { name: null }],
+    ['a nested payload', { message: { text: 'hello there, this is long enough' } }],
+  ])('rejects %s in place of a string field', async (_label, override) => {
+    const response = await handleContactForm(
+      contactRequest({ ...validSubmission, ...override }),
+      allowingEnv()
+    );
+    expect(response.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['name', { name: '   ' }],
+    ['email', { email: '   ' }],
+    ['message', { message: '          ' }],
+  ])('rejects a whitespace-only %s', async (_label, override) => {
+    const response = await handleContactForm(
+      contactRequest({ ...validSubmission, ...override }),
+      allowingEnv()
+    );
+    expect(response.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('measures the bounds against the trimmed value, not the padding', async () => {
+    // `'  a  '` is 5 characters but one letter. Counting the padding would admit a name
+    // that fails the minimum it exists to enforce.
+    const response = await handleContactForm(
+      contactRequest({ ...validSubmission, name: `  ${'a'} ` }),
+      allowingEnv()
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('accepts a padded address and sends to the trimmed one', async () => {
+    // The regex forbids whitespace, so an untrimmed '  jane@example.com  ' would 400 on a
+    // perfectly valid address. Validating the trimmed value means the address that passes
+    // is also the address Resend receives.
+    muteLogs();
+    const response = await handleContactForm(
+      contactRequest({ ...validSubmission, email: '  jane@example.com  ' }),
+      allowingEnv()
+    );
+    expect(response.status).toBe(200);
+    const recipients = fetchMock.mock.calls.map(([, init]) => JSON.parse(init.body).to[0]);
+    expect(recipients).toContain('jane@example.com');
+    for (const to of recipients) expect(to).not.toMatch(/^\s|\s$/);
+  });
+
+  it('does not carry padding into the delivered email body', async () => {
+    muteLogs();
+    await handleContactForm(
+      contactRequest({ ...validSubmission, name: '  Jane Doe  ' }),
+      allowingEnv()
+    );
+    const bodies = fetchMock.mock.calls.map(([, init]) => JSON.parse(init.body).html);
+    expect(bodies.join('')).not.toContain('  Jane Doe  ');
+    expect(bodies.join('')).toContain('Jane Doe');
+  });
 });
 
 describe('honeypot', () => {
@@ -369,6 +441,33 @@ describe('honeypot', () => {
     // Older cached copies of the bundle post without `company`.
     await handleContactForm(contactRequest(validSubmission), allowingEnv());
     expect(fetchMock).toHaveBeenCalled();
+  });
+
+  it('logs no IP, user-agent or submitted content when it fires', async () => {
+    // The honeypot is a heuristic — autofill can trip it for a real person. Logging who
+    // they are and what device they used writes the PII this change removes from the
+    // success path, for someone who may have been misclassified.
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    await handleContactForm(
+      contactRequest(
+        { ...validSubmission, company: 'Acme Bots Inc' },
+        { 'CF-Connecting-IP': '203.0.113.42', 'user-agent': 'Mozilla/5.0 (BotHunter 9.9)' }
+      ),
+      allowingEnv()
+    );
+    const written = JSON.stringify(log.mock.calls);
+    expect(written).toContain('Honeypot');
+    for (const secret of [
+      '203.0.113.42',
+      'BotHunter',
+      'Mozilla',
+      validSubmission.email,
+      validSubmission.name,
+      validSubmission.message,
+      'Acme Bots Inc',
+    ]) {
+      expect(written).not.toContain(secret);
+    }
   });
 });
 

@@ -400,15 +400,23 @@ function jsonResponse(body, status = 200, extraHeaders = {}) {
 export async function handleContactForm(request, env) {
   try {
     const payload = await request.json();
-    const { name, email, message, company } = payload;
+    // `raw*` names deliberately: these are attacker-controlled and of unknown type until
+    // validated below, which rebinds the trimmed strings as `name`/`email`/`message`. The
+    // naming is what stops a later edit from reaching past validation to the raw value.
+    const { name: rawName, email: rawEmail, message: rawMessage, company } = payload;
 
     // Honeypot. `company` is rendered off-screen and left empty by real visitors; bots
     // that fill every field in the form give themselves away. Answer 200 with the normal
     // success body so the bot can't distinguish rejection from delivery and retry.
     if (typeof company === 'string' && company.trim() !== '') {
+      // No IP and no user-agent. The honeypot is a heuristic, not proof of a bot: a
+      // password manager or aggressive autofill can put a value in an off-screen field
+      // that a real person never saw. Logging the address and device string of whoever
+      // trips it writes visitor PII and a fingerprint into the log retention window —
+      // the same thing this change removes from the success path — for someone who may
+      // simply have been misclassified. The count is what's actionable; who it was is not.
       console.log('🍯 Honeypot triggered — dropping submission', {
-        ip: request.headers.get('CF-Connecting-IP') || 'unknown',
-        userAgent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
       });
       return jsonResponse({
         success: true,
@@ -416,7 +424,32 @@ export async function handleContactForm(request, env) {
       });
     }
 
-    // Validate input
+    // Validate input.
+    //
+    // The type check is load-bearing, not defensive boilerplate: JSON gives the caller
+    // free choice of type, and `!value` only rejects the falsy ones. A number, object or
+    // array is truthy and has no useful `.length`, so `name: 12345` and `message: 42`
+    // both read `.length === undefined`, and every `undefined < min` / `undefined > max`
+    // comparison is false — the bounds below silently pass. `['a@b.co']` even satisfies
+    // the email regex, because RegExp.test stringifies its argument.
+    //
+    // Trim first so the same value is validated, sent and stored: `'  a@b.co  '` fails
+    // isValidEmail untrimmed (the regex forbids whitespace) while `'  ab  '` would pass
+    // the name minimum on padding alone.
+    if (
+      typeof rawName !== 'string' ||
+      typeof rawEmail !== 'string' ||
+      typeof rawMessage !== 'string'
+    ) {
+      return jsonResponse({ success: false, message: 'All fields are required' }, 400);
+    }
+
+    // From here on these shadow the raw values, so every downstream use — the emails, the
+    // log lengths, the Resend recipient — sees exactly what was validated.
+    const name = rawName.trim();
+    const email = rawEmail.trim();
+    const message = rawMessage.trim();
+
     if (!name || !email || !message) {
       return jsonResponse({ success: false, message: 'All fields are required' }, 400);
     }
@@ -449,6 +482,11 @@ export async function handleContactForm(request, env) {
     // legitimate visitor's quota, but before sending — the limit exists to cap outbound
     // email, which is the expensive and abusable part.
     if (await isRateLimited(request, env)) {
+      // This one does keep the IP, unlike the honeypot above. Exceeding the limit is a
+      // measured fact about this address rather than a guess about intent, and the address
+      // is the only actionable output — it's what a WAF or firewall rule would be written
+      // against. The limiter already holds it as its own key, so the log adds no new
+      // category of data.
       console.warn('🚦 Rate limit exceeded for contact form', {
         ip: request.headers.get('CF-Connecting-IP') || 'unknown',
       });
