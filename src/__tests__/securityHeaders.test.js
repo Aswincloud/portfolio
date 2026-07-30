@@ -57,6 +57,18 @@ describe('collectInlineScriptHashes', () => {
     const [after] = collectInlineScriptHashes('<script>a() // edited</script>');
     expect(before).not.toBe(after);
   });
+
+  // HTML tag and attribute names are case-insensitive, so the scanner must be too.
+  // A missed `<SCRIPT>` means a missing hash, which means CSP blocks a script the
+  // build intended to allow.
+  it('matches tags and attributes regardless of case', () => {
+    expect(collectInlineScriptHashes('<SCRIPT>alert(1)</SCRIPT>')).toEqual([sha256('alert(1)')]);
+    expect(collectInlineScriptHashes('<ScRiPt>alert(1)</sCrIpT>')).toEqual([sha256('alert(1)')]);
+    expect(collectInlineScriptHashes('<SCRIPT SRC="/app.js"></SCRIPT>')).toEqual([]);
+    expect(
+      collectInlineScriptHashes('<script TYPE="APPLICATION/LD+JSON">{"a":1}</script>')
+    ).toEqual([]);
+  });
 });
 
 describe('collectEventHandlerHashes', () => {
@@ -68,6 +80,11 @@ describe('collectEventHandlerHashes', () => {
   it('deduplicates identical handlers', () => {
     const html = '<a onclick="go()"></a><a onclick="go()"></a>';
     expect(collectEventHandlerHashes(html)).toEqual([sha256('go()')]);
+  });
+
+  it('matches handler attributes regardless of case', () => {
+    expect(collectEventHandlerHashes('<a ONCLICK="go()"></a>')).toEqual([sha256('go()')]);
+    expect(collectEventHandlerHashes('<a OnLoad="go()"></a>')).toEqual([sha256('go()')]);
   });
 });
 

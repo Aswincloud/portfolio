@@ -40,12 +40,16 @@ const sha256 = source => `'sha256-${createHash('sha256').update(source, 'utf8').
  */
 export function collectInlineScriptHashes(html) {
   const hashes = [];
-  const scriptTag = /<script([^>]*)>([\s\S]*?)<\/script>/g;
+  // Every pattern below is case-insensitive: HTML tag and attribute names are, so
+  // `<SCRIPT>` or `SRC=` would otherwise slip past and produce a policy that doesn't
+  // match the page (a missing hash means the browser blocks a script the build meant
+  // to allow).
+  const scriptTag = /<script([^>]*)>([\s\S]*?)<\/script>/gi;
   let match;
   while ((match = scriptTag.exec(html)) !== null) {
     const [, attrs, body] = match;
-    if (/\bsrc\s*=/.test(attrs)) continue;
-    if (/type\s*=\s*["']application\/ld\+json["']/.test(attrs)) continue;
+    if (/\bsrc\s*=/i.test(attrs)) continue;
+    if (/type\s*=\s*["']application\/ld\+json["']/i.test(attrs)) continue;
     hashes.push(sha256(body));
   }
   return hashes;
@@ -58,7 +62,7 @@ export function collectInlineScriptHashes(html) {
  */
 export function collectEventHandlerHashes(html) {
   const hashes = new Set();
-  const handler = /\son[a-z]+\s*=\s*"([^"]*)"/g;
+  const handler = /\son[a-z]+\s*=\s*"([^"]*)"/gi;
   let match;
   while ((match = handler.exec(html)) !== null) hashes.add(sha256(match[1]));
   return [...hashes];
