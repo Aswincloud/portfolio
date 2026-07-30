@@ -418,8 +418,11 @@ export async function handleContactForm(request, env) {
       console.log('🍯 Honeypot triggered — dropping submission', {
         timestamp: new Date().toISOString(),
       });
+      // Byte-identical to the real success response below, including `delivered` — a
+      // shape difference here would be exactly the signal the honeypot exists to deny.
       return jsonResponse({
         success: true,
+        delivered: true,
         message: 'Message sent successfully! Thank you for contacting me.',
       });
     }
@@ -546,43 +549,66 @@ export async function handleContactForm(request, env) {
       timestamp: new Date().toISOString(),
     });
 
-    try {
-      const [notificationResult, autoReplyResult] = await Promise.all([
-        sendEmail(
-          'contact@aswincloud.com',
-          `New Portfolio Contact from ${name}`,
-          notificationHTML,
-          notificationText,
-          request.headers.get('host') || 'aswincloud.com',
-          env
-        ),
-        sendEmail(
-          email,
-          'Thank you for contacting me!',
-          autoReplyHTML,
-          autoReplyText,
-          request.headers.get('host') || 'aswincloud.com',
-          env
-        ),
-      ]);
+    // allSettled, not all: the two sends are not equally important, so their outcomes
+    // have to be inspected separately rather than collapsed into one rejection.
+    const [notification, autoReply] = await Promise.allSettled([
+      sendEmail(
+        'contact@aswincloud.com',
+        `New Portfolio Contact from ${name}`,
+        notificationHTML,
+        notificationText,
+        request.headers.get('host') || 'aswincloud.com',
+        env
+      ),
+      sendEmail(
+        email,
+        'Thank you for contacting me!',
+        autoReplyHTML,
+        autoReplyText,
+        request.headers.get('host') || 'aswincloud.com',
+        env
+      ),
+    ]);
 
-      console.log('✅ Both emails sent successfully:', {
-        notificationResult,
-        autoReplyResult,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (emailError) {
-      console.error('❌ Email processing failed:', {
-        error: emailError.message,
-        stack: emailError.stack,
+    // The notification is the delivery. If it failed, the message reached nobody, and
+    // the previous behaviour — logging the error and answering `success: true` anyway —
+    // meant the visitor was told their message was sent when it had been dropped. They
+    // had no reason to follow up, and no copy of what they wrote. Report the failure and
+    // let the client offer the mailto fallback.
+    if (notification.status === 'rejected') {
+      console.error('❌ Notification email failed — submission not delivered:', {
+        error: notification.reason?.message,
+        autoReplyStatus: autoReply.status,
         email: redactEmail(email),
         timestamp: new Date().toISOString(),
       });
-      // Continue with success response even if email fails
+      return jsonResponse(
+        {
+          success: false,
+          delivered: false,
+          message:
+            'Your message could not be delivered. Please email contact@aswincloud.com directly.',
+        },
+        502
+      );
+    }
+
+    // The auto-reply is a courtesy to the visitor, so its failure is not theirs to act
+    // on: the message did reach its destination. Saying "failed" here would be false and
+    // would prompt a duplicate submission.
+    if (autoReply.status === 'rejected') {
+      console.warn('⚠️ Auto-reply failed but the notification was delivered:', {
+        error: autoReply.reason?.message,
+        email: redactEmail(email),
+        timestamp: new Date().toISOString(),
+      });
+    } else {
+      console.log('✅ Both emails sent successfully:', { timestamp: new Date().toISOString() });
     }
 
     return jsonResponse({
       success: true,
+      delivered: true,
       message: 'Message sent successfully! Thank you for contacting me.',
     });
   } catch (error) {

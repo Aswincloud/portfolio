@@ -33,9 +33,14 @@ import {
  */
 let fetchMock;
 beforeEach(() => {
+  // mockImplementation, not mockResolvedValue: a single Response instance shared across
+  // both sends would have its body consumed by the first, and the second read throws
+  // "Body has already been read". Each call gets its own.
   fetchMock = vi
     .spyOn(globalThis, 'fetch')
-    .mockResolvedValue(new Response(JSON.stringify({ id: 'stub-email-id' }), { status: 200 }));
+    .mockImplementation(
+      async () => new Response(JSON.stringify({ id: 'stub-email-id' }), { status: 200 })
+    );
 });
 afterEach(() => {
   vi.restoreAllMocks();
@@ -551,18 +556,93 @@ describe('log hygiene', () => {
       lines.push(args.map(a => (typeof a === 'string' ? a : JSON.stringify(a))).join(' '));
     vi.spyOn(console, 'log').mockImplementation(capture);
     vi.spyOn(console, 'error').mockImplementation(capture);
-    fetchMock.mockResolvedValue(new Response('domain not verified', { status: 403 }));
+    // Fresh Response per call — see the note on the global stub.
+    fetchMock.mockImplementation(async () => new Response('domain not verified', { status: 403 }));
 
     const response = await handleContactForm(
       contactRequest({ ...validSubmission, email: 'jane.doe@example.com' }),
       allowingEnv()
     );
 
-    // Note: the endpoint still reports success here. That behaviour is the subject of
-    // a separate fix; this test only pins the logging.
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(502);
     const output = lines.join('\n');
     expect(output).not.toContain('jane.doe@example.com');
     expect(output).toContain('403');
+  });
+});
+
+describe('delivery outcome', () => {
+  beforeEach(muteLogs);
+
+  /**
+   * Both sends go to the same URL, so route by payload: `to` is contact@aswincloud.com
+   * for the notification and the visitor's address for the auto-reply.
+   */
+  const routeResend = ({ notification, autoReply }) => {
+    fetchMock.mockImplementation(async (_url, init) => {
+      const { to } = JSON.parse(init.body);
+      const outcome = to[0] === 'contact@aswincloud.com' ? notification : autoReply;
+      return outcome === 'ok'
+        ? new Response(JSON.stringify({ id: 'stub-email-id' }), { status: 200 })
+        : new Response('rejected by provider', { status: 422 });
+    });
+  };
+
+  it('reports success when both emails are sent', async () => {
+    routeResend({ notification: 'ok', autoReply: 'ok' });
+    const response = await handleContactForm(contactRequest(validSubmission), allowingEnv());
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ success: true, delivered: true });
+  });
+
+  // The bug this suite exists for: the message reached nobody, and the caller was told
+  // it had been sent.
+  it('reports failure when the notification email could not be sent', async () => {
+    routeResend({ notification: 'fail', autoReply: 'ok' });
+    const response = await handleContactForm(contactRequest(validSubmission), allowingEnv());
+
+    expect(response.status).toBe(502);
+    const body = await response.json();
+    expect(body).toMatchObject({ success: false, delivered: false });
+    // The client shows a mailto fallback, so the address has to be in the copy.
+    expect(body.message).toContain('contact@aswincloud.com');
+  });
+
+  it('still reports success when only the courtesy auto-reply fails', async () => {
+    // The submission did arrive. Telling the visitor it failed would be false and
+    // would prompt a duplicate.
+    routeResend({ notification: 'ok', autoReply: 'fail' });
+    const response = await handleContactForm(contactRequest(validSubmission), allowingEnv());
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ success: true, delivered: true });
+  });
+
+  it('attempts the auto-reply even when the notification fails', async () => {
+    // allSettled, not all: a short-circuit here would drop a send that might succeed.
+    routeResend({ notification: 'fail', autoReply: 'ok' });
+    await handleContactForm(contactRequest(validSubmission), allowingEnv());
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('reports failure when the transport itself throws', async () => {
+    fetchMock.mockRejectedValue(new TypeError('network unreachable'));
+    const response = await handleContactForm(contactRequest(validSubmission), allowingEnv());
+    expect(response.status).toBe(502);
+    await expect(response.json()).resolves.toMatchObject({ success: false, delivered: false });
+  });
+
+  it('gives the honeypot a response byte-identical to a real success', async () => {
+    // Any difference in shape — including the new `delivered` field — would tell a bot
+    // it had been detected.
+    routeResend({ notification: 'ok', autoReply: 'ok' });
+    const real = await handleContactForm(contactRequest(validSubmission), allowingEnv());
+    const trapped = await handleContactForm(
+      contactRequest({ ...validSubmission, company: 'AcmeBot' }),
+      allowingEnv()
+    );
+
+    expect(trapped.status).toBe(real.status);
+    expect(await trapped.text()).toBe(await real.text());
   });
 });
