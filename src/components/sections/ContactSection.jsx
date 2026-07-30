@@ -34,7 +34,9 @@ const CONTACT_INFO = [
 
 const ContactSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  // `company` is a honeypot — see the hidden field in the form below. It is part of
+  // formData purely so the existing JSON.stringify(formData) submits it unchanged.
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', company: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
   const { createRipple } = useRipple();
@@ -92,7 +94,7 @@ const ContactSection = () => {
 
       if (response.ok && data.success) {
         setSubmitStatus('success');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', message: '', company: '' });
       } else if (data.errors && data.errors.length > 0) {
         const errorMessages = data.errors.map(err => `${err.param}: ${err.msg}`).join(', ');
         throw new Error(`Validation failed: ${errorMessages}`);
@@ -105,7 +107,7 @@ const ContactSection = () => {
       // Fallback: if the backend isn't reachable, don't punish the visitor.
       if (error instanceof TypeError || error.name === 'NetworkError') {
         setSubmitStatus('success');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', message: '', company: '' });
       } else {
         setSubmitStatus('error');
       }
@@ -205,6 +207,30 @@ const ContactSection = () => {
             className='card-surface p-6 sm:p-8'
           >
             <form onSubmit={handleSubmit} className='space-y-5'>
+              {/*
+                Honeypot. Bots that fill every input in the form give themselves away;
+                the Worker silently drops any submission where this arrives non-empty.
+
+                Hidden with a wrapper that is removed from the accessibility tree and
+                taken out of the tab order, rather than `type='hidden'` (which bots read
+                and skip) or `display: none` (which some password managers and mobile
+                browsers still autofill). `autoComplete='off'` keeps browsers from
+                helpfully filling it in on a real visitor's behalf, which would otherwise
+                reject a genuine message.
+              */}
+              <div aria-hidden='true' className='absolute -left-[9999px] h-0 w-0 overflow-hidden'>
+                <label htmlFor='contact-company'>Company (leave this field empty)</label>
+                <input
+                  id='contact-company'
+                  type='text'
+                  name='company'
+                  value={formData.company}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete='off'
+                />
+              </div>
+
               {submitStatus === 'success' && (
                 <div
                   role='status'
