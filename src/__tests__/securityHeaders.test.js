@@ -69,6 +69,26 @@ describe('collectInlineScriptHashes', () => {
       collectInlineScriptHashes('<script TYPE="APPLICATION/LD+JSON">{"a":1}</script>')
     ).toEqual([]);
   });
+
+  // These end-tag forms all close the element per the HTML parser, so the body must stop
+  // there. Requiring `>` immediately after the name would swallow everything up to the
+  // next literal `</script>` and hash the wrong text.
+  it.each([
+    ['a space before the closing bracket', '<script>alert(1)</script >'],
+    ['a tab before the closing bracket', '<script>alert(1)</script\t>'],
+    ['a newline before the closing bracket', '<script>alert(1)</script\n>'],
+    ['attributes on the end tag', '<script>alert(1)</script foo="bar">'],
+  ])('terminates the body on an end tag with %s', (_label, html) => {
+    expect(collectInlineScriptHashes(html)).toEqual([sha256('alert(1)')]);
+  });
+
+  it('still separates adjacent scripts when the end tag is padded', () => {
+    // The end-tag match consumes the delimiter, so check it doesn't eat the next `<`.
+    expect(collectInlineScriptHashes('<script>a()</script ><script>b()</script>')).toEqual([
+      sha256('a()'),
+      sha256('b()'),
+    ]);
+  });
 });
 
 describe('collectEventHandlerHashes', () => {
@@ -85,6 +105,22 @@ describe('collectEventHandlerHashes', () => {
   it('matches handler attributes regardless of case', () => {
     expect(collectEventHandlerHashes('<a ONCLICK="go()"></a>')).toEqual([sha256('go()')]);
     expect(collectEventHandlerHashes('<a OnLoad="go()"></a>')).toEqual([sha256('go()')]);
+  });
+
+  // The parser honours all three forms as handlers, so a policy that only hashes
+  // double-quoted ones would have the browser block the others.
+  it.each([
+    ['double-quoted', `<a onclick="go()"></a>`],
+    ['single-quoted', `<a onclick='go()'></a>`],
+    ['unquoted', `<a onclick=go()></a>`],
+  ])('hashes %s handler values', (_label, html) => {
+    expect(collectEventHandlerHashes(html)).toEqual([sha256('go()')]);
+  });
+
+  it('deduplicates the same handler written with different quoting', () => {
+    expect(collectEventHandlerHashes(`<a onclick="go()"></a><b onmouseover='go()'></b>`)).toEqual([
+      sha256('go()'),
+    ]);
   });
 });
 

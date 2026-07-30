@@ -40,11 +40,14 @@ const sha256 = source => `'sha256-${createHash('sha256').update(source, 'utf8').
  */
 export function collectInlineScriptHashes(html) {
   const hashes = [];
-  // Every pattern below is case-insensitive: HTML tag and attribute names are, so
-  // `<SCRIPT>` or `SRC=` would otherwise slip past and produce a policy that doesn't
-  // match the page (a missing hash means the browser blocks a script the build meant
-  // to allow).
-  const scriptTag = /<script([^>]*)>([\s\S]*?)<\/script>/gi;
+  // Matched against what the HTML parser actually treats as a script element, not the
+  // narrowest spelling of one — a form this misses means a missing hash, and CSP then
+  // blocks a script the build meant to allow.
+  //   - `i`: tag and attribute names are case-insensitive, so `<SCRIPT>` and `SRC=` count.
+  //   - `[\s>]` after the closing name: `</script >` and `</script foo>` also close the
+  //     element (verified against a real HTML parser), so requiring `>` immediately would
+  //     run the captured body on past the true end of the script.
+  const scriptTag = /<script([^>]*)>([\s\S]*?)<\/script[\s>]/gi;
   let match;
   while ((match = scriptTag.exec(html)) !== null) {
     const [, attrs, body] = match;
@@ -62,9 +65,14 @@ export function collectInlineScriptHashes(html) {
  */
 export function collectEventHandlerHashes(html) {
   const hashes = new Set();
-  const handler = /\son[a-z]+\s*=\s*"([^"]*)"/gi;
+  // All three attribute-value forms the parser accepts — double-quoted, single-quoted and
+  // unquoted (confirmed against a real parser). Matching only `"…"` would leave a
+  // single-quoted handler unhashed, and CSP would then block it.
+  const handler = /\son[a-z]+\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/gi;
   let match;
-  while ((match = handler.exec(html)) !== null) hashes.add(sha256(match[1]));
+  while ((match = handler.exec(html)) !== null) {
+    hashes.add(sha256(match[1] ?? match[2] ?? match[3]));
+  }
   return [...hashes];
 }
 
