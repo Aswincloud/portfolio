@@ -109,7 +109,9 @@ temp/
 *.sw?
 
 # Cloudflare Workers
-public/_redirects 
+public/_redirects
+# Local state from `wrangler dev`
+.wrangler/
 # Playwright
 test-results/
 playwright-report/

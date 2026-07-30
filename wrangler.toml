@@ -1,6 +1,8 @@
 name = "aswin-portfolio"
 main = "worker.js"
-compatibility_date = "2024-01-01"
+# >= 2025-04-01 enables SPA navigation-request optimization: navigations are
+# served from assets without invoking the Worker.
+compatibility_date = "2025-04-01"
 preview_urls = true
 
 [vars]
@@ -17,3 +19,10 @@ zone_name = "aswincloud.com"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+# Deep links (/privacy, /terms, …) are client-side routes, so unmatched paths
+# must return index.html rather than 404.
+not_found_handling = "single-page-application"
+# Only the API needs the Worker. Assets are served directly and get their
+# security headers from dist/_headers (generated at build time), which is both
+# cheaper and lower-latency than routing every request through the script.
+run_worker_first = ["/api/*"]
