@@ -4,6 +4,10 @@ node_modules/
 # Build outputs
 dist/
 build/
+# `npm run test:coverage` output. Prettier happens to accept istanbul's current
+# generated files, so this is not fixing a present failure — it stops a future
+# reporter release from breaking `format:check` for anyone who ran coverage.
+coverage/
 
 # Environment files
 .env

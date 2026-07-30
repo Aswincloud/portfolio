@@ -66,13 +66,17 @@ export const useCountUp = (value, start, { duration = 1500, delay = 0 } = {}) =>
     doneRef.current = true;
     const from = 0;
     const { target, prefix, suffix } = parsed;
-    let startTs = 0;
+    // null rather than 0 as the "not yet started" sentinel: a browser is free to
+    // pass 0 as the first frame timestamp (it is a time origin offset, and the
+    // spec sets no floor), and a falsy check would then re-anchor the start on
+    // every frame — t stays 0 and the number never leaves its initial value.
+    let startTs = null;
     // easeOutQuad — gentle settle at the end but near-even pacing across the
     // run, so the digits visibly tick up rather than snapping to the total.
     const ease = t => 1 - (1 - t) * (1 - t);
 
     const tick = ts => {
-      if (!startTs) startTs = ts;
+      if (startTs === null) startTs = ts;
       const t = Math.min((ts - startTs) / duration, 1);
       const current = Math.round(from + (target - from) * ease(t));
       setDisplay(`${prefix}${current}${suffix}`);

@@ -18,20 +18,45 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
+// Web Storage is not always available: Safari's private mode throws on setItem,
+// browsers with cookies disabled throw on access, and an error loop can exhaust the
+// origin quota. That matters more here than anywhere else in the app — these helpers
+// run from componentDidCatch, and a throw there escapes the boundary, so React gives
+// up on the subtree and renders nothing. Losing the log is acceptable; losing the
+// fallback turns a contained failure into a blank page.
+const readStorage = (storage, key) => {
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writeStorage = (storage, key, value) => {
+  try {
+    storage.setItem(key, value);
+  } catch (e) {
+    console.warn(`Failed to write ${key} to storage:`, e);
+  }
+};
+
 // Error analytics service
 class ErrorAnalytics {
   static logError(error, errorInfo, context = {}) {
     const errorData = {
       timestamp: new Date().toISOString(),
-      message: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack,
+      // `throw` accepts any value, and third-party code does throw bare strings and
+      // plain objects. Those have no .message/.name/.stack, so read them defensively
+      // and fall back to the value itself for the message.
+      message: error?.message ?? String(error),
+      stack: error?.stack ?? '',
+      componentStack: errorInfo?.componentStack ?? '',
       userAgent: navigator.userAgent,
       url: window.location.href,
       userId: this.getUserId(),
       sessionId: this.getSessionId(),
       context,
-      errorType: error.name,
+      errorType: error?.name ?? typeof error,
       severity: this.calculateSeverity(error),
     };
 
@@ -51,19 +76,22 @@ class ErrorAnalytics {
   }
 
   static logToLocalStorage(errorData) {
+    let errors = [];
     try {
-      const errors = JSON.parse(localStorage.getItem('portfolio_errors') || '[]');
-      errors.push(errorData);
-
-      // Keep only last 50 errors
-      if (errors.length > 50) {
-        errors.splice(0, errors.length - 50);
-      }
-
-      localStorage.setItem('portfolio_errors', JSON.stringify(errors));
+      errors = JSON.parse(readStorage(localStorage, 'portfolio_errors') || '[]');
     } catch (e) {
-      console.warn('Failed to log error to localStorage:', e);
+      // Corrupt history — start over rather than dropping this report too.
+      console.warn('Failed to read error history; starting a new one:', e);
     }
+
+    errors.push(errorData);
+
+    // Keep only last 50 errors
+    if (errors.length > 50) {
+      errors.splice(0, errors.length - 50);
+    }
+
+    writeStorage(localStorage, 'portfolio_errors', JSON.stringify(errors));
   }
 
   static logToAnalytics(errorData) {
@@ -93,23 +121,28 @@ class ErrorAnalytics {
   }
 
   static getUserId() {
-    return localStorage.getItem('portfolio_user_id') || 'anonymous';
+    return readStorage(localStorage, 'portfolio_user_id') || 'anonymous';
   }
 
   static getSessionId() {
-    let sessionId = sessionStorage.getItem('portfolio_session_id');
+    let sessionId = readStorage(sessionStorage, 'portfolio_session_id');
     if (!sessionId) {
       // Non-security correlation ID for grouping error reports by session.
       sessionId = crypto.randomUUID();
-      sessionStorage.setItem('portfolio_session_id', sessionId);
+      writeStorage(sessionStorage, 'portfolio_session_id', sessionId);
     }
     return sessionId;
   }
 
   static calculateSeverity(error) {
-    if (error.name === 'ChunkLoadError') return 'warning';
-    if (error.message.includes('Network')) return 'warning';
-    if (error.message.includes('Loading')) return 'warning';
+    if (error?.name === 'ChunkLoadError') return 'warning';
+    // A thrown string or plain object has no .message, and reading .includes off
+    // undefined threw from inside componentDidCatch — which escapes the boundary and
+    // leaves React with no fallback to render, i.e. a blank page instead of a
+    // recoverable error screen. Normalise before matching.
+    const message = String(error?.message ?? error ?? '');
+    if (message.includes('Network')) return 'warning';
+    if (message.includes('Loading')) return 'warning';
     return 'error';
   }
 }
@@ -141,13 +174,20 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
 
-    // Log error with context
-    ErrorAnalytics.logError(error, errorInfo, {
-      component: this.props.fallbackComponent || 'Unknown',
-      retryCount: this.state.retryCount,
-      timestamp: Date.now(),
-      props: this.props.context || {},
-    });
+    // Belt and braces around the individual guards in ErrorAnalytics: anything that
+    // escapes this method escapes the boundary too, and React then unmounts the
+    // subtree without rendering the fallback. Reporting is best-effort; showing the
+    // visitor a recoverable error page is not.
+    try {
+      ErrorAnalytics.logError(error, errorInfo, {
+        component: this.props.fallbackComponent || 'Unknown',
+        retryCount: this.state.retryCount,
+        timestamp: Date.now(),
+        props: this.props.context || {},
+      });
+    } catch (e) {
+      console.warn('Failed to report caught error:', e);
+    }
   }
 
   handleRetry = async () => {
