@@ -130,7 +130,7 @@ const AboutSection = React.memo(() => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                className='group card-surface p-6 transition-colors duration-300 hover:border-brand-500/30 hover:bg-surface-2'
+                className='group card-surface card-lift p-6'
               >
                 <div className='flex items-start gap-4'>
                   <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300 transition-transform duration-300 group-hover:scale-105'>
