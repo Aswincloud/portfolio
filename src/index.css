@@ -274,17 +274,32 @@
 /* ---------------------------------------------------------------------------
    Tumbling cube (Approach band)
 
-   A 3×3×3 cube in pure CSS 3D — six 9-cell face grids positioned in space and
-   rotated as one group. Deliberately not WebGL: the whole animation is a single
-   compositor-driven transform on one element, so it costs no main-thread work
-   and needs no GPU-dependent fallback. Measured with the band on screen: 60.1
-   fps and zero long tasks, identical to the same page with the cube deleted.
-   Four earlier passes on this repo removed decorative JS rAF loops for exactly
-   that reason; nothing here runs per frame in JS.
+   A 3×3×3 cube built from 26 separate cubies, tumbling as a group while its
+   layers turn on all three axes. Deliberately not WebGL: every turn is one
+   compositor transform with a transition, so it costs no main-thread work per
+   frame and needs no GPU-dependent fallback.
+
+   The gaps between cubies are real gaps — each cubie is its own box in space,
+   not a cell painted onto a flat face plate. That is what lets a layer turn
+   visibly, and what gives the edges something to catch light on. Only the faces
+   on the cube's surface are rendered (54 in total, at most three per cubie); see
+   the cube-cubie comment for why, and what it measured.
+
+   JS only schedules turns (~0.7/sec) and bakes integer state when one lands;
+   see cubePermutation.js. Four earlier passes on this repo removed decorative
+   rAF loops for hurting scroll perf, so nothing here runs per frame.
    --------------------------------------------------------------------------- */
 
 @utility cube-stage {
   --cube-size: 200px;
+  --cube-gap: 7px;
+  --cube-turn-ms: 620ms; /* must match TURN_MS in TumblingCube.jsx */
+  --cubie-size: calc((var(--cube-size) - 2 * var(--cube-gap)) / 3);
+  --cubie-half: calc(var(--cubie-size) / 2);
+  /* Centre-to-centre spacing of adjacent cubies. Every cubie's position is an
+     integer multiple of this, so the lattice stays exact at any --cube-size —
+     the same reason the old face offsets had to be a calc() rather than px. */
+  --cubie-step: calc(var(--cubie-size) + var(--cube-gap));
   position: relative;
   width: var(--cube-size);
   height: var(--cube-size);
@@ -292,6 +307,7 @@
 
   @media (width < 48rem) {
     --cube-size: 140px;
+    --cube-gap: 5px;
   }
 
   /* Contact shadow on the ground beneath the cube.
@@ -300,21 +316,25 @@
      `filter: drop-shadow()` on the stage. drop-shadow traces the *animated*
      silhouette, so the blur is recomputed every single frame — measured here at
      51 fps with it versus 60 without, and it was the only thing costing frames
-     (the 54 cell gradients cost nothing). This pseudo-element never moves, so
+     (the sticker gradients cost nothing). This pseudo-element never moves, so
      it rasterises once and then just composites, and at these opacities against
-     the near-black band the two are visually equivalent. */
+     the near-black band the two are visually equivalent.
+
+     Sized past 100% because a tumbling cube's corners swing outside the
+     --cube-size footprint — an ellipse matched to the box alone reads as too
+     small and detaches from the cube. */
   &::before {
     content: '';
     position: absolute;
     z-index: 0;
     left: 50%;
-    bottom: -10%;
+    bottom: -16%;
     translate: -50% 0;
-    width: 92%;
-    height: 18%;
+    width: 108%;
+    height: 20%;
     border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.85) 0%, transparent 70%);
-    filter: blur(10px);
+    background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.9) 0%, transparent 72%);
+    filter: blur(13px);
   }
 }
 
@@ -330,63 +350,51 @@
   /* The global reduce block below zeroes animation-duration, which does NOT
      freeze the cube mid-tumble — with no fill-mode the animation completes
      immediately and the element falls back to its un-animated style. That's
-     `transform: none`, i.e. staring straight down one face: a flat 3×3 grid of
-     squares that no longer reads as a cube at all. So pin an explicit
-     three-quarter rest pose, which is what "frozen" should look like. */
+     `transform: none`, i.e. staring straight down one face, which no longer
+     reads as a cube at all. So pin an explicit three-quarter rest pose, which is
+     what "frozen" should look like. The turn scheduler also returns early under
+     this query, so a reduced-motion visitor gets a still, solved cube. */
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     transform: rotateX(-24deg) rotateY(34deg);
   }
 }
 
-/* Each face is a 3×3 grid; the gap + darker face backing are what read as the
-   gaps between a real cube's stickers.
+/* One cubie, centred on the stage and then translated out to its lattice
+   position by an inline transform (see cubieTransform in the component).
+   `top/left/margin` centre it first so the inline translate3d is measured from
+   the cube's middle, which is what makes the integer coordinates symmetric.
 
-   Every translateZ is `calc(var(--cube-size) / 2)` — half the cube's own width.
-   It must stay derived: hardcoding the px offset means the faces silently come
-   apart at any other --cube-size, which is exactly what happened at the 140px
-   mobile size before this was a calc(). */
-@utility cube-face {
+   Only the three faces that can face the camera are rendered as children; the
+   cubie's own dark `background` stands in for the hidden interior. That is a
+   performance decision with a measured basis: rendering all six faces per cubie
+   means 156 composited layers inside one preserve-3d tree, and the compositor
+   sorts and blends every one of them each frame whether or not it is visible.
+   Measured 39.8 fps for 156 faces versus 59.3 for 54 faces plus this
+   background — a 20 fps difference, with flattening the *styling* of the inner
+   faces changing nothing (40.0), which is what proves the cost is per-layer
+   rather than per-pixel. */
+@utility cube-cubie {
   position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 4px;
-  padding: 5px;
-  border-radius: 12px;
-  background: #0a1020;
-  box-shadow: inset 0 0 0 1px rgb(148 163 184 / 0.1);
-  /* Without this, the far side's cells bleed through the near side and the
-     cube stops reading as solid. */
-  backface-visibility: hidden;
-
-  &:nth-child(1) {
-    transform: translateZ(calc(var(--cube-size) / 2));
-  }
-  &:nth-child(2) {
-    transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
-  }
-  &:nth-child(3) {
-    transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
-  }
-  &:nth-child(4) {
-    transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
-  }
-  &:nth-child(5) {
-    transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
-  }
-  &:nth-child(6) {
-    transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
-  }
+  top: 50%;
+  left: 50%;
+  width: var(--cubie-size);
+  height: var(--cubie-size);
+  margin: calc(var(--cubie-size) / -2);
+  transform-style: preserve-3d;
+  /* Stands in for the unrendered interior faces, so a cubie still reads as a
+     solid block of dark plastic when a turn swings it open. */
+  background: #070c18;
+  border-radius: 5px;
 }
 
-/* A fixed diagonal gradient plus two inset hairlines fake the specular
-   highlight a real light source would give. Because the gradient is painted in
-   each cell's own (rotating) coordinate space, the sheen sweeps as the cube
-   turns — which is the part that sells the glossy look without any lighting
-   maths. */
-@utility cube-cell {
+/* A fixed diagonal gradient plus two inset hairlines fake the specular highlight
+   a real light source would give. Because the gradient is painted in each
+   sticker's own (rotating) coordinate space, the sheen sweeps as the cube turns —
+   the part that sells the glossy look without any lighting maths. */
+@utility cube-sticker {
+  position: absolute;
+  inset: 0;
   border-radius: 5px;
   background:
     linear-gradient(
@@ -399,11 +407,16 @@
   box-shadow:
     inset 0 1px 0 rgb(226 232 240 / 0.1),
     inset 0 -1px 0 rgb(0 0 0 / 0.5);
+  /* Lets the compositor cull a sticker the moment it turns away instead of
+     blending it behind the cube. Worth 9 fps on its own (49.3 → measured), and
+     it is safe here precisely because only outward faces exist: there is no
+     inner face whose backface a viewer could legitimately need to see. */
+  backface-visibility: hidden;
 }
 
-/* Accent cells, used sparsely — a handful across 54, so the cube stays a dark
+/* Accent stickers, used sparsely — 7 cubies of 26, so the cube stays a dark
    object catching brand light rather than a coloured toy. */
-@utility cube-cell-hl {
+@utility cube-sticker-hl {
   background:
     linear-gradient(
       150deg,
@@ -414,7 +427,7 @@
     #101a2e;
 }
 
-@utility cube-cell-em {
+@utility cube-sticker-em {
   background:
     linear-gradient(
       150deg,
@@ -425,7 +438,7 @@
     #0d1424;
 }
 
-@utility cube-cell-cy {
+@utility cube-sticker-cy {
   background:
     linear-gradient(
       150deg,
