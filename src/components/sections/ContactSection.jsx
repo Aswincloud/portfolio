@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
 import { Mail, MapPin, Briefcase, Send, Check, AlertTriangle, Copy } from 'lucide-react';
 import { useRipple } from '../../hooks';
 
@@ -153,7 +154,10 @@ const ContactSection = () => {
     'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:opacity-50';
 
   return (
-    <section id='contact' className='section-padding relative overflow-hidden section-seam bg-ink'>
+    <section
+      id='contact'
+      className='section-padding relative overflow-hidden section-seam seam-brand bg-ink'
+    >
       {/* soft glow behind the form */}
       <div
         aria-hidden='true'
@@ -162,23 +166,22 @@ const ContactSection = () => {
       />
 
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='06'
+          label='Contact'
+          accent='brand'
+          title={
+            <>
+              Let&apos;s <span className='gradient-text'>work</span> together
+            </>
+          }
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>06 /</span> Contact
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>
-            Let&apos;s <span className='gradient-text'>work</span> together
-          </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             Have a project, a performance problem, or just want to talk shop? Drop me a line.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr]'>
           {/* Contact info */}

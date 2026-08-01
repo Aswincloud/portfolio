@@ -1,8 +1,41 @@
 import { Brain, Zap, Gamepad2, Activity, Gauge, Globe } from 'lucide-react';
 
+// Accent per *kind* of thing, not per project. Six cards separated only by a
+// small icon meant the grid had to be read rather than scanned; keying colour to
+// category gives it structure — the two bots share a hue precisely because that
+// is the signal ("same kind of thing"), not an oversight.
+//
+// Literal class strings, never interpolated. Tailwind finds classes by scanning
+// source text, so `bg-${kind}-500/10` is emitted as nothing at all and the
+// failure shows up as an invisible accent rather than a build error. Same
+// constraint as SkillsSection's `edge`/`dot`.
+export const PROJECT_KINDS = {
+  web: {
+    tile: 'border-brand-500/20 bg-brand-500/10 text-brand-300',
+    edge: 'via-brand-400/60',
+    chip: 'border-brand-500/20 bg-brand-500/10 text-brand-300',
+  },
+  perf: {
+    tile: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-300',
+    edge: 'via-cyan-400/60',
+    chip: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-300',
+  },
+  data: {
+    tile: 'border-indigo-500/20 bg-indigo-500/10 text-indigo-300',
+    edge: 'via-indigo-400/60',
+    chip: 'border-indigo-500/20 bg-indigo-500/10 text-indigo-300',
+  },
+  bot: {
+    tile: 'border-sky-500/20 bg-sky-500/10 text-sky-300',
+    edge: 'via-sky-400/60',
+    chip: 'border-sky-500/20 bg-sky-500/10 text-sky-300',
+  },
+};
+
 export const featuredProjects = [
   {
     id: 'portfolio',
+    kind: 'web',
     title: 'aswincloud — This Portfolio',
     domain: 'www.aswincloud.com',
     description:
@@ -23,6 +56,7 @@ export const featuredProjects = [
   },
   {
     id: 'ttperf',
+    kind: 'perf',
     title: 'ttperf — TT-Metal Performance Profiler',
     domain: 'ttperf.aswincloud.com',
     description:
@@ -44,6 +78,7 @@ export const featuredProjects = [
   },
   {
     id: 'ttnn-eltwise-performance',
+    kind: 'data',
     title: 'TTNN Eltwise Performance Tracker',
     domain: 'ttnn-eltwise-performance.aswincloud.com',
     description:
@@ -67,6 +102,7 @@ export const featuredProjects = [
 export const additionalProjects = [
   {
     id: 'pr-reviewer',
+    kind: 'data',
     title: 'PR Reviewer',
     domain: 'pr-reviewer.aswincloud.com',
     description:
@@ -86,6 +122,7 @@ export const additionalProjects = [
   },
   {
     id: 'mirror-download-bot',
+    kind: 'bot',
     title: 'Mirror Download Bot',
     domain: 't.me/Testdownload123bot',
     description:
@@ -105,6 +142,7 @@ export const additionalProjects = [
   },
   {
     id: 'word-chain-game-bot',
+    kind: 'bot',
     title: 'Word Chain Game Bot',
     domain: 't.me/gamebotbyashbot',
     description:

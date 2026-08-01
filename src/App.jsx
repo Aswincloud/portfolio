@@ -21,7 +21,6 @@ import {
   ContactSection,
   Footer,
 } from './components/sections';
-import { initAnalytics } from './utils/analytics.js';
 import {
   ErrorBoundary,
   SectionErrorBoundary,
@@ -217,10 +216,6 @@ const Layout = ({ children }) => {
 
 // Main App Component with Routing
 const App = () => {
-  useEffect(() => {
-    initAnalytics();
-  }, []);
-
   return (
     // reducedMotion="user" makes every motion/react component respect the OS
     // "reduce motion" setting — animations render instantly for users who asked

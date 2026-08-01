@@ -8,6 +8,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
 import { Code, Zap, Cpu, Cloud } from 'lucide-react';
 
 // `proof` grounds each discipline in work that actually exists elsewhere on the
@@ -69,22 +70,21 @@ const SkillsSection = () => {
   return (
     <section
       id='skills'
-      className='section-padding relative overflow-hidden section-seam bg-canvas'
+      className='section-padding relative overflow-hidden section-seam seam-indigo bg-canvas'
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='03'
+          label='Skills'
+          accent='indigo'
+          title={
+            <>
+              What I do <span className='gradient-text'>best</span>
+            </>
+          }
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>03 /</span> Skills
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>
-            What I do <span className='gradient-text'>best</span>
-          </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             The disciplines I reach for when a system needs to be faster, leaner, or more reliable —
             the specific tools live in the{' '}
@@ -96,7 +96,7 @@ const SkillsSection = () => {
             </a>
             .
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div className='grid gap-5 sm:grid-cols-2 lg:grid-cols-4'>
           {SKILLS.map((skill, i) => (

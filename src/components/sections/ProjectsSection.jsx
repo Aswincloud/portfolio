@@ -9,24 +9,36 @@
 import React, { useState, useId, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
 import { ExternalLink, ChevronDown, Package, Check } from 'lucide-react';
 import { Github } from '../icons/BrandIcons.jsx';
-import { featuredProjects, allProjects } from '../../data/projects.jsx';
+import { featuredProjects, allProjects, PROJECT_KINDS } from '../../data/projects.jsx';
 import { useRipple } from '../../hooks';
 
 const ProjectCard = ({ project, index, inView }) => {
+  const kind = PROJECT_KINDS[project.kind] ?? PROJECT_KINDS.web;
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: (index % 3) * 0.08 }}
-      className='group relative flex h-full flex-col card-surface card-lift p-7 lg:p-8'
+      className='group relative flex h-full flex-col overflow-hidden card-surface card-lift p-7 lg:p-8'
     >
-      {/* Top row: icon + status/metric. The status pill states it's live; the
-          metric chip below gives each card a distinct at-a-glance signal so the
-          grid doesn't read as six identical "Live" badges. */}
+      {/* Accent edge, keyed to the project's kind — the same centre-weighted
+          hairline the skills cards and the section seams use. */}
+      <span
+        aria-hidden='true'
+        className={`absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent ${kind.edge}`}
+      />
+
+      {/* Top row: icon + status/metric. The status pill stays emerald on every
+          card — it means "live", which doesn't vary by kind. The metric chip
+          below it takes the accent instead. */}
       <div className='flex items-start justify-between gap-4'>
-        <span className='flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-500/20 bg-brand-500/10 text-brand-300 transition-transform duration-300 group-hover:scale-105 [&_svg]:h-7 [&_svg]:w-7'>
+        <span
+          className={`flex h-14 w-14 items-center justify-center rounded-2xl border transition-transform duration-300 group-hover:scale-105 [&_svg]:h-7 [&_svg]:w-7 ${kind.tile}`}
+        >
           {project.icon}
         </span>
         <div className='flex flex-col items-end gap-1.5'>
@@ -35,7 +47,9 @@ const ProjectCard = ({ project, index, inView }) => {
             {project.status}
           </span>
           {project.metric && (
-            <span className='rounded-full border border-hairline bg-surface-2 px-2.5 py-1 font-mono text-[11px] font-medium text-slate-400'>
+            <span
+              className={`rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium ${kind.chip}`}
+            >
               {project.metric}
             </span>
           )}
@@ -129,24 +143,21 @@ const ProjectsSection = () => {
   return (
     <section
       id='projects'
-      className='section-padding relative overflow-hidden section-seam bg-ink'
+      className='section-padding relative overflow-hidden section-seam seam-cyan bg-ink'
       ref={ref}
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          inView={inView}
+          number='04'
+          label='Projects'
+          accent='cyan'
+          title={<>Things I&apos;ve built</>}
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>04 /</span> Projects
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>Things I&apos;ve built</h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             Performance tooling, dashboards, and a few bots — most live on my own cloud.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div id={listId} className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {(showMore ? allProjects : featuredProjects).map((project, index) => (

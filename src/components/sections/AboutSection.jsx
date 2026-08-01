@@ -10,6 +10,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import { Cpu, Cloud, Gauge, Palette } from 'lucide-react';
+import SectionHeader from '../SectionHeader.jsx';
 
 const PARAGRAPHS = [
   {
@@ -76,19 +77,20 @@ const AboutSection = React.memo(() => {
       <div className='container-custom relative z-10'>
         <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:gap-20'>
           {/* Narrative */}
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7 }}
+          <SectionHeader
+            innerRef={ref}
+            inView={inView}
+            number='01'
+            label='About'
+            accent='brand'
+            className=''
+            titleClassName='text-4xl font-bold leading-tight sm:text-5xl'
+            title={
+              <>
+                Where software meets <span className='gradient-text'>silicon</span>
+              </>
+            }
           >
-            <p className='eyebrow mb-5'>
-              <span className='text-slate-600'>01 /</span> About
-            </p>
-            <h2 className='text-4xl font-bold leading-tight sm:text-5xl'>
-              Where software meets <span className='gradient-text'>silicon</span>
-            </h2>
-
             {/* "Now" line — a live status echoing the hero's availability chip,
                 so the page opens with a current, specific signal of what I'm on. */}
             <p className='mt-5 inline-flex items-center gap-2.5 font-mono text-sm text-slate-400'>
@@ -115,7 +117,7 @@ const AboutSection = React.memo(() => {
                 </motion.p>
               ))}
             </div>
-          </motion.div>
+          </SectionHeader>
 
           {/* Focus areas */}
           <motion.div

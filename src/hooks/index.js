@@ -12,10 +12,6 @@ export {
   ERROR_SEVERITY,
   ERROR_CATEGORIES,
 } from './useErrorReporting.js';
-export {
-  default as usePageTransitions,
-  useScrollAnimations,
-  useStaggeredAnimations,
-} from './usePageTransitions.js';
+export { default as usePageTransitions } from './usePageTransitions.js';
 export { useRipple } from './useRipple.jsx';
 export { useCountUp } from './useCountUp.js';

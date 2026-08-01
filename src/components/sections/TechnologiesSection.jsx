@@ -9,6 +9,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
 import {
   Cloud,
   Monitor,
@@ -126,27 +127,26 @@ const TechnologiesSection = () => {
   return (
     <section
       id='technologies'
-      className='section-padding relative overflow-hidden section-seam bg-canvas'
+      className='section-padding relative overflow-hidden section-seam seam-indigo bg-canvas'
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='05'
+          label='Stack'
+          accent='indigo'
+          title={
+            <>
+              Technologies &amp; <span className='gradient-text'>platforms</span>
+            </>
+          }
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>05 /</span> Stack
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>
-            Technologies &amp; <span className='gradient-text'>platforms</span>
-          </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             The tools I use to build, ship, and run things — from languages and frameworks to cloud,
             OS, networking, and infrastructure.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div className='grid gap-5 md:grid-cols-2'>
           {TECHNOLOGIES.map((cat, catIndex) => {
