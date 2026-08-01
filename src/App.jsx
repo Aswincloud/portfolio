@@ -13,6 +13,7 @@ import LoadingSpinner from './components/LoadingSpinner.jsx';
 import {
   HeroSection,
   AboutSection,
+  ApproachBand,
   ExperienceSection,
   SkillsSection,
   ProjectsSection,
@@ -46,6 +47,10 @@ const HomePage = () => {
 
       <SectionErrorBoundary sectionName='About'>
         <AboutSection />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName='Approach'>
+        <ApproachBand />
       </SectionErrorBoundary>
 
       <SectionErrorBoundary sectionName='Experience'>
