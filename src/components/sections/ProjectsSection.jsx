@@ -20,7 +20,7 @@ const ProjectCard = ({ project, index, inView }) => {
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: (index % 3) * 0.08 }}
-      className='group relative flex h-full flex-col card-surface p-7 transition-colors duration-300 hover:border-slate-600 hover:bg-surface-2 lg:p-8'
+      className='group relative flex h-full flex-col card-surface card-lift p-7 lg:p-8'
     >
       {/* Top row: icon + status/metric. The status pill states it's live; the
           metric chip below gives each card a distinct at-a-glance signal so the

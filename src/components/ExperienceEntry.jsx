@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar, ChevronRight } from 'lucide-react';
 
 // Per-company accent — subtle tint so the two roles are distinguishable
 // without breaking the emerald/cyan system.
@@ -29,6 +29,8 @@ function ExperienceEntryComponent({
   location,
   logo,
   description,
+  achievements = [],
+  tech = [],
   experience,
   inView = false,
   delay = 0.1,
@@ -53,7 +55,7 @@ function ExperienceEntryComponent({
         <span className={`h-2.5 w-2.5 rounded-full ${theme.dot}`} />
       </span>
 
-      <div className='group card-surface overflow-hidden p-6 transition-colors duration-300 hover:border-slate-600 md:p-8'>
+      <div className='group card-surface card-lift overflow-hidden p-6 md:p-8'>
         {/* Period */}
         <div className='mb-5 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface-2 px-3 py-1'>
           <Calendar size={13} className={theme.tag} />
@@ -87,8 +89,41 @@ function ExperienceEntryComponent({
           </div>
         </div>
 
-        {/* Description */}
+        {/* Lead */}
         <p className='mt-5 leading-relaxed text-slate-400'>{description}</p>
+
+        {/* What the role actually involved. Bullets rather than a second
+            paragraph: the prose version packed three distinct pieces of work
+            into one block, and the specifics were the first thing a skimming
+            reader lost. Markers use the per-company accent. */}
+        {achievements.length > 0 && (
+          <ul className='mt-5 space-y-2.5'>
+            {achievements.map(item => (
+              <li
+                key={item}
+                className='flex items-start gap-3 text-sm leading-relaxed text-slate-400'
+              >
+                <ChevronRight size={15} className={`mt-0.5 shrink-0 ${theme.tag}`} />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Tooling — same chip treatment as the project cards, so the two card
+            grids read as one system rather than two. */}
+        {tech.length > 0 && (
+          <div className='mt-6 flex flex-wrap gap-2 border-t border-hairline pt-5'>
+            {tech.map(t => (
+              <span
+                key={t}
+                className='rounded-md border border-hairline bg-surface-2 px-2.5 py-1 font-mono text-[11px] text-slate-300'
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );

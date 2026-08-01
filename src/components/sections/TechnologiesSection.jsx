@@ -9,49 +9,113 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Cloud, Monitor, Wifi, Code2 } from 'lucide-react';
+import {
+  Cloud,
+  Monitor,
+  Wifi,
+  Code2,
+  CloudCog,
+  Server,
+  Workflow,
+  AppWindow,
+  ShieldCheck,
+  Network,
+} from 'lucide-react';
+import {
+  Python,
+  ReactMark,
+  NodeJs,
+  Pytest,
+  TailwindCss,
+  Cloudflare,
+  Vercel,
+  Koyeb,
+  Ubuntu,
+  Apple,
+  Android,
+  Tailscale,
+  OpenWrt,
+} from '../icons/TechIcons.jsx';
 
+// Each item carries its own mark so the list reads as a recognisable stack
+// rather than eighteen identical bullets. Products get their real logo; the
+// entries that are disciplines rather than products (server admin, DevOps, VPN,
+// network admin) get a generic lucide glyph, as do Azure and Windows — see the
+// header note in TechIcons.jsx for why those two have no brand mark.
 const TECHNOLOGIES = [
   {
     category: 'Languages & Frameworks',
     icon: Code2,
     items: [
-      { name: 'Python', description: 'Tooling, automation, and data/ML work' },
-      { name: 'React', description: 'Component-driven UIs and dashboards' },
-      { name: 'Node.js', description: 'APIs, serverless functions, and tooling' },
-      { name: 'pytest', description: 'Test automation and profiling harnesses' },
-      { name: 'Tailwind CSS', description: 'Design systems and responsive styling' },
+      { name: 'Python', description: 'Tooling, automation, and data/ML work', icon: Python },
+      { name: 'React', description: 'Component-driven UIs and dashboards', icon: ReactMark },
+      { name: 'Node.js', description: 'APIs, serverless functions, and tooling', icon: NodeJs },
+      { name: 'pytest', description: 'Test automation and profiling harnesses', icon: Pytest },
+      {
+        name: 'Tailwind CSS',
+        description: 'Design systems and responsive styling',
+        icon: TailwindCss,
+      },
     ],
   },
   {
     category: 'Cloud & Infrastructure',
     icon: Cloud,
     items: [
-      { name: 'Cloudflare', description: 'CDN, DNS, Workers, and edge compute' },
-      { name: 'Microsoft Azure', description: 'Cloud computing services and solutions' },
-      { name: 'Vercel & Koyeb', description: 'Frontend and serverless deployment' },
-      { name: 'VPS & Server Admin', description: 'Self-hosting, setup, and maintenance' },
-      { name: 'DevOps & IaC', description: 'CI/CD and automated infrastructure' },
+      { name: 'Cloudflare', description: 'CDN, DNS, Workers, and edge compute', icon: Cloudflare },
+      {
+        name: 'Microsoft Azure',
+        description: 'Cloud computing services and solutions',
+        icon: CloudCog,
+      },
+      { name: 'Vercel', description: 'Frontend and preview deployments', icon: Vercel },
+      { name: 'Koyeb', description: 'Serverless app and API hosting', icon: Koyeb },
+      {
+        name: 'VPS & Server Admin',
+        description: 'Self-hosting, setup, and maintenance',
+        icon: Server,
+      },
+      { name: 'DevOps & IaC', description: 'CI/CD and automated infrastructure', icon: Workflow },
     ],
   },
   {
     category: 'Operating Systems',
     icon: Monitor,
     items: [
-      { name: 'Ubuntu', description: 'Linux server administration and development' },
-      { name: 'Windows', description: 'Desktop and server environments' },
-      { name: 'macOS', description: 'Apple ecosystem development and administration' },
-      { name: 'Android', description: 'Mobile development and customization' },
+      {
+        name: 'Ubuntu',
+        description: 'Linux server administration and development',
+        icon: Ubuntu,
+      },
+      { name: 'Windows', description: 'Desktop and server environments', icon: AppWindow },
+      {
+        name: 'macOS',
+        description: 'Apple ecosystem development and administration',
+        icon: Apple,
+      },
+      { name: 'Android', description: 'Mobile development and customization', icon: Android },
     ],
   },
   {
     category: 'Networking & Security',
     icon: Wifi,
     items: [
-      { name: 'Tailscale', description: 'Zero-config VPN and mesh networking' },
-      { name: 'VPN', description: 'Virtual Private Network setup and management' },
-      { name: 'OpenWrt', description: 'Open-source router firmware and networking' },
-      { name: 'Network Administration', description: 'Network infrastructure and protocols' },
+      { name: 'Tailscale', description: 'Zero-config VPN and mesh networking', icon: Tailscale },
+      {
+        name: 'VPN',
+        description: 'Virtual Private Network setup and management',
+        icon: ShieldCheck,
+      },
+      {
+        name: 'OpenWrt',
+        description: 'Open-source router firmware and networking',
+        icon: OpenWrt,
+      },
+      {
+        name: 'Network Administration',
+        description: 'Network infrastructure and protocols',
+        icon: Network,
+      },
     ],
   },
 ];
@@ -93,7 +157,7 @@ const TechnologiesSection = () => {
                 initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: catIndex * 0.1 }}
-                className='card-surface p-6 lg:p-8'
+                className='card-surface card-lift p-6 lg:p-8'
               >
                 <div className='mb-6 flex items-center gap-3'>
                   <span className='flex h-11 w-11 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300'>
@@ -103,21 +167,33 @@ const TechnologiesSection = () => {
                 </div>
 
                 <ul className='space-y-1'>
-                  {cat.items.map((item, itemIndex) => (
-                    <motion.li
-                      key={item.name}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={inView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ duration: 0.4, delay: catIndex * 0.1 + itemIndex * 0.05 }}
-                      className='group flex items-baseline gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-surface-2'
-                    >
-                      <span className='mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-600 transition-colors group-hover:bg-brand-400' />
-                      <div className='min-w-0'>
-                        <span className='font-medium text-slate-200'>{item.name}</span>
-                        <span className='ml-2 text-sm text-slate-500'>{item.description}</span>
-                      </div>
-                    </motion.li>
-                  ))}
+                  {cat.items.map((item, itemIndex) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <motion.li
+                        key={item.name}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={inView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.4, delay: catIndex * 0.1 + itemIndex * 0.05 }}
+                        className='group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-surface-2'
+                      >
+                        {/* Fixed 20px slot so the text column stays aligned
+                            regardless of each mark's aspect ratio, and so the
+                            filled brand logos and the stroked lucide fallbacks
+                            share one optical centre. Monochrome → brand on
+                            hover, exactly what the plain dot used to do:
+                            eighteen full-colour logos would fight the
+                            emerald→cyan accent instead of supporting it. */}
+                        <span className='mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 transition-colors group-hover:text-brand-300'>
+                          <ItemIcon size={16} />
+                        </span>
+                        <div className='min-w-0'>
+                          <span className='font-medium text-slate-200'>{item.name}</span>
+                          <span className='ml-2 text-sm text-slate-500'>{item.description}</span>
+                        </div>
+                      </motion.li>
+                    );
+                  })}
                 </ul>
               </motion.div>
             );

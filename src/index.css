@@ -169,6 +169,38 @@
   @apply rounded-2xl border border-hairline;
 }
 
+/* Hover elevation for the card system. One utility, so every content card in
+   every section lifts identically — each section previously spelled out its own
+   ad-hoc hover classes and they had already drifted (About used
+   hover:border-brand-500/30, everything else hover:border-slate-600).
+
+   Uses the `translate` property rather than `transform`: motion/react writes the
+   composed transform to the element's inline style (and emits `transform: none`
+   at rest), which would override a class-based transform. `translate` is a
+   separate property, so the two compose instead of fighting.
+
+   4px and no scale — a scale resamples the card text mid-transition and nudges
+   neighbouring cards out of optical alignment in the multi-column grids. */
+@utility card-lift {
+  transition-property: translate, box-shadow, border-color, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: var(--ease-out);
+}
+
+/* Scoped to `hover: hover` so a tap on a touch device doesn't leave the card
+   stuck in its lifted state, and to `no-preference` because the global reduce
+   block below only zeroes the transition *duration* — it can't remove the 4px
+   displacement itself, and an element jumping under the pointer is exactly what
+   a visitor asking for less motion is asking us not to do. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card-lift:hover {
+    translate: 0 -4px;
+    border-color: var(--color-slate-600);
+    background-color: var(--color-surface-2);
+    box-shadow: 0 12px 28px -12px rgb(0 0 0 / 0.55);
+  }
+}
+
 @utility gradient-text {
   @apply bg-linear-to-r from-brand-300 via-emerald-200 to-cyan-300 bg-clip-text text-transparent;
 }

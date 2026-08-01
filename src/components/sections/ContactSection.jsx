@@ -194,7 +194,7 @@ const ContactSection = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.25 + i * 0.1 }}
-                className='group card-surface flex items-start gap-4 p-5 transition-colors hover:border-slate-600'
+                className='group card-surface card-lift flex items-start gap-4 p-5'
               >
                 <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300'>
                   {item.icon}

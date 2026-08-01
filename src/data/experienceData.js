@@ -1,4 +1,6 @@
-// Experience data for the portfolio
+// Experience data for the portfolio.
+// `description` is the one-line lead; `achievements` carries the specifics and
+// `tech` the tooling, so each card is scannable rather than a wall of prose.
 export const getExperienceData = experience => [
   {
     period: 'June 2023 - Present',
@@ -7,7 +9,13 @@ export const getExperienceData = experience => [
     location: 'Chennai, India',
     logo: '/MulticoreWare_Logo.jpg',
     description:
-      'Performance engineering for AI accelerator hardware — profiling and benchmarking tensor operations, identifying bottlenecks across the software stack, and optimizing the code paths that drive throughput on next-generation AI silicon.',
+      'Performance engineering for AI accelerator hardware — making tensor operations faster on next-generation AI silicon.',
+    achievements: [
+      'Profile and benchmark tensor operations on AI accelerator hardware, turning the measurements into concrete optimization work.',
+      'Trace bottlenecks across the software stack to find where the time actually goes before changing anything.',
+      'Optimize the code paths that drive throughput — data layout, kernel choice, and scheduling decisions.',
+    ],
+    tech: ['Python', 'pytest', 'Profiling', 'Benchmarking', 'Performance Tuning'],
     experience: experience,
     delay: 0.1,
   },
@@ -18,7 +26,13 @@ export const getExperienceData = experience => [
     location: 'Pondicherry, India',
     logo: '/Lenovo_Global_Corporate_Logo.png',
     description:
-      'Developed and maintained smart attendance system using face recognition technology and ESD tester with database integration. Worked on computer vision algorithms, biometric authentication systems, and real-time data processing for employee attendance tracking and ESD testing workflows.',
+      'Computer vision and test automation for manufacturing — attendance and ESD testing systems.',
+    achievements: [
+      'Built and maintained a smart attendance system using face recognition, from the vision pipeline through to the database behind it.',
+      'Developed an ESD tester with database integration for the electrostatic-discharge testing workflow.',
+      'Handled the real-time data processing behind attendance tracking and ESD test runs.',
+    ],
+    tech: ['Computer Vision', 'Face Recognition', 'Biometrics', 'Database Integration'],
     experience: '1 year',
     delay: 0.2,
   },
