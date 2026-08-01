@@ -164,6 +164,27 @@ describe('buildCsp', () => {
     expect(csp['frame-src']).toContain('https://support.aswincloud.com');
   });
 
+  it('allowlists the Cloudflare Web Analytics beacon, path-scoped and with its trailing slash', () => {
+    const csp = parse(buildCsp(html));
+    const beacon = 'https://static.cloudflareinsights.com/beacon.min.js/';
+
+    // Cloudflare's proxy injects the beacon into every HTML response, so this is
+    // not opt-in: without the grant the script is blocked and analytics records
+    // nothing, with no failure anywhere except the browser console.
+    expect(csp['script-src']).toContain(beacon);
+    // The beacon POSTs its RUM payload to the apex host, not the static. one.
+    expect(csp['connect-src']).toContain('https://cloudflareinsights.com');
+
+    // The trailing slash is the whole fix and is easy to "tidy" away. A CSP path
+    // without one must match exactly, and the real src carries a version segment
+    // (…/beacon.min.js/v4513226…), so the un-slashed form — which is what
+    // Cloudflare's own docs recommend — does not match and the script stays
+    // blocked. Verified in Chromium against the live URL.
+    expect(csp['script-src']).not.toContain('https://static.cloudflareinsights.com/beacon.min.js');
+    // Path-scoped rather than origin-wide, so the grant covers only the beacon.
+    expect(csp['script-src']).not.toContain('https://static.cloudflareinsights.com');
+  });
+
   it('locks down the directives that limit injection blast radius', () => {
     const csp = parse(buildCsp(html));
     expect(csp['default-src']).toEqual(["'self'"]);
