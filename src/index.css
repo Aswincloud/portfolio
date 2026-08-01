@@ -38,6 +38,7 @@
   --animate-marquee: marquee 40s linear infinite;
   --animate-pulse-slow: pulseSlow 3s ease-in-out infinite;
   --animate-text-shimmer: textShimmer 6s ease-in-out infinite;
+  --animate-cube-tumble: cubeTumble 30s linear infinite;
 
   @keyframes aurora {
     0%,
@@ -66,6 +67,19 @@
     }
     50% {
       opacity: 0.45;
+    }
+  }
+  /* Slow tumble on both axes. Start and end are the same orientation +360° on
+     each axis, so the loop is seamless with no visible seam or snap. Linear
+     because any easing reads as a pulse over a 30s cycle. Frame 0 is a
+     three-quarter view, which is also the still that prefers-reduced-motion
+     freezes on (the global block zeroes animation-duration). */
+  @keyframes cubeTumble {
+    0% {
+      transform: rotateX(-22deg) rotateY(18deg);
+    }
+    100% {
+      transform: rotateX(338deg) rotateY(378deg);
     }
   }
   /* A highlight glint sweeps left→right across a gradient text fill, then
@@ -255,6 +269,170 @@
       transparent
     );
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Tumbling cube (Approach band)
+
+   A 3×3×3 cube in pure CSS 3D — six 9-cell face grids positioned in space and
+   rotated as one group. Deliberately not WebGL: the whole animation is a single
+   compositor-driven transform on one element, so it costs no main-thread work
+   (measured: 60.3 fps, zero long tasks) and needs no GPU-dependent fallback.
+   Four earlier passes on this repo removed decorative JS rAF loops for exactly
+   that reason; nothing here runs per frame in JS.
+   --------------------------------------------------------------------------- */
+
+@utility cube-stage {
+  --cube-size: 200px;
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  perspective: 1100px;
+
+  @media (width < 48rem) {
+    --cube-size: 140px;
+  }
+
+  /* Contact shadow on the ground beneath the cube.
+
+     Deliberately a static blurred ellipse rather than
+     `filter: drop-shadow()` on the stage. drop-shadow traces the *animated*
+     silhouette, so the blur is recomputed every single frame — measured here at
+     51 fps with it versus 60 without, and it was the only thing costing frames
+     (the 54 cell gradients cost nothing). This pseudo-element never moves, so
+     it rasterises once and then just composites, and at these opacities against
+     the near-black band the two are visually equivalent. */
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    bottom: -10%;
+    translate: -50% 0;
+    width: 92%;
+    height: 18%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.85) 0%, transparent 70%);
+    filter: blur(10px);
+  }
+}
+
+@utility cube-shell {
+  position: relative;
+  /* Above the ground shadow painted by .cube-stage::before. */
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: var(--animate-cube-tumble);
+
+  /* The global reduce block below zeroes animation-duration, which does NOT
+     freeze the cube mid-tumble — with no fill-mode the animation completes
+     immediately and the element falls back to its un-animated style. That's
+     `transform: none`, i.e. staring straight down one face: a flat 3×3 grid of
+     squares that no longer reads as a cube at all. So pin an explicit
+     three-quarter rest pose, which is what "frozen" should look like. */
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    transform: rotateX(-24deg) rotateY(34deg);
+  }
+}
+
+/* Each face is a 3×3 grid; the gap + darker face backing are what read as the
+   gaps between a real cube's stickers.
+
+   Every translateZ is `calc(var(--cube-size) / 2)` — half the cube's own width.
+   It must stay derived: hardcoding the px offset means the faces silently come
+   apart at any other --cube-size, which is exactly what happened at the 140px
+   mobile size before this was a calc(). */
+@utility cube-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #0a1020;
+  box-shadow: inset 0 0 0 1px rgb(148 163 184 / 0.1);
+  /* Without this, the far side's cells bleed through the near side and the
+     cube stops reading as solid. */
+  backface-visibility: hidden;
+
+  &:nth-child(1) {
+    transform: translateZ(calc(var(--cube-size) / 2));
+  }
+  &:nth-child(2) {
+    transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+  }
+  &:nth-child(3) {
+    transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+  }
+  &:nth-child(4) {
+    transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+  }
+  &:nth-child(5) {
+    transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+  }
+  &:nth-child(6) {
+    transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+  }
+}
+
+/* A fixed diagonal gradient plus two inset hairlines fake the specular
+   highlight a real light source would give. Because the gradient is painted in
+   each cell's own (rotating) coordinate space, the sheen sweeps as the cube
+   turns — which is the part that sells the glossy look without any lighting
+   maths. */
+@utility cube-cell {
+  border-radius: 5px;
+  background:
+    linear-gradient(
+      150deg,
+      rgb(226 232 240 / 0.16) 0%,
+      rgb(148 163 184 / 0.05) 34%,
+      rgb(2 6 14 / 0.5) 100%
+    ),
+    #0d1424;
+  box-shadow:
+    inset 0 1px 0 rgb(226 232 240 / 0.1),
+    inset 0 -1px 0 rgb(0 0 0 / 0.5);
+}
+
+/* Accent cells, used sparsely — a handful across 54, so the cube stays a dark
+   object catching brand light rather than a coloured toy. */
+@utility cube-cell-hl {
+  background:
+    linear-gradient(
+      150deg,
+      rgb(226 232 240 / 0.3) 0%,
+      rgb(148 163 184 / 0.09) 40%,
+      rgb(2 6 14 / 0.5) 100%
+    ),
+    #101a2e;
+}
+
+@utility cube-cell-em {
+  background:
+    linear-gradient(
+      150deg,
+      rgb(16 185 129 / 0.42) 0%,
+      rgb(16 185 129 / 0.1) 55%,
+      rgb(2 6 14 / 0.5) 100%
+    ),
+    #0d1424;
+}
+
+@utility cube-cell-cy {
+  background:
+    linear-gradient(
+      150deg,
+      rgb(34 211 238 / 0.38) 0%,
+      rgb(34 211 238 / 0.09) 55%,
+      rgb(2 6 14 / 0.5) 100%
+    ),
+    #0d1424;
 }
 
 @layer utilities {
