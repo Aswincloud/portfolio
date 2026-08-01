@@ -71,9 +71,9 @@
   }
   /* Slow tumble on both axes. Start and end are the same orientation +360° on
      each axis, so the loop is seamless with no visible seam or snap. Linear
-     because any easing reads as a pulse over a 30s cycle. Frame 0 is a
-     three-quarter view, which is also the still that prefers-reduced-motion
-     freezes on (the global block zeroes animation-duration). */
+     because any easing reads as a pulse over a 30s cycle. The
+     prefers-reduced-motion still is set separately on .cube-shell — this
+     keyframe's frame 0 is not what a reduced-motion visitor sees. */
   @keyframes cubeTumble {
     0% {
       transform: rotateX(-22deg) rotateY(18deg);
@@ -277,7 +277,8 @@
    A 3×3×3 cube in pure CSS 3D — six 9-cell face grids positioned in space and
    rotated as one group. Deliberately not WebGL: the whole animation is a single
    compositor-driven transform on one element, so it costs no main-thread work
-   (measured: 60.3 fps, zero long tasks) and needs no GPU-dependent fallback.
+   and needs no GPU-dependent fallback. Measured with the band on screen: 60.1
+   fps and zero long tasks, identical to the same page with the cube deleted.
    Four earlier passes on this repo removed decorative JS rAF loops for exactly
    that reason; nothing here runs per frame in JS.
    --------------------------------------------------------------------------- */
