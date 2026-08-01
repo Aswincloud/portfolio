@@ -30,8 +30,9 @@ const ApproachBand = () => {
           transition={{ duration: 0.7 }}
           // The row is centred as a unit and the copy column is allowed to
           // grow, so the pair sits optically centred instead of hugging the
-          // left gutter. px-8 on the stage keeps its drop-shadow clear of the
-          // section's overflow-hidden.
+          // left gutter. px-8 on the stage gives the cube room to swing: its
+          // corners and its ground ellipse both reach past --cube-size, and the
+          // section is overflow-hidden.
           className='mx-auto flex max-w-3xl flex-col items-center gap-10 md:flex-row md:gap-14'
         >
           <div className='shrink-0 px-8'>
