@@ -125,3 +125,60 @@ export const applyTurn = (cubies, axis, slice, direction) => {
  * @returns {boolean} true when both may run concurrently
  */
 export const canTurnConcurrently = (a, b) => a.axis === b.axis && a.slice !== b.slice;
+
+/* Bounds for the specular highlight, as percentages inside a sticker.
+ *
+ * Both ranges stay well clear of 50%, and that is the whole point. The hotspot
+ * is painted once per sticker in its own coordinate space, so wherever it sits,
+ * it sits there on all 54 faces at once. Near a corner that reads as light
+ * glancing across the cube; further in, every tile gets a matching centred blob
+ * and the cube reads as a grid of glowing buttons rather than one lit object.
+ *
+ * The bounds come from sweeping the range against the real cube at its shipped
+ * size, not against a mock-up: 36%/21% and beyond are visibly blobby, 32%/18% is
+ * borderline, 28%/16% and below read as light. Scale mattered more than expected
+ * — an isolated large sticker tolerates a much more central hotspot than a 42px
+ * one seen among 53 others, so the bound measured on a prototype was too loose.
+ *
+ * The Y range is tighter than the X range because the cube's ground shadow
+ * anchors it from below, so a light drifting downward fights the shading that
+ * is already there.
+ */
+const LIGHT_X = { min: 10, max: 30 };
+const LIGHT_Y = { min: 6, max: 17 };
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+/**
+ * Map a pointer position to the specular highlight's position inside a sticker.
+ *
+ * Pure, and deliberately here rather than in the component: it is the one part
+ * of the pointer feature with a correctness condition worth testing, and it
+ * needs no DOM to test — just a rect-shaped object.
+ *
+ * The pointer's offset from the stage's centre is normalised to −1…1 and then
+ * mapped across the ranges above, so the light tracks direction rather than
+ * absolute position: the highlight leans the way the cursor is, and stays in
+ * bounds no matter how far away the cursor actually is.
+ *
+ * @param {number} clientX pointer X in viewport coordinates
+ * @param {number} clientY pointer Y in viewport coordinates
+ * @param {{left: number, top: number, width: number, height: number}} rect
+ *   the stage's bounding box
+ * @returns {{x: number, y: number}} percentages, always within the ranges above
+ */
+export const lightPosition = (clientX, clientY, rect) => {
+  // A zero-sized rect means the stage is not laid out (display:none, or measured
+  // before paint). Dividing by it yields Infinity/NaN, which would serialise
+  // into the custom property as garbage and blank the hotspot, so fall back to
+  // the centre of the range instead.
+  const nx = rect.width > 0 ? (clientX - (rect.left + rect.width / 2)) / rect.width : 0;
+  const ny = rect.height > 0 ? (clientY - (rect.top + rect.height / 2)) / rect.height : 0;
+
+  const spread = (n, { min, max }) => {
+    const mid = (min + max) / 2;
+    return clamp(mid + clamp(n, -1, 1) * ((max - min) / 2), min, max);
+  };
+
+  return { x: spread(nx, LIGHT_X), y: spread(ny, LIGHT_Y) };
+};

@@ -287,7 +287,10 @@
 
    JS only schedules turns (~0.7/sec) and bakes integer state when one lands;
    see cubePermutation.js. Four earlier passes on this repo removed decorative
-   rAF loops for hurting scroll perf, so nothing here runs per frame.
+   rAF loops for hurting scroll perf, so the only thing that can run per frame is
+   the light: on a hovering pointer device the highlight follows the cursor, via
+   one rAF-coalesced write of --cube-light-x/y, and only while the pointer is
+   actually moving over the band. See the TumblingCube.jsx header.
    --------------------------------------------------------------------------- */
 
 @utility cube-stage {
@@ -300,6 +303,20 @@
      integer multiple of this, so the lattice stays exact at any --cube-size —
      the same reason the old face offsets had to be a calc() rather than px. */
   --cubie-step: calc(var(--cubie-size) + var(--cube-gap));
+  /* Where the specular highlight sits inside every sticker. Declared here rather
+     than on the sticker so all 54 inherit it: moving the light on the whole cube
+     is then one style write on this element, which is what makes the pointer
+     handler in TumblingCube.jsx cheap enough to exist.
+
+     Also the resting value for anyone the pointer never reaches — touch devices
+     and reduced-motion visitors keep exactly this.
+
+     Kept well away from a sticker's centre: past roughly 32%/18% the hotspot
+     lands mid-tile and the cube stops reading as one object catching a light and
+     starts reading as 54 glowing buttons. lightPosition() in cubePermutation.js
+     clamps inside that bound, and carries the sweep it came from. */
+  --cube-light-x: 28%;
+  --cube-light-y: 14%;
   position: relative;
   width: var(--cube-size);
   height: var(--cube-size);
@@ -388,25 +405,40 @@
   border-radius: 5px;
 }
 
-/* A fixed diagonal gradient plus two inset hairlines fake the specular highlight
-   a real light source would give. Because the gradient is painted in each
-   sticker's own (rotating) coordinate space, the sheen sweeps as the cube turns —
-   the part that sells the glossy look without any lighting maths. */
+/* Two layers fake the lighting a real light source would give: a radial hotspot
+   for the specular highlight, over a diagonal wash for the broad falloff, plus
+   two inset hairlines for the bevel. Because both are painted in each sticker's
+   own (rotating) coordinate space, the sheen sweeps as the cube turns — the part
+   that sells the glossy look without any lighting maths.
+
+   The hotspot's position comes from --cube-light-x/y on the stage, so the
+   pointer can move the light across all 54 faces at once. Everything else about
+   it is static: an idle keyframe walking the light measured 53.7 fps against
+   60.0 for a fixed one, because moving it repaints every gradient. That is paint
+   work rather than compositor work, which is the category this repo has removed
+   animations for before, so the light only ever moves in response to a pointer
+   that is actually moving. */
 @utility cube-sticker {
   position: absolute;
   inset: 0;
   border-radius: 5px;
   background:
+    radial-gradient(
+      135% 135% at var(--cube-light-x) var(--cube-light-y),
+      rgb(255 255 255 / 0.3) 0%,
+      rgb(226 232 240 / 0.1) 26%,
+      transparent 58%
+    ),
     linear-gradient(
       150deg,
-      rgb(226 232 240 / 0.16) 0%,
-      rgb(148 163 184 / 0.05) 34%,
-      rgb(2 6 14 / 0.5) 100%
+      rgb(226 232 240 / 0.14) 0%,
+      rgb(148 163 184 / 0.04) 40%,
+      rgb(2 6 14 / 0.55) 100%
     ),
     #0d1424;
   box-shadow:
-    inset 0 1px 0 rgb(226 232 240 / 0.1),
-    inset 0 -1px 0 rgb(0 0 0 / 0.5);
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 -1px 0 rgb(0 0 0 / 0.55);
   /* Lets the compositor cull a sticker the moment it turns away instead of
      blending it behind the cube. Worth 9 fps on its own (49.3 → measured), and
      it is safe here precisely because only outward faces exist: there is no
@@ -415,9 +447,21 @@
 }
 
 /* Accent stickers, used sparsely — 7 cubies of 26, so the cube stays a dark
-   object catching brand light rather than a coloured toy. */
+   object catching brand light rather than a coloured toy.
+
+   Each repeats the hotspot layer from .cube-sticker. That looks like duplication
+   worth factoring out, but these set `background` outright rather than adding to
+   it, so an accent that omits the hotspot simply loses it: the 8 accent stickers
+   would sit flat while the other 46 gloss, which is obvious the moment they sit
+   side by side. Only the tinted layer underneath differs. */
 @utility cube-sticker-hl {
   background:
+    radial-gradient(
+      135% 135% at var(--cube-light-x) var(--cube-light-y),
+      rgb(255 255 255 / 0.3) 0%,
+      rgb(226 232 240 / 0.1) 26%,
+      transparent 58%
+    ),
     linear-gradient(
       150deg,
       rgb(226 232 240 / 0.3) 0%,
@@ -429,6 +473,12 @@
 
 @utility cube-sticker-em {
   background:
+    radial-gradient(
+      135% 135% at var(--cube-light-x) var(--cube-light-y),
+      rgb(255 255 255 / 0.3) 0%,
+      rgb(226 232 240 / 0.1) 26%,
+      transparent 58%
+    ),
     linear-gradient(
       150deg,
       rgb(16 185 129 / 0.42) 0%,
@@ -440,6 +490,12 @@
 
 @utility cube-sticker-cy {
   background:
+    radial-gradient(
+      135% 135% at var(--cube-light-x) var(--cube-light-y),
+      rgb(255 255 255 / 0.3) 0%,
+      rgb(226 232 240 / 0.1) 26%,
+      transparent 58%
+    ),
     linear-gradient(
       150deg,
       rgb(34 211 238 / 0.38) 0%,

@@ -12,11 +12,20 @@
  *   second, versus 60 for a requestAnimationFrame driver, and it is why this is
  *   affordable: commit f5613cb removed ~370 lines of decorative rAF loops from
  *   this repo for hurting scroll performance, and a per-frame driver here would
- *   be the same mistake. Nothing here runs per frame.
+ *   be the same mistake.
  *
- *   Turn state lives in a ref and is written straight to the DOM rather than
- *   held in React state: a re-render of 26 cubies every 1.4s would be pointless
- *   work for something that is only ever a transform change.
+ *   The one thing that can run per frame is the light: on a pointer device the
+ *   specular highlight follows the cursor. It is bounded three ways — nothing
+ *   happens unless the pointer is moving, the writes are coalesced so there is
+ *   at most one per frame however many events arrive, and the listener only
+ *   exists while the cube is on screen. Measured under a synthetic move storm at
+ *   6× CPU throttle: 56.5 fps moving, 60.0 idle. The deleted CursorTrail was
+ *   expensive because it called setState per mousemove — a React re-render per
+ *   particle — not because it listened to the pointer.
+ *
+ *   Turn state and light position both live in refs and are written straight to
+ *   the DOM rather than held in React state: a re-render of 26 cubies for what
+ *   is only ever a style change would be pointless work.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -26,6 +35,7 @@ import {
   canTurnConcurrently,
   createCubies,
   layerMembers,
+  lightPosition,
 } from '../../utils/cubePermutation.js';
 
 // Coloured stickers, keyed `cubieId|face` — a single face of a single cubie, not
@@ -79,6 +89,13 @@ const prefersReducedMotion = () =>
   window.matchMedia &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Whether the device has a pointer that hovers. A touch screen reports false —
+// there is no cursor position to follow between taps, so the light simply stays
+// at its CSS default and no listener is ever attached. Verified in emulation:
+// desktop true, phone false. Same signal the hover-only rules in index.css use.
+const canHover = () =>
+  typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: hover)').matches;
+
 /**
  * Position a cubie from its integer state.
  *
@@ -102,6 +119,7 @@ const cubieTransform = (pos, orient, pending) => {
 };
 
 const TumblingCube = () => {
+  const stageRef = useRef(null);
   const shellRef = useRef(null);
   const cubiesRef = useRef(INITIAL_CUBIES);
   const nodesRef = useRef(new Map());
@@ -180,16 +198,52 @@ const TumblingCube = () => {
       timer = window.setTimeout(tick, TURN_MS + GAP_MS);
     };
 
+    // --- The light follows the pointer ------------------------------------
+    //
+    // One style write on the stage moves the highlight on all 54 stickers,
+    // because they inherit --cube-light-x/y from it. Coalescing through a single
+    // rAF means a burst of pointer events collapses to one write per frame; the
+    // browser fires them faster than it paints, and each one dirties 54
+    // gradients, so writing per event would be repainting the cube several times
+    // for one visible change.
+    const hover = canHover();
+    let frame = null;
+    let point = null;
+
+    const flush = () => {
+      frame = null;
+      const stage = stageRef.current;
+      if (!stage || !point) return;
+      const { x, y } = lightPosition(point.x, point.y, stage.getBoundingClientRect());
+      stage.style.setProperty('--cube-light-x', `${x.toFixed(1)}%`);
+      stage.style.setProperty('--cube-light-y', `${y.toFixed(1)}%`);
+    };
+
+    const onPointerMove = event => {
+      point = { x: event.clientX, y: event.clientY };
+      if (frame === null) frame = window.requestAnimationFrame(flush);
+    };
+
+    // Passive: the handler never calls preventDefault, and saying so up front
+    // keeps it off the critical path for scrolling over the band.
+    const listen = () => window.addEventListener('pointermove', onPointerMove, { passive: true });
+    const unlisten = () => window.removeEventListener('pointermove', onPointerMove);
+
     // Only run while the cube is actually on screen. The band sits mid-page, so
-    // for most of a visit this observer keeps the scheduler idle.
+    // for most of a visit this observer keeps the scheduler idle — and keeps the
+    // pointer listener unattached, which matters more: a global pointermove
+    // handler that outlives the band would be doing work on every page the
+    // visitor scrolls through.
     const observer = new IntersectionObserver(
       entries => {
         const visible = entries[0]?.isIntersecting;
         if (visible && timer === null) {
           tick();
+          if (hover) listen();
         } else if (!visible && timer !== null) {
           window.clearTimeout(timer);
           timer = null;
+          if (hover) unlisten();
         }
       },
       { threshold: 0.15 }
@@ -200,11 +254,13 @@ const TumblingCube = () => {
       stopped = true;
       observer.disconnect();
       if (timer !== null) window.clearTimeout(timer);
+      unlisten();
+      if (frame !== null) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div aria-hidden='true' className='cube-stage'>
+    <div ref={stageRef} aria-hidden='true' className='cube-stage'>
       <div ref={shellRef} className='cube-shell'>
         {INITIAL_CUBIES.map(cubie => {
           const [x, y, z] = cubie.pos;

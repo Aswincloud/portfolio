@@ -7,6 +7,9 @@
  *   non-lattice position, two cubies in one cell, or a non-rotation orientation,
  *   the cube would visibly tear apart or skew mid-animation. Cheap to assert
  *   here, near-impossible to catch by eye later.
+ *
+ *   Also covers lightPosition, the other pure function in that module. Its
+ *   failure mode is the same shape — invisible in code, obvious on screen.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -16,6 +19,7 @@ import {
   canTurnConcurrently,
   createCubies,
   layerMembers,
+  lightPosition,
 } from '../utils/cubePermutation.js';
 
 const det = m =>
@@ -129,5 +133,75 @@ describe('cube permutation model', () => {
       const b = layerMembers(cubies, axis, 1).map(c => c.id);
       expect(b.some(id => a.has(id))).toBe(false);
     }
+  });
+});
+
+// A stage somewhere down the page, so a test that accidentally assumed the
+// viewport origin would fail rather than coincidentally pass.
+const RECT = { left: 400, top: 300, width: 320, height: 320 };
+
+/* The clamp is the whole substance of lightPosition, and it is the kind of thing
+ * that breaks quietly: a wrong bound still produces a perfectly valid gradient,
+ * just one painted at each tile's centre, so all 54 faces glow individually
+ * instead of the cube reading as one object catching a light. Nothing throws and
+ * nothing looks broken in code — it only looks wrong on screen. Hence asserting
+ * the bounds here.
+ */
+describe('specular light position', () => {
+  const X = { min: 10, max: 30 };
+  const Y = { min: 6, max: 17 };
+
+  const expectInRange = ({ x, y }) => {
+    expect(x).toBeGreaterThanOrEqual(X.min);
+    expect(x).toBeLessThanOrEqual(X.max);
+    expect(y).toBeGreaterThanOrEqual(Y.min);
+    expect(y).toBeLessThanOrEqual(Y.max);
+  };
+
+  it('stays in range for a pointer far outside the stage on every side', () => {
+    // Thousands of pixels out, and negative — the pointer is tracked globally
+    // while the band is on screen, so it genuinely does reach these positions.
+    const far = [
+      [-9000, 300],
+      [9000, 300],
+      [400, -9000],
+      [400, 9000],
+      [-9000, -9000],
+      [9000, 9000],
+    ];
+    for (const [cx, cy] of far) expectInRange(lightPosition(cx, cy, RECT));
+  });
+
+  it('never puts the light near a tile centre, even at the stage centre', () => {
+    // Centre pointer gives the middle of each range. That must still be nowhere
+    // near 50% — a highlight at the middle of every sticker is the failure this
+    // clamp exists to prevent.
+    const centre = lightPosition(560, 460, RECT);
+    expect(centre).toEqual({ x: 20, y: 11.5 });
+    expect(centre.x).toBeLessThan(35);
+    expect(centre.y).toBeLessThan(35);
+  });
+
+  it('leans the light toward the pointer', () => {
+    const left = lightPosition(RECT.left - 200, 460, RECT);
+    const right = lightPosition(RECT.left + RECT.width + 200, 460, RECT);
+    const above = lightPosition(560, RECT.top - 200, RECT);
+    const below = lightPosition(560, RECT.top + RECT.height + 200, RECT);
+
+    expect(left.x).toBeLessThan(right.x);
+    expect(above.y).toBeLessThan(below.y);
+    // And it actually travels, rather than sitting clamped at one value.
+    expect(right.x - left.x).toBeGreaterThan(10);
+    expect(below.y - above.y).toBeGreaterThan(5);
+  });
+
+  it('returns a usable position for an unlaid-out stage', () => {
+    // getBoundingClientRect on a display:none element, or one measured before
+    // paint, is all zeroes. Dividing by that yields NaN, which would serialise
+    // into the custom property as garbage and blank the hotspot on all 54 faces.
+    const zero = lightPosition(560, 460, { left: 0, top: 0, width: 0, height: 0 });
+    expect(Number.isFinite(zero.x)).toBe(true);
+    expect(Number.isFinite(zero.y)).toBe(true);
+    expectInRange(zero);
   });
 });
