@@ -24,6 +24,20 @@ const GTM = 'https://www.googletagmanager.com';
 const CHATWOOT = 'https://support.aswincloud.com';
 const FONTS_CSS = 'https://fonts.googleapis.com';
 const FONTS_FILES = 'https://fonts.gstatic.com';
+// Cloudflare Web Analytics. The proxy injects this script into every HTML
+// response, so it is not optional here — without it the beacon is blocked and
+// analytics silently collects nothing.
+//
+// The trailing slash is load-bearing. Cloudflare's own docs say to allowlist
+// `…/beacon.min.js`, but the real src is `…/beacon.min.js/<version-hash>`, and a
+// CSP path with no trailing slash must match the URL path *exactly*. Verified
+// against the live beacon URL in Chromium: the documented form is blocked, this
+// one is allowed. Scoped to the path rather than the whole origin so the grant
+// covers only the beacon.
+const CF_BEACON = 'https://static.cloudflareinsights.com/beacon.min.js/';
+// The beacon POSTs its RUM payload here (XHR to /cdn-cgi/rum), on the apex
+// hostname rather than the static. one it is served from.
+const CF_BEACON_RUM = 'https://cloudflareinsights.com';
 // GA4 spreads telemetry across regional subdomains (region1.google-analytics.com,
 // etc.), so these have to be wildcards.
 const GA_BEACONS = [
@@ -90,6 +104,7 @@ export function buildCsp(html) {
       ...(handlerHashes.length ? ["'unsafe-hashes'", ...handlerHashes] : []),
       GTM,
       CHATWOOT,
+      CF_BEACON,
     ],
     // 'unsafe-inline' is a considered trade-off: the Chatwoot SDK injects a
     // <style> element at runtime whose contents change with their releases, so it
@@ -100,7 +115,7 @@ export function buildCsp(html) {
     'style-src': ["'self'", "'unsafe-inline'", FONTS_CSS],
     'img-src': ["'self'", 'data:', 'https:'],
     'font-src': ["'self'", 'data:', FONTS_FILES],
-    'connect-src': ["'self'", ...GA_BEACONS, CHATWOOT],
+    'connect-src': ["'self'", ...GA_BEACONS, CHATWOOT, CF_BEACON_RUM],
     // The Chatwoot widget renders its panel in an iframe on its own origin.
     'frame-src': ["'self'", CHATWOOT],
     'object-src': ["'none'"],
