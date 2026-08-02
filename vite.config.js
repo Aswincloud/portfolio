@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import securityHeaders from './scripts/vite-plugin-security-headers.js';
+import prerenderHero from './scripts/vite-plugin-prerender-hero.js';
 
 export default defineConfig({
-  plugins: [react(), securityHeaders()],
+  // prerenderHero writes the hero copy into the shell; securityHeaders hashes
+  // the final HTML at closeBundle, so it must stay last.
+  plugins: [react(), prerenderHero(), securityHeaders()],
   server: {
     port: 3000,
     open: true,
