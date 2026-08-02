@@ -15,6 +15,20 @@ import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } fr
 import { AnimatedMeshGradient } from '../background';
 import { buttonMotion } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
+import {
+  HERO_HEADLINE_LINES,
+  HERO_HEADLINE_ACCENT,
+  HERO_INTRO,
+  HERO_INTRO_EMPHASIS,
+  splitAround,
+} from '../../data/heroContent.js';
+
+// The headline and intro are read from data rather than written out here,
+// because the build-time prerender in scripts/vite-plugin-prerender-hero.js
+// puts the same words into the static shell's <h1>. Two hand-written copies of
+// one sentence is the drift this repo keeps having to undo.
+const HEADLINE = HERO_HEADLINE_LINES.map(line => splitAround(line, HERO_HEADLINE_ACCENT));
+const INTRO = splitAround(HERO_INTRO, HERO_INTRO_EMPHASIS);
 
 // One stat cell. Split into its own component so each can own a useCountUp
 // call (hooks can't run inside the parent's .map). `start` flips true when the
@@ -119,29 +133,30 @@ const HeroSection = React.memo(function HeroSection() {
             <span className='eyebrow text-brand-300'>Software Engineer · Pondicherry, India</span>
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className='text-balance text-4xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl'
-          >
-            I make AI accelerators
-            <br />
-            go <span className='gradient-text-shimmer'>faster</span>.
-          </motion.h1>
+          {/* Headline. No entrance animation, unlike everything around it: these
+              two elements are already on screen before React runs, written into
+              the static shell by scripts/vite-plugin-prerender-hero.js. Fading
+              them in from opacity 0 made the headline visibly vanish and
+              reappear at mount — measured at 645ms of flicker, which is worse
+              than the animation was ever worth. The elements below this are not
+              prerendered, so they still animate and the hero still assembles. */}
+          <h1 className='text-balance text-4xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl'>
+            {HEADLINE.map((line, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <br />}
+                {line.before}
+                {line.match && <span className='gradient-text-shimmer'>{line.match}</span>}
+                {line.after}
+              </React.Fragment>
+            ))}
+          </h1>
 
-          {/* Sub copy */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className='mx-auto mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-slate-400 sm:mt-5 sm:text-lg'
-          >
-            I&apos;m <span className='font-semibold text-slate-200'>Aswin</span> — I profile,
-            benchmark, and optimize the software that runs on next-generation AI silicon at
-            MulticoreWare. Off the clock, I run my own cloud.
-          </motion.p>
+          {/* Sub copy — prerendered too, so likewise unanimated. */}
+          <p className='mx-auto mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-slate-400 sm:mt-5 sm:text-lg'>
+            {INTRO.before}
+            {INTRO.match && <span className='font-semibold text-slate-200'>{INTRO.match}</span>}
+            {INTRO.after}
+          </p>
 
           {/* CTAs */}
           <motion.div
