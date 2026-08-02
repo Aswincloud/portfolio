@@ -11,6 +11,7 @@ import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import { Cpu, Cloud, Gauge, Palette } from 'lucide-react';
 import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 
 const PARAGRAPHS = [
   {
@@ -75,7 +76,7 @@ const AboutSection = React.memo(() => {
   return (
     <section
       id='about'
-      className='section-padding relative overflow-hidden section-seam seam-brand bg-canvas'
+      className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-canvas`}
     >
       <div className='container-custom relative z-10'>
         <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:gap-20'>

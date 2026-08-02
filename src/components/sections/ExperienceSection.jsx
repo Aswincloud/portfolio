@@ -8,6 +8,7 @@
 import React, { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import { useExperienceCalculator } from '../../hooks';
 import { getExperienceData } from '../../data/experienceData.js';
 import ExperienceEntry from '../ExperienceEntry.jsx';
@@ -20,7 +21,7 @@ const ExperienceSection = () => {
   return (
     <section
       id='experience'
-      className='section-padding relative overflow-hidden section-seam seam-cyan bg-ink'
+      className={`section-padding relative overflow-hidden ${sectionAccent('cyan')} bg-ink`}
     >
       <div className='container-custom relative z-10'>
         <SectionHeader

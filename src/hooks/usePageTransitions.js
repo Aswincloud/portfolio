@@ -12,8 +12,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 // deliberately absent: it has no id and is not a nav destination.
 const SECTIONS = ['home', 'about', 'experience', 'skills', 'projects', 'technologies', 'contact'];
 
-// Matches `scroll-padding-top` in index.css, so a click and a keyboard-driven
-// hash jump land in the same place.
+// Matches `scroll-padding-top` in index.css (and the same constant in App.jsx's
+// useHashScroll), so a nav click, a hashed URL, and a native hash jump all land
+// in the same place. Change one, change all three.
 const HEADER_OFFSET = 80;
 
 /**

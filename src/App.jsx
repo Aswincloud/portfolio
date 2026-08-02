@@ -165,9 +165,17 @@ const useChatVisibility = () => {
 
 // When we land on a hashed URL (e.g. /#projects from the 404 page, the footer,
 // or an external link), the target section may not exist yet at the moment the
-// hash is set. Wait for it via rAF, then scroll with the same 80px fixed-header
-// offset used elsewhere. Pathname is a dependency so navigating away and back
-// to the home route with a hash re-triggers the scroll.
+// hash is set. Wait for it via rAF, then scroll with the fixed-header offset.
+// Pathname is a dependency so navigating away and back to the home route with a
+// hash re-triggers the scroll.
+//
+// Because this runs on every hash change, it — not `scroll-padding-top` — is
+// what decides where a hash lands, on a cold load as much as an in-app one.
+// Keep HEADER_OFFSET in step with the constant of the same name in
+// usePageTransitions.js and `scroll-padding-top` in index.css; all three
+// describe the same fixed header, and this is the one that actually applies.
+const HEADER_OFFSET = 80;
+
 const useHashScroll = () => {
   const { pathname, hash } = useLocation();
 
@@ -177,7 +185,7 @@ const useHashScroll = () => {
     const attempt = (tries = 0) => {
       const el = document.getElementById(hash.slice(1));
       if (el) {
-        window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+        window.scrollTo({ top: el.offsetTop - HEADER_OFFSET, behavior: 'smooth' });
       } else if (tries < 20) {
         raf = requestAnimationFrame(() => attempt(tries + 1));
       }

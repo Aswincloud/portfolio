@@ -10,6 +10,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import {
   Cloud,
   Monitor,
@@ -129,7 +130,7 @@ const TechnologiesSection = () => {
   return (
     <section
       id='technologies'
-      className='section-padding relative overflow-hidden section-seam seam-indigo bg-canvas'
+      className={`section-padding relative overflow-hidden ${sectionAccent('indigo')} bg-canvas`}
     >
       <div className='container-custom relative z-10'>
         <SectionHeader

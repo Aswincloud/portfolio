@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import { Mail, MapPin, Briefcase, Send, Check, AlertTriangle, Copy } from 'lucide-react';
 import { useRipple } from '../../hooks';
 
@@ -156,7 +157,7 @@ const ContactSection = () => {
   return (
     <section
       id='contact'
-      className='section-padding relative overflow-hidden section-seam seam-brand bg-ink'
+      className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-ink`}
     >
       {/* soft glow behind the form */}
       <div

@@ -10,6 +10,7 @@ import React, { useState, useId, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import { ExternalLink, ChevronDown, Package, Check } from 'lucide-react';
 import { Github } from '../icons/BrandIcons.jsx';
 import { featuredProjects, allProjects, PROJECT_KINDS } from '../../data/projects.jsx';
@@ -145,7 +146,7 @@ const ProjectsSection = () => {
   return (
     <section
       id='projects'
-      className='section-padding relative overflow-hidden section-seam seam-cyan bg-ink'
+      className={`section-padding relative overflow-hidden ${sectionAccent('cyan')} bg-ink`}
       ref={ref}
     >
       <div className='container-custom relative z-10'>

@@ -116,7 +116,19 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    /* Keep in step with HEADER_OFFSET in usePageTransitions.js and the same
+       constant in App.jsx's useHashScroll. Those two intercept every hash we
+       currently produce — nav clicks and cold-loaded hashed URLs alike — and
+       scroll manually, so this declaration governs nothing today: raising it to
+       300px in a built stylesheet moved neither path, while raising the JS
+       offset to 300 moved both. What's left for it is find-in-page and
+       focus-driven scrolls, plus every hash path added from here on.
+
+       It sat at 88px against their 80px. Not a visible bug, then, but three
+       constants describing one 80px fixed header with one of them disagreeing —
+       and the one that disagreed is the fallback, so the drift would only have
+       surfaced the day something stopped going through the JS. */
+    scroll-padding-top: 80px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
