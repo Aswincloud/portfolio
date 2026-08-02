@@ -13,6 +13,7 @@ import { Mail, ArrowRight, FileText, ArrowDown, MessageCircle } from 'lucide-rea
 import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
+import RotatingRoles from '../RotatingRoles.jsx';
 import { buttonMotion } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
 import {
@@ -130,7 +131,7 @@ const HeroSection = React.memo(function HeroSection() {
 
             {/* text-brand-300 explicitly: `eyebrow` carries no colour, and this
                 one has no SectionHeader to supply it. */}
-            <span className='eyebrow text-brand-300'>Software Engineer · Pondicherry, India</span>
+            <RotatingRoles />
           </motion.div>
 
           {/* Headline. No entrance animation, unlike everything around it: these
