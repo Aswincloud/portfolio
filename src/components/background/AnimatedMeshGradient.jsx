@@ -17,9 +17,16 @@
  *   index.css for why it has to be, and for the paint-order arrangement that
  *   makes tiles switch on and off rather than slide. That block also records why
  *   the layer paints an opaque grid over the glows instead of masking them: the
- *   mask was measured at 22 fps against 50. Reduced motion is handled per
- *   utility there, not by the global override, which does not freeze animations
- *   the way it looks like it should.
+ *   mask was measured at 22 fps against 50.
+ *
+ *   The die map needs no reduced-motion handling of its own, because nothing in
+ *   it animates — the only moving parts on this backdrop are the three auroras,
+ *   which the global override at index.css:663 already covers. Worth knowing if
+ *   you ever give the die layers an animation: that override sets
+ *   animation-duration to 0.01ms with iteration-count 1, which *completes* an
+ *   animation instantly rather than freezing it, so with no fill-mode the
+ *   element snaps to its un-animated style. cube-shell:567 has to pin an
+ *   explicit rest pose for exactly that reason.
  */
 
 import React from 'react';
