@@ -13,6 +13,7 @@ import { Mail, ArrowRight, FileText, ArrowDown, MessageCircle } from 'lucide-rea
 import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
+import TechMarquee from './TechMarquee.jsx';
 import { buttonMotion } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
 import {
@@ -252,6 +253,8 @@ const HeroSection = React.memo(function HeroSection() {
             <StatCell key={stat.label} value={stat.value} label={stat.label} start={statsInView} />
           ))}
         </motion.dl>
+
+        <TechMarquee />
       </div>
 
       {/* Scroll indicator — a flow child pinned to the bottom of the hero
