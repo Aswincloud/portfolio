@@ -14,26 +14,27 @@ import prerenderHero, { renderHeroShell } from '../../scripts/vite-plugin-preren
 import { HERO_HEADLINE_LINES, HERO_INTRO, splitAround } from '../data/heroContent.js';
 
 const runTransform = html => prerenderHero().transformIndexHtml.handler(html);
-const stripTags = s => s.replace(/<[^>]+>/g, '');
-const decode = s =>
-  s
-    .replace(/&quot;/g, '"')
-    .replace(/&gt;/g, '>')
-    .replace(/&lt;/g, '<')
-    .replace(/&amp;/g, '&');
+
+// Read the shell back by parsing it, not by regex. An earlier version stripped
+// tags with `replace(/<[^>]+>/g, '')` and hand-decoded entities; CodeQL flagged
+// that as an incomplete multi-character sanitizer and was right to — `<scr<script>ipt>`
+// survives a single pass. Nothing untrusted reaches it here, but a test asserting
+// on escaping shouldn't itself contain a broken unescaper. Parsing is also simply
+// more accurate: textContent decodes entities for free, and the tag set below is
+// the elements a browser actually builds rather than the ones a regex can spot.
+const parse = html => new DOMParser().parseFromString(html, 'text/html');
+const textOf = html => parse(html).body.textContent;
 
 describe('renderHeroShell', () => {
   it('emits exactly one h1 containing the full headline', () => {
-    const html = renderHeroShell();
-    expect(html.match(/<h1\b/g)).toHaveLength(1);
-
-    const inner = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)[1];
-    expect(decode(stripTags(inner))).toBe(HERO_HEADLINE_LINES.join(' '));
+    const doc = parse(renderHeroShell());
+    const h1s = doc.querySelectorAll('h1');
+    expect(h1s).toHaveLength(1);
+    expect(h1s[0].textContent).toBe(HERO_HEADLINE_LINES.join(' '));
   });
 
   it('emits the intro copy verbatim', () => {
-    const body = decode(stripTags(renderHeroShell()));
-    expect(body).toContain(HERO_INTRO);
+    expect(textOf(renderHeroShell())).toContain(HERO_INTRO);
   });
 
   it('ships nothing hidden — no opacity:0 or display:none', () => {
@@ -52,11 +53,11 @@ describe('renderHeroShell', () => {
 
   it('escapes text rather than interpolating it raw', () => {
     // Guard against the copy ever containing a character that would break out
-    // of the markup. Only tags this function itself emits should be present.
-    const emitted = renderHeroShell()
-      .match(/<\/?([a-z0-9]+)/gi)
-      .map(t => t.replace(/<\/?/, ''));
-    expect(new Set(emitted)).toEqual(new Set(['div', 'p', 'h1', 'span', 'strong']));
+    // of the markup. Only elements this function itself emits should exist —
+    // asked of the parsed tree, so it's the elements a browser really builds.
+    const doc = parse(renderHeroShell());
+    const built = new Set([...doc.body.querySelectorAll('*')].map(el => el.tagName.toLowerCase()));
+    expect(built).toEqual(new Set(['div', 'p', 'h1', 'span', 'strong']));
   });
 });
 
