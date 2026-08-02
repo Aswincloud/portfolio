@@ -9,9 +9,17 @@
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import prerenderHero, { renderHeroShell } from '../../scripts/vite-plugin-prerender-hero.js';
 import { HERO_HEADLINE_LINES, HERO_INTRO, splitAround } from '../data/heroContent.js';
+
+// Vite's transform does define __dirname here, so the earlier version worked —
+// but it only works under a bundler. Deriving the path from import.meta.url is
+// what plain ESM gives us, and it matches assetsignore.test.js, the other test
+// that reads repo files off disk.
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const read = relative => readFileSync(resolve(repoRoot, relative), 'utf8');
 
 const runTransform = html => prerenderHero().transformIndexHtml.handler(html);
 
@@ -74,14 +82,13 @@ describe('the plugin', () => {
 
   it('matches the real index.html, so the build cannot quietly stop injecting', () => {
     // The throw above only helps if the pattern still matches the real file.
-    const html = readFileSync(resolve(__dirname, '../../index.html'), 'utf8');
-    expect(() => runTransform(html)).not.toThrow();
+    expect(() => runTransform(read('index.html'))).not.toThrow();
   });
 });
 
 describe('single source of copy', () => {
   it('HeroSection contains no hardcoded headline or intro text', () => {
-    const src = readFileSync(resolve(__dirname, '../components/sections/HeroSection.jsx'), 'utf8');
+    const src = read('src/components/sections/HeroSection.jsx');
     // Both renderers must read heroContent.js. If someone re-types the sentence
     // into the JSX, the two copies can drift and only one of them is indexed.
     const code = src.replace(/\{\/\*[\s\S]*?\*\/\}/g, ''); // drop JSX comments
