@@ -13,6 +13,7 @@ import { Mail, ArrowRight, FileText, ArrowDown, MessageCircle } from 'lucide-rea
 import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
+import CursorSpotlight from '../background/CursorSpotlight.jsx';
 import { buttonMotion } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
 import {
@@ -101,6 +102,7 @@ const HeroSection = React.memo(function HeroSection() {
   return (
     <section id='home' className='relative flex min-h-dvh flex-col overflow-hidden'>
       <AnimatedMeshGradient />
+      <CursorSpotlight />
 
       {/* Content is centered in the space below the fixed nav. `my-auto`
           (rather than justify-center) centers when there's room but lets the
