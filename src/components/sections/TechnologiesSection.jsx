@@ -9,6 +9,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import {
   Cloud,
   Monitor,
@@ -120,33 +122,34 @@ const TECHNOLOGIES = [
   },
 ];
 
+const TOTAL_TECHNOLOGIES = TECHNOLOGIES.reduce((n, cat) => n + cat.items.length, 0);
+
 const TechnologiesSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
     <section
       id='technologies'
-      className='section-padding relative overflow-hidden section-seam bg-canvas'
+      className={`section-padding relative overflow-hidden ${sectionAccent('indigo')} bg-canvas`}
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='05'
+          label='Stack'
+          accent='indigo'
+          title={
+            <>
+              Technologies &amp; <span className='gradient-text'>platforms</span>
+            </>
+          }
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>05 /</span> Stack
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>
-            Technologies &amp; <span className='gradient-text'>platforms</span>
-          </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             The tools I use to build, ship, and run things — from languages and frameworks to cloud,
             OS, networking, and infrastructure.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div className='grid gap-5 md:grid-cols-2'>
           {TECHNOLOGIES.map((cat, catIndex) => {
@@ -160,7 +163,13 @@ const TechnologiesSection = () => {
                 className='card-surface card-lift p-6 lg:p-8'
               >
                 <div className='mb-6 flex items-center gap-3'>
-                  <span className='flex h-11 w-11 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300'>
+                  {/* Indigo, matching this section's accent. These four tiles
+                      were the last brand-emerald left in a section that is
+                      otherwise indigo, and being the largest coloured element
+                      on screen here they were reading as the section's hue —
+                      arguing with the seam and the eyebrow rather than
+                      supporting them. */}
+                  <span className='flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-500/20 bg-indigo-500/10 text-indigo-300'>
                     <Icon size={20} />
                   </span>
                   <h3 className='text-lg font-semibold text-white'>{cat.category}</h3>
@@ -180,11 +189,11 @@ const TechnologiesSection = () => {
                         {/* Fixed 20px slot so the text column stays aligned
                             regardless of each mark's aspect ratio, and so the
                             filled brand logos and the stroked lucide fallbacks
-                            share one optical centre. Monochrome → brand on
-                            hover, exactly what the plain dot used to do:
-                            eighteen full-colour logos would fight the
-                            emerald→cyan accent instead of supporting it. */}
-                        <span className='mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 transition-colors group-hover:text-brand-300'>
+                            share one optical centre. Monochrome → the section's
+                            indigo on hover, exactly what the plain dot used to
+                            do: eighteen full-colour logos would fight the
+                            section accent instead of supporting it. */}
+                        <span className='mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 transition-colors group-hover:text-indigo-300'>
                           <ItemIcon size={16} />
                         </span>
                         <div className='min-w-0'>
@@ -204,12 +213,18 @@ const TechnologiesSection = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className='relative mt-8 overflow-hidden rounded-2xl border border-brand-500/20 bg-linear-to-r from-brand-500/10 via-surface to-cyan-500/10 p-8 text-center'
+          className='relative mt-8 overflow-hidden rounded-2xl border border-indigo-500/20 bg-linear-to-r from-indigo-500/10 via-surface to-cyan-500/10 p-8 text-center'
         >
-          <h3 className='text-xl font-bold text-white'>Always learning</h3>
+          <h3 className='text-xl font-bold text-white'>Learned by shipping</h3>
+          {/* The count is derived rather than written down so it can't drift out
+              of date when the lists above change. The previous copy here made no
+              claim at all ("constantly exploring new technologies to stay
+              current"), which read as filler next to sections that quote real
+              numbers — so this points at the evidence instead. */}
           <p className='mx-auto mt-2 max-w-2xl leading-relaxed text-slate-400'>
-            I&apos;m constantly exploring new technologies and platforms to stay current and expand
-            what I can build across different domains.
+            All {TOTAL_TECHNOLOGIES} of these are here because I&apos;ve put something into
+            production with it — a published package, a service I run, or the site you&apos;re
+            reading. The list grows when a real problem needs a tool I don&apos;t have yet.
           </p>
         </motion.div>
       </div>

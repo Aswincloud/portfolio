@@ -8,6 +8,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import { Code, Zap, Cpu, Cloud } from 'lucide-react';
 
 // `proof` grounds each discipline in work that actually exists elsewhere on the
@@ -69,22 +71,21 @@ const SkillsSection = () => {
   return (
     <section
       id='skills'
-      className='section-padding relative overflow-hidden section-seam bg-canvas'
+      className={`section-padding relative overflow-hidden ${sectionAccent('indigo')} bg-canvas`}
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='03'
+          label='Skills'
+          accent='indigo'
+          title={
+            <>
+              What I do <span className='gradient-text'>best</span>
+            </>
+          }
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>03 /</span> Skills
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>
-            What I do <span className='gradient-text'>best</span>
-          </h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             The disciplines I reach for when a system needs to be faster, leaner, or more reliable —
             the specific tools live in the{' '}
@@ -96,9 +97,15 @@ const SkillsSection = () => {
             </a>
             .
           </p>
-        </motion.div>
+        </SectionHeader>
 
-        <div className='grid gap-5 sm:grid-cols-2 lg:grid-cols-4'>
+        {/* Two across, not four. At `lg:grid-cols-4` each card was a 207px
+            column, which put the body copy at ~26 characters a line — well under
+            the 45–75 band where prose stays comfortable — and was narrow enough
+            that "Performance Optimization" wrapped to two lines while its three
+            neighbours didn't, leaving that one card's text 28px out of step. Two
+            columns give ~62 characters and fit every title on one line. */}
+        <div className='grid gap-5 md:grid-cols-2'>
           {SKILLS.map((skill, i) => (
             <motion.div
               key={skill.title}

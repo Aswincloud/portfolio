@@ -116,7 +116,19 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    /* Keep in step with HEADER_OFFSET in usePageTransitions.js and the same
+       constant in App.jsx's useHashScroll. Those two intercept every hash we
+       currently produce — nav clicks and cold-loaded hashed URLs alike — and
+       scroll manually, so this declaration governs nothing today: raising it to
+       300px in a built stylesheet moved neither path, while raising the JS
+       offset to 300 moved both. What's left for it is find-in-page and
+       focus-driven scrolls, plus every hash path added from here on.
+
+       It sat at 88px against their 80px. Not a visible bug, then, but three
+       constants describing one 80px fixed header with one of them disagreeing —
+       and the one that disagreed is the fallback, so the drift would only have
+       surfaced the day something stopped going through the JS. */
+    scroll-padding-top: 80px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -172,9 +184,14 @@
   @apply py-24 lg:py-32;
 }
 
-/* Eyebrow label: mono, uppercase, tracked — the recurring "technical" motif. */
+/* Eyebrow label: mono, uppercase, tracked — the recurring "technical" motif.
+   Carries no colour of its own: the six numbered eyebrows get their hue from
+   SectionHeader's ACCENTS map, and baking a default in here too would make the
+   result depend on which of the two classes Tailwind happened to emit last.
+   The consequence is that a bare `eyebrow` renders slate — so every use site
+   must pair it with a text-* class. */
 @utility eyebrow {
-  @apply inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand-300;
+  @apply inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.2em];
 }
 
 /* Card surface used across every section for a single, coherent card system. */
@@ -250,11 +267,16 @@
 
 /* Section seam: a centre-weighted hairline at the top edge so consecutive
    sections read as deliberately separated panels rather than a hard bg swap.
-   Rendered via a pseudo-element so it never affects layout/padding. */
+   Rendered via a pseudo-element so it never affects layout/padding.
+
+   The seam carries the section's accent (see seam-* below) because it is the
+   only thing marking the boundary at all: the bg-ink/bg-canvas alternation the
+   sections already use measures a 1.035 contrast ratio, which is below the
+   threshold where two greys read as different at all. Tinting the one-pixel
+   edge is what makes the alternation legible without touching the surfaces. */
 @utility section-seam {
   position: relative;
-}
-@utility section-seam {
+
   &::before {
     content: '';
     position: absolute;
@@ -264,11 +286,60 @@
     background: linear-gradient(
       to right,
       transparent,
-      var(--color-hairline) 20%,
-      var(--color-hairline) 80%,
+      var(--seam-color, var(--color-hairline)) 20%,
+      var(--seam-color, var(--color-hairline)) 80%,
       transparent
     );
   }
+
+  /* Accent wash. The seam alone gave the hue about one pixel of the viewport to
+     work with, which is not enough surface area to actually tell you which
+     section you're in — the thing the accent exists to do. This spreads the same
+     hue over the section's opening, behind the header, at a strength low enough
+     that it reads as the light in the room rather than as a coloured panel. It
+     is also what stops all six openings from looking identical: the surfaces are
+     still the same near-black either way, so the wash is doing that work alone.
+
+     Painted as ::after (last in the box tree, so above ::before and any
+     unlayered background children) but below the `relative z-10` content
+     wrapper every section uses. pointer-events: none so it never eats a click.
+     Defaults to transparent, i.e. an untinted section is exactly as it was. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 380px;
+    pointer-events: none;
+    background: radial-gradient(
+      75% 380px at 50% 0%,
+      var(--seam-glow, transparent),
+      transparent 72%
+    );
+  }
+}
+
+/* Per-section accent tints. Each is a separate literal utility rather than one
+   parameterised class because Tailwind finds classes by scanning source text —
+   a name assembled at runtime is never emitted, and the failure mode is an
+   invisible seam rather than an error. Same constraint as SkillsSection's
+   per-card `edge` values.
+
+   Mixed against transparent rather than hardcoded: a 1px line at full
+   saturation reads as a coloured rule, which is louder than a boundary marker
+   needs to be. ~45% keeps it a tinted hairline, and ~8% keeps the wash below the
+   point where it starts to look like a different background. */
+@utility seam-brand {
+  --seam-color: color-mix(in oklab, var(--color-brand-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-brand-400) 8%, transparent);
+}
+@utility seam-cyan {
+  --seam-color: color-mix(in oklab, var(--color-cyan-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-cyan-400) 8%, transparent);
+}
+@utility seam-indigo {
+  --seam-color: color-mix(in oklab, var(--color-indigo-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-indigo-400) 8%, transparent);
 }
 
 /* ---------------------------------------------------------------------------

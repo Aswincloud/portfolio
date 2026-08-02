@@ -13,7 +13,7 @@ import { Mail, ArrowRight, FileText, ArrowDown, MessageCircle } from 'lucide-rea
 import { Github, Linkedin } from '../icons/BrandIcons.jsx';
 import { useExperienceCalculator, useThrottledScroll, useRipple, useCountUp } from '../../hooks';
 import { AnimatedMeshGradient } from '../background';
-import { useMicroInteractions } from '../../utils/microInteractions';
+import { buttonMotion } from '../../utils/microInteractions';
 import { RESUME_URL } from '../../data/links.js';
 
 // One stat cell. Split into its own component so each can own a useCountUp
@@ -25,7 +25,12 @@ const StatCell = ({ value, label, start }) => {
   // behind the fade-in.
   const display = useCountUp(value, start, { delay: 750, duration: 1500 });
   return (
-    <div className='bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
+    // A <dl> requires dt before dd in source order, so the number is put above
+    // its label visually with flex + order. The flex column is load-bearing:
+    // `order` is ignored outside a flex/grid container, and without it the cell
+    // silently rendered label-over-number (the label's own mt-1 only makes sense
+    // under a number, which is what gave the inversion away).
+    <div className='flex flex-col bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
       <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>
         {label}
       </dt>
@@ -45,7 +50,6 @@ const SOCIALS = [
 const HeroSection = React.memo(function HeroSection() {
   const experience = useExperienceCalculator();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-  const { variants } = useMicroInteractions();
   const { createRipple } = useRipple();
   const contactButtonRef = useRef(null);
   // Trigger the stat count-up once the strip is on screen (triggerOnce so it
@@ -110,7 +114,9 @@ const HeroSection = React.memo(function HeroSection() {
               </span>
             </span>
 
-            <span className='eyebrow'>Software Engineer · Pondicherry, India</span>
+            {/* text-brand-300 explicitly: `eyebrow` carries no colour, and this
+                one has no SectionHeader to supply it. */}
+            <span className='eyebrow text-brand-300'>Software Engineer · Pondicherry, India</span>
           </motion.div>
 
           {/* Headline */}
@@ -148,8 +154,8 @@ const HeroSection = React.memo(function HeroSection() {
               ref={contactButtonRef}
               href='#contact'
               onClick={e => createRipple(e, contactButtonRef.current)}
-              whileHover={variants.buttonHover}
-              whileTap={variants.buttonTap}
+              whileHover={buttonMotion.hover}
+              whileTap={buttonMotion.tap}
               className='group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-linear-to-r from-brand-500 to-cyan-500 px-7 py-3.5 font-semibold text-ink shadow-lg shadow-brand-500/20 transition-shadow hover:shadow-xl hover:shadow-brand-500/30 sm:w-auto'
             >
               <Mail size={18} />
@@ -165,8 +171,8 @@ const HeroSection = React.memo(function HeroSection() {
                 href={RESUME_URL}
                 target='_blank'
                 rel='noopener noreferrer'
-                whileHover={variants.buttonHover}
-                whileTap={variants.buttonTap}
+                whileHover={buttonMotion.hover}
+                whileTap={buttonMotion.tap}
                 className='group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-hairline bg-surface/60 px-5 py-3.5 font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:border-slate-600 hover:bg-surface sm:w-auto sm:px-7'
                 aria-label='View résumé (opens in a new tab)'
               >
@@ -181,8 +187,8 @@ const HeroSection = React.memo(function HeroSection() {
               <motion.a
                 href='#contact'
                 onClick={openLiveChat}
-                whileHover={variants.buttonHover}
-                whileTap={variants.buttonTap}
+                whileHover={buttonMotion.hover}
+                whileTap={buttonMotion.tap}
                 className='group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-hairline bg-surface/60 px-5 py-3.5 font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:border-brand-500/40 hover:bg-surface hover:text-brand-200 sm:hidden'
                 aria-label='Open live chat'
               >

@@ -6,8 +6,9 @@
  */
 
 import React, { useMemo } from 'react';
-import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
+import SectionHeader from '../SectionHeader.jsx';
+import { sectionAccent } from '../../data/sectionAccents.js';
 import { useExperienceCalculator } from '../../hooks';
 import { getExperienceData } from '../../data/experienceData.js';
 import ExperienceEntry from '../ExperienceEntry.jsx';
@@ -20,28 +21,27 @@ const ExperienceSection = () => {
   return (
     <section
       id='experience'
-      className='section-padding relative overflow-hidden section-seam bg-ink'
+      className={`section-padding relative overflow-hidden ${sectionAccent('cyan')} bg-ink`}
     >
       <div className='container-custom relative z-10'>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className='mb-14 max-w-2xl'
+        <SectionHeader
+          innerRef={ref}
+          inView={inView}
+          number='02'
+          label='Experience'
+          accent='cyan'
+          title={<>Where I&apos;ve worked</>}
         >
-          <p className='eyebrow mb-5'>
-            <span className='text-slate-600'>02 /</span> Experience
-          </p>
-          <h2 className='text-4xl font-bold sm:text-5xl'>Where I&apos;ve worked</h2>
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>
             Building performance-critical software and shipping across hardware and cloud.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <div className='relative max-w-4xl'>
-          {/* Timeline rail (desktop) */}
-          <div className='absolute left-[25px] top-4 bottom-4 hidden w-px bg-linear-to-b from-brand-500/40 via-hairline to-transparent md:block' />
+          {/* Timeline rail. Aligned to the node centres in ExperienceEntry:
+              left-[13px] mobile, left-[25px] desktop. Cyan head rather than the
+              old brand-500 so it agrees with this section's accent. */}
+          <div className='absolute left-[13px] top-4 bottom-4 w-px bg-linear-to-b from-cyan-500/40 via-hairline to-transparent md:left-[25px]' />
 
           <div className='space-y-6 md:space-y-8'>
             {experienceData.map(entry => (

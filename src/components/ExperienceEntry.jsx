@@ -42,15 +42,21 @@ function ExperienceEntryComponent({
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay }}
-      className='relative pl-0 md:pl-20'
+      className='relative pl-9 md:pl-20'
     >
-      {/* Timeline node (desktop) — a solid ink disc masks the rail passing
-          behind it, a colored ring gives the halo, and the dot is flex-centred
-          inside so the two can never drift apart. Its centre (left 15 + 10)
-          sits on the rail at left-[25px]. */}
+      {/* Timeline node — a solid ink disc masks the rail passing behind it, a
+          colored ring gives the halo, and the dot is flex-centred inside so the
+          two can never drift apart. Its centre (left + 10) sits on the rail:
+          3+10=13 mobile, 15+10=25 desktop.
+
+          Shown at every width. It used to be md:flex alongside an md:block
+          rail, which meant the section's one visual device — the thing that
+          makes it a timeline rather than a stack of cards — was missing on
+          phones. The 36px indent it costs there is affordable: at 390px the
+          card still gets 314px. */}
       <span
         aria-hidden='true'
-        className={`absolute left-[15px] top-[30px] hidden h-5 w-5 items-center justify-center rounded-full bg-ink ring-2 md:flex ${theme.ring}`}
+        className={`absolute left-[3px] top-[30px] flex h-5 w-5 items-center justify-center rounded-full bg-ink ring-2 md:left-[15px] ${theme.ring}`}
       >
         <span className={`h-2.5 w-2.5 rounded-full ${theme.dot}`} />
       </span>
