@@ -63,10 +63,19 @@ const Footer = () => {
           </div>
 
           {/* Links */}
-          <nav aria-label='Footer' className='flex flex-col gap-3'>
-            <span className='font-mono text-xs uppercase tracking-wider text-slate-600'>Links</span>
+          {/* -my-1 cancels the padding's contribution to the nav's own height so
+              the column keeps its original rhythm while each row grows. */}
+          <nav aria-label='Footer' className='-my-1 flex flex-col gap-1'>
+            <span className='mb-1 font-mono text-xs uppercase tracking-wider text-slate-600'>
+              Links
+            </span>
             {LINKS.map(link => {
-              const cls = 'text-sm text-slate-400 transition-colors hover:text-brand-300';
+              // py-1.5 on an inline-flex row: the text is 20px, which leaves the
+              // hit area 4px under the 24px WCAG 2.5.8 floor. `w-fit` keeps the
+              // target the width of the words rather than the whole column, so
+              // the padding grows the target without widening it into dead space.
+              const cls =
+                'inline-flex w-fit py-1.5 text-sm text-slate-400 transition-colors hover:text-brand-300';
               // Internal routes go through the router so basename is respected
               // and navigation stays client-side; external links use <a>.
               return link.external ? (
@@ -92,9 +101,11 @@ const Footer = () => {
           <p className='font-mono text-xs text-slate-600'>
             © {currentYear} Aswin. All rights reserved.
           </p>
+          {/* -my-1.5 keeps the row's visual height unchanged while the padding
+              lifts the 16px-tall link over the 24px WCAG 2.5.8 target floor. */}
           <a
             href='#home'
-            className='inline-flex items-center gap-1.5 font-mono text-xs text-slate-500 transition-colors hover:text-brand-300'
+            className='-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-mono text-xs text-slate-500 transition-colors hover:text-brand-300'
           >
             Back to top
             <ArrowUp size={13} />

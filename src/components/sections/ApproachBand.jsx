@@ -40,7 +40,9 @@ const ApproachBand = () => {
           </div>
 
           <div className='text-center md:text-left'>
-            <p className='eyebrow mb-5'>Approach</p>
+            {/* text-brand-300 explicitly: `eyebrow` carries no colour, and this
+                band has no SectionHeader to supply it. */}
+            <p className='eyebrow mb-5 text-brand-300'>Approach</p>
             <h2 className='text-3xl font-bold leading-tight sm:text-4xl'>
               Always <span className='gradient-text'>turning it over</span>
             </h2>

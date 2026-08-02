@@ -34,9 +34,24 @@ const ACCENTS = {
 };
 
 /**
+ * Two headline scales. Every section headline was rendering at exactly 48px/700,
+ * so scrolling the page felt metronomic — six beats of identical weight with no
+ * sense of where you were in the arc. `major` opens and closes the page (About,
+ * Contact); the four sections in between step down to `minor`, which reads as
+ * body-of-the-argument rather than as another opening statement.
+ *
+ * Literal strings for the same reason as ACCENTS: Tailwind scans source text.
+ */
+const TITLE_SCALES = {
+  major: 'text-4xl font-bold leading-tight sm:text-5xl',
+  minor: 'text-3xl font-bold leading-tight sm:text-4xl',
+};
+
+/**
  * @param {string} number - Two-digit section index, e.g. '01'.
  * @param {string} label - Eyebrow text, matching the nav item.
  * @param {'brand'|'cyan'|'indigo'} accent - Key into ACCENTS.
+ * @param {'major'|'minor'} size - Key into TITLE_SCALES.
  * @param {React.ReactNode} title - Headline content (may contain a
  *   `gradient-text` span).
  * @param {React.ReactNode} children - Optional sub-copy under the headline.
@@ -48,14 +63,15 @@ const SectionHeader = ({
   number,
   label,
   accent = 'brand',
+  size = 'minor',
   title,
-  titleClassName = 'text-4xl font-bold sm:text-5xl',
   children,
   inView,
   innerRef,
   className = 'mb-14 max-w-2xl',
 }) => {
   const tone = ACCENTS[accent] ?? ACCENTS.brand;
+  const titleClassName = TITLE_SCALES[size] ?? TITLE_SCALES.minor;
 
   return (
     <motion.div

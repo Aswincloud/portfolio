@@ -36,19 +36,21 @@ const ProjectCard = ({ project, index, inView }) => {
           card — it means "live", which doesn't vary by kind. The metric chip
           below it takes the accent instead. */}
       <div className='flex items-start justify-between gap-4'>
+        {/* shrink-0: without it a long metric chip compresses the tile — the
+            widest one used to leave it 35px of the 56px it asks for. */}
         <span
-          className={`flex h-14 w-14 items-center justify-center rounded-2xl border transition-transform duration-300 group-hover:scale-105 [&_svg]:h-7 [&_svg]:w-7 ${kind.tile}`}
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border transition-transform duration-300 group-hover:scale-105 [&_svg]:h-7 [&_svg]:w-7 ${kind.tile}`}
         >
           {project.icon}
         </span>
-        <div className='flex flex-col items-end gap-1.5'>
-          <span className='inline-flex items-center gap-1.5 rounded-full border border-brand-500/20 bg-brand-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-brand-300'>
+        <div className='flex min-w-0 flex-col items-end gap-1.5'>
+          <span className='inline-flex shrink-0 items-center gap-1.5 rounded-full border border-brand-500/20 bg-brand-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-brand-300'>
             <span className='h-1.5 w-1.5 rounded-full bg-brand-400' />
             {project.status}
           </span>
           {project.metric && (
             <span
-              className={`rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium ${kind.chip}`}
+              className={`max-w-full truncate rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium ${kind.chip}`}
             >
               {project.metric}
             </span>

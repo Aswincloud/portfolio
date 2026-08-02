@@ -73,7 +73,10 @@ const AboutSection = React.memo(() => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
 
   return (
-    <section id='about' className='section-padding relative overflow-hidden bg-canvas'>
+    <section
+      id='about'
+      className='section-padding relative overflow-hidden section-seam seam-brand bg-canvas'
+    >
       <div className='container-custom relative z-10'>
         <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:gap-20'>
           {/* Narrative */}
@@ -84,7 +87,7 @@ const AboutSection = React.memo(() => {
             label='About'
             accent='brand'
             className=''
-            titleClassName='text-4xl font-bold leading-tight sm:text-5xl'
+            size='major'
             title={
               <>
                 Where software meets <span className='gradient-text'>silicon</span>

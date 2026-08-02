@@ -98,7 +98,13 @@ const SkillsSection = () => {
           </p>
         </SectionHeader>
 
-        <div className='grid gap-5 sm:grid-cols-2 lg:grid-cols-4'>
+        {/* Two across, not four. At `lg:grid-cols-4` each card was a 207px
+            column, which put the body copy at ~26 characters a line — well under
+            the 45–75 band where prose stays comfortable — and was narrow enough
+            that "Performance Optimization" wrapped to two lines while its three
+            neighbours didn't, leaving that one card's text 28px out of step. Two
+            columns give ~62 characters and fit every title on one line. */}
+        <div className='grid gap-5 md:grid-cols-2'>
           {SKILLS.map((skill, i) => (
             <motion.div
               key={skill.title}

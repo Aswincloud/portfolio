@@ -173,9 +173,11 @@
 }
 
 /* Eyebrow label: mono, uppercase, tracked — the recurring "technical" motif.
-   Deliberately carries no colour: each section supplies its own accent (see the
-   accent-* utilities below) and relying on an override here would make the
-   result depend on which utility Tailwind happened to emit last. */
+   Carries no colour of its own: the six numbered eyebrows get their hue from
+   SectionHeader's ACCENTS map, and baking a default in here too would make the
+   result depend on which of the two classes Tailwind happened to emit last.
+   The consequence is that a bare `eyebrow` renders slate — so every use site
+   must pair it with a text-* class. */
 @utility eyebrow {
   @apply inline-flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.2em];
 }
@@ -262,8 +264,7 @@
    edge is what makes the alternation legible without touching the surfaces. */
 @utility section-seam {
   position: relative;
-}
-@utility section-seam {
+
   &::before {
     content: '';
     position: absolute;
@@ -278,9 +279,35 @@
       transparent
     );
   }
+
+  /* Accent wash. The seam alone gave the hue about one pixel of the viewport to
+     work with, which is not enough surface area to actually tell you which
+     section you're in — the thing the accent exists to do. This spreads the same
+     hue over the section's opening, behind the header, at a strength low enough
+     that it reads as the light in the room rather than as a coloured panel. It
+     is also what stops all six openings from looking identical: the surfaces are
+     still the same near-black either way, so the wash is doing that work alone.
+
+     Painted as ::after (last in the box tree, so above ::before and any
+     unlayered background children) but below the `relative z-10` content
+     wrapper every section uses. pointer-events: none so it never eats a click.
+     Defaults to transparent, i.e. an untinted section is exactly as it was. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 380px;
+    pointer-events: none;
+    background: radial-gradient(
+      75% 380px at 50% 0%,
+      var(--seam-glow, transparent),
+      transparent 72%
+    );
+  }
 }
 
-/* Per-section seam tints. Each is a separate literal utility rather than one
+/* Per-section accent tints. Each is a separate literal utility rather than one
    parameterised class because Tailwind finds classes by scanning source text —
    a name assembled at runtime is never emitted, and the failure mode is an
    invisible seam rather than an error. Same constraint as SkillsSection's
@@ -288,15 +315,19 @@
 
    Mixed against transparent rather than hardcoded: a 1px line at full
    saturation reads as a coloured rule, which is louder than a boundary marker
-   needs to be. ~45% keeps it a tinted hairline. */
+   needs to be. ~45% keeps it a tinted hairline, and ~8% keeps the wash below the
+   point where it starts to look like a different background. */
 @utility seam-brand {
   --seam-color: color-mix(in oklab, var(--color-brand-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-brand-400) 8%, transparent);
 }
 @utility seam-cyan {
   --seam-color: color-mix(in oklab, var(--color-cyan-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-cyan-400) 8%, transparent);
 }
 @utility seam-indigo {
   --seam-color: color-mix(in oklab, var(--color-indigo-400) 45%, transparent);
+  --seam-glow: color-mix(in oklab, var(--color-indigo-400) 8%, transparent);
 }
 
 /* ---------------------------------------------------------------------------

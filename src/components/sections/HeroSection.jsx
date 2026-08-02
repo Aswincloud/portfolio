@@ -25,7 +25,12 @@ const StatCell = ({ value, label, start }) => {
   // behind the fade-in.
   const display = useCountUp(value, start, { delay: 750, duration: 1500 });
   return (
-    <div className='bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
+    // A <dl> requires dt before dd in source order, so the number is put above
+    // its label visually with flex + order. The flex column is load-bearing:
+    // `order` is ignored outside a flex/grid container, and without it the cell
+    // silently rendered label-over-number (the label's own mt-1 only makes sense
+    // under a number, which is what gave the inversion away).
+    <div className='flex flex-col bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
       <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>
         {label}
       </dt>
@@ -109,7 +114,9 @@ const HeroSection = React.memo(function HeroSection() {
               </span>
             </span>
 
-            <span className='eyebrow'>Software Engineer · Pondicherry, India</span>
+            {/* text-brand-300 explicitly: `eyebrow` carries no colour, and this
+                one has no SectionHeader to supply it. */}
+            <span className='eyebrow text-brand-300'>Software Engineer · Pondicherry, India</span>
           </motion.div>
 
           {/* Headline */}

@@ -172,6 +172,7 @@ const ContactSection = () => {
           number='06'
           label='Contact'
           accent='brand'
+          size='major'
           title={
             <>
               Let&apos;s <span className='gradient-text'>work</span> together
