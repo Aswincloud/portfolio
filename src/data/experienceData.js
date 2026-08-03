@@ -4,7 +4,7 @@
 export const getExperienceData = experience => [
   {
     period: 'June 2023 - Present',
-    title: 'Software Developer Engineer',
+    title: 'Senior Software Engineer',
     company: 'MulticoreWare Pvt Ltd',
     location: 'Chennai, India',
     logo: '/MulticoreWare_Logo.jpg',

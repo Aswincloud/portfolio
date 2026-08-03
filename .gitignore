@@ -115,3 +115,8 @@ public/_redirects
 # Playwright
 test-results/
 playwright-report/
+# Lighthouse CI reports, written by `npx @lhci/cli autorun` when running the
+# gate locally. CI never sees these (its lighthouse job is a fresh checkout,
+# separate from the one running format:check), but locally an unguarded
+# `git add .` would commit a dozen HTML/JSON reports.
+.lighthouseci/

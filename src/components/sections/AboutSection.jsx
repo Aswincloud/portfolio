@@ -17,8 +17,8 @@ const PARAGRAPHS = [
   {
     body: (
       <>
-        I&apos;m a <span className='font-semibold text-slate-100'>software engineer</span> based in
-        Pondicherry, working at MulticoreWare on the software that runs on{' '}
+        I&apos;m a <span className='font-semibold text-slate-100'>senior software engineer</span>{' '}
+        based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
         <span className='font-semibold text-slate-100'>AI accelerator hardware</span>. Most days
         that means profiling tensor operations, hunting bottlenecks, and turning benchmark numbers
         into something faster.

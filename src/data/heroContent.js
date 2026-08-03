@@ -26,6 +26,14 @@ export const HERO_HEADLINE_LINES = ['I make AI accelerators', 'go faster.'];
 /** The word in the headline carrying the shimmer gradient. */
 export const HERO_HEADLINE_ACCENT = 'faster';
 
+/**
+ * The role line above the headline. Lives here for the same reason the headline
+ * does: HeroSection and the prerender both render it, and it was previously
+ * typed out in both — the one piece of hero copy this module didn't already
+ * own, and so the one that could drift.
+ */
+export const HERO_EYEBROW = 'Senior Software Engineer · Pondicherry, India';
+
 export const HERO_INTRO =
   "I'm Aswin — I profile, benchmark, and optimize the software that runs on " +
   'next-generation AI silicon at MulticoreWare. Off the clock, I run my own cloud.';

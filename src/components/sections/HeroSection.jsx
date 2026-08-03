@@ -18,6 +18,7 @@ import { RESUME_URL } from '../../data/links.js';
 import {
   HERO_HEADLINE_LINES,
   HERO_HEADLINE_ACCENT,
+  HERO_EYEBROW,
   HERO_INTRO,
   HERO_INTRO_EMPHASIS,
   splitAround,
@@ -130,7 +131,7 @@ const HeroSection = React.memo(function HeroSection() {
 
             {/* text-brand-300 explicitly: `eyebrow` carries no colour, and this
                 one has no SectionHeader to supply it. */}
-            <span className='eyebrow text-brand-300'>Software Engineer · Pondicherry, India</span>
+            <span className='eyebrow text-brand-300'>{HERO_EYEBROW}</span>
           </motion.div>
 
           {/* Headline. No entrance animation, unlike everything around it: these
