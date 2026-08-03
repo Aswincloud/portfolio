@@ -40,8 +40,10 @@
     <text x="62" y="31" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="24" font-weight="600" fill="#ffffff">aswin<tspan fill="#34d399">cloud</tspan></text>
   </g>
 
-  <!-- Eyebrow -->
-  <text x="98" y="286" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="20" font-weight="500" letter-spacing="4" fill="#6ee7b7">SOFTWARE ENGINEER</text>
+  <!-- Eyebrow. The role here and the hero's HERO_EYEBROW are the same claim, and
+       they drifted once already — socialCard.test.js now ties them together, so
+       edit heroContent.js and re-run `npm run og:build` rather than this line. -->
+  <text x="98" y="286" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="20" font-weight="500" letter-spacing="4" fill="#6ee7b7">SENIOR SOFTWARE ENGINEER</text>
 
   <!-- Headline -->
   <text x="94" y="372" font-family="'Space Grotesk', Inter, system-ui, sans-serif" font-size="82" font-weight="700" fill="#ffffff">I make AI accelerators</text>

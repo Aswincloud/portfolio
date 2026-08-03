@@ -2,11 +2,13 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import securityHeaders from './scripts/vite-plugin-security-headers.js';
 import prerenderHero from './scripts/vite-plugin-prerender-hero.js';
+import sitemap from './scripts/vite-plugin-sitemap.js';
 
 export default defineConfig({
   // prerenderHero writes the hero copy into the shell; securityHeaders hashes
-  // the final HTML at closeBundle, so it must stay last.
-  plugins: [react(), prerenderHero(), securityHeaders()],
+  // the final HTML at closeBundle, so it must stay last. sitemap only emits its
+  // own file and reads nothing the others write, so its position is free.
+  plugins: [react(), prerenderHero(), sitemap(), securityHeaders()],
   server: {
     port: 3000,
     open: true,
