@@ -63,16 +63,20 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Aswin — Software Engineer" />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://www.aswincloud.com/" />
-    <meta property="twitter:title" content="Aswin — Software Engineer" />
+    <!-- Twitter. These take `name`, not `property` — the two families come from
+         different specs. Open Graph is RDFa, where the attribute is `property`;
+         Twitter cards are plain HTML metadata, where it is `name`. Twitter's own
+         crawler happens to accept either, but other consumers that read
+         twitter:* tags don't all have that fallback. -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.aswincloud.com/" />
+    <meta name="twitter:title" content="Aswin — Software Engineer" />
     <meta
-      property="twitter:description"
+      name="twitter:description"
       content="Optimizing the software that runs on AI accelerator hardware — profiling, benchmarking, and throughput. Based in Pondicherry, India."
     />
-    <meta property="twitter:image" content="https://www.aswincloud.com/og-image.png" />
-    <meta property="twitter:image:alt" content="Aswin — Software Engineer" />
+    <meta name="twitter:image" content="https://www.aswincloud.com/og-image.png" />
+    <meta name="twitter:image:alt" content="Aswin — Software Engineer" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
