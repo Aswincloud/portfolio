@@ -265,6 +265,145 @@
   background-size: 22px 22px;
 }
 
+/* ---------------------------------------------------------------------------
+   Die map — the hero backdrop.
+
+   A chip floorplan whose tiles light up as activation drifts across it. It
+   replaces a flat dotted grid, against which the hero read as static: two
+   screenshots of that build at different animation phases differed in 3.5% of
+   subpixels at a max delta of 23/255. The aurora *was* moving; there was just
+   nothing on screen with enough structure to show it. Giving the light a
+   lattice to fall on is what makes the same motion legible — measured on the
+   backdrop alone, the grid layer went from 0.00% of subpixels changing to
+   36.08%, without a single new animation.
+
+   How it works. The three aurora glows above it in AnimatedMeshGradient are the
+   light; these layers paint an OPAQUE grid of channels, in the page's own ink
+   colour, on top of them. Light survives only in the square holes between the
+   channels, so tiles appear to switch on and off as a glow drifts past while the
+   lattice itself never moves. The grid is what is static and the light is what
+   moves — swap that round and the tiles slide with the glow, which reads as
+   drifting texture rather than a chip.
+
+   Nothing here animates, and that is the point. Commit f5613cb deleted ~370
+   lines of decorative rAF loops from this repo for hurting scroll performance,
+   and TumblingCube.jsx:8-15 records two more measured passes; anything
+   decorative has to clear that bar. Three versions of this layer did not, all
+   measured at 1400x900 against main's 50 fps while scrolling the hero:
+
+     tile mask + 2 moving glows                    22 fps
+     opaque grid painted over 2 moving glows       30 fps
+     same, glows shrunk to aurora size             40 fps
+     opaque grid over the auroras already there    (this)
+
+   The first version's cost was the mask: with the glows removed it ran at 50,
+   with the mask removed at 23, and with the mask present but the glows static at
+   28 — Chrome renders a masked subtree into an intermediate surface on every
+   composited frame. Painting opaque ink over the glows instead removed that
+   surface and bought 8 fps.
+
+   The rest was the glows themselves. CDP confirmed both were properly
+   composited ("active accelerated transform animation") — they were just far too
+   large: 3080x1980 = 6.1Mpx each, against 745x745 = 0.56Mpx for the biggest
+   aurora, and the fps recovered monotonically as they shrank. But even at aurora
+   size two extra animating layers still cost 11 fps, while main's *three*
+   auroras cost nothing, because they were already on screen and already
+   composited. So the fix was to add no animating layer at all and let the
+   auroras be the activation. The die map is now three static, never-repainted
+   divs; the motion is the drift that the hero already had.
+
+   A pleasant consequence: no mask means no mask-composite: intersect, which
+   Chrome only shipped in 120 while Tailwind v4's baseline is 111.
+   --------------------------------------------------------------------------- */
+
+@utility die-map {
+  /* Tile pitch, and how much of that pitch is tile rather than channel. Both
+     die-grid and die-lines derive from these, so the channels and the hairlines
+     agree by construction instead of by two numbers being kept in step by hand.
+     Channel width is the remainder, step - fill: 5px here, 4px on small screens.
+
+     overflow:hidden is not for the children — they are all inset:0 — but so the
+     repeating gradients cannot paint past a rounded or clipped ancestor. */
+  --die-step: 26px;
+  --die-fill: 21px;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+
+  @media (width < 48rem) {
+    --die-step: 20px;
+    --die-fill: 16px;
+  }
+}
+
+/* The opaque channel grid. Two repeating gradients of solid ink, so the gaps
+   between them are the tiles. Sits above the glows and below nothing — the
+   aurora and vignette are later siblings of .die-map and still paint on top.
+
+   The colour has to be the exact page background, not a translucent black: at
+   any alpha below 1 the glow shows through the channels too and the tiles stop
+   having edges, which is the whole effect. */
+@utility die-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--color-ink) 0 calc(var(--die-step) - var(--die-fill)),
+      transparent calc(var(--die-step) - var(--die-fill)) var(--die-step)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-ink) 0 calc(var(--die-step) - var(--die-fill)),
+      transparent calc(var(--die-step) - var(--die-fill)) var(--die-step)
+    );
+}
+
+/* Faint hairlines so the die still reads as a die where no glow is passing.
+   Unlit, it is a floorplan; lit, the tiles it outlines light up.
+
+   These carry the whole effect away from the auroras, which is most of the
+   hero — the first version inherited 0.055 alpha from the dotted grid it
+   replaced and the lattice simply vanished outside the top-left corner. Lit
+   tiles are the accent; these are what makes them tiles rather than a stain. */
+@utility die-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgb(148 163 184 / 0.1) 0 1px,
+      transparent 1px var(--die-step)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(148 163 184 / 0.1) 0 1px,
+      transparent 1px var(--die-step)
+    );
+}
+
+/* Hold the centre back. The headline and intro sit in a column through the
+   middle of the hero, and a glow passing behind them raises the local
+   background luminance — which Lighthouse cannot catch, because it computes
+   contrast against the CSS background colour and not against the image that
+   actually rendered. Damping the middle keeps measured contrast where it was
+   and puts the activity around the copy rather than under it.
+
+   Tuned against sampled pixels rather than by eye: behind the headline and
+   intro, at 390px and 1400px, worst-case contrast measures 15.6:1 against white
+   and 11.6:1 against the intro's slate-300. The requirement is 4.5:1, so there
+   is a lot of room to soften this if the centre ever reads as too dead. */
+@utility die-center-damp {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    54% 42% at 50% 46%,
+    rgb(6 10 19 / 0.86) 0%,
+    rgb(6 10 19 / 0.48) 60%,
+    transparent 100%
+  );
+}
+
 /* Section seam: a centre-weighted hairline at the top edge so consecutive
    sections read as deliberately separated panels rather than a hard bg swap.
    Rendered via a pseudo-element so it never affects layout/padding.
