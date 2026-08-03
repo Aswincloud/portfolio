@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Terminal } from 'lucide-react';
-import { useThrottledScroll, usePageTransitions } from '../hooks';
+import { useThrottledScroll, usePageTransitions, useDismissable } from '../hooks';
 import { RESUME_URL } from '../data/links.js';
 
 // Performance-optimized Navigation component
@@ -17,6 +17,12 @@ const Navigation = React.memo(function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  // Wraps the bar *and* the sheet, so the toggle counts as "inside" — see the
+  // pointerdown note in useDismissable: a toggle outside this would dismiss on
+  // the same press that opened it.
+  const navRef = React.useRef(null);
+  const closeMenu = React.useCallback(() => setIsMenuOpen(false), []);
+  useDismissable(isMenuOpen, closeMenu, navRef);
 
   const { navigateToSection, currentSection } = usePageTransitions();
   const isHomePage = location.pathname === '/';
@@ -31,8 +37,20 @@ const Navigation = React.memo(function Navigation() {
     (e, href) => {
       if (href.startsWith('#') && isHomePage) {
         e.preventDefault();
-        navigateToSection(href.replace('#', ''));
         setIsMenuOpen(false);
+        // Scroll *after* the sheet closes, not before.
+        //
+        // The open sheet locks the page with `overflow: hidden` on <html>, and a
+        // scrollTo issued while that lock is on is silently discarded — the
+        // element never moves and the lock then lifts, so tapping a menu item did
+        // nothing at all. Caught by the e2e test on the single most common use of
+        // this menu; the unit test could not see it, because jsdom does not
+        // implement scrolling and so cannot refuse one.
+        //
+        // One frame is enough: the setState above commits and React runs the
+        // dismissal effect's cleanup — which restores the overflow — before the
+        // next animation frame. Verified in a real browser rather than inferred.
+        requestAnimationFrame(() => navigateToSection(href.replace('#', '')));
       } else {
         setIsMenuOpen(false);
       }
@@ -55,6 +73,7 @@ const Navigation = React.memo(function Navigation() {
 
   return (
     <nav
+      ref={navRef}
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled || !isHomePage || isMenuOpen
           ? 'border-b border-hairline bg-ink/80 backdrop-blur-xl'
@@ -127,6 +146,11 @@ const Navigation = React.memo(function Navigation() {
               className='rounded-lg p-2 text-slate-300 transition-colors hover:bg-white/5 hover:text-white md:hidden'
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMenuOpen}
+              /* aria-expanded on its own says "something is expanded" without
+                 saying what. Naming the sheet lets a screen reader move to the
+                 thing this button controls. The id is static because there is
+                 exactly one nav on the page. */
+              aria-controls='mobile-menu'
             >
               {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -137,6 +161,7 @@ const Navigation = React.memo(function Navigation() {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
+              id='mobile-menu'
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

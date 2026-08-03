@@ -14,6 +14,7 @@ import SectionHeader from '../SectionHeader.jsx';
 import { sectionAccent } from '../../data/sectionAccents.js';
 import { Mail, MapPin, Briefcase, Send, Check, AlertTriangle, Copy } from 'lucide-react';
 import { useRipple } from '../../hooks';
+import { LIMITS, LIMIT_HINTS } from '../../data/contactLimits.js';
 
 const EMAIL = 'contact@aswincloud.com';
 
@@ -58,6 +59,22 @@ const ContactSection = () => {
   const { createRipple } = useRipple();
   const submitButtonRef = React.useRef(null);
   const [copied, setCopied] = useState(false);
+  const statusRef = React.useRef(null);
+
+  // Move focus to the outcome panel once it appears.
+  //
+  // role='alert' and role='status' make a screen reader announce these, but a
+  // sighted keyboard or mobile visitor got nothing: the panel renders *above* the
+  // fields, so on a phone the reason a submission failed can be off-screen while
+  // you are still looking at the button you pressed. Focusing it both scrolls it
+  // into view and puts the next Tab inside the panel, which is where the mailto
+  // fallback lives on the 'failed' branch.
+  //
+  // tabIndex={-1} on the panel makes it focusable without adding it to the tab
+  // order. preventScroll is deliberately *not* set — the scroll is half the point.
+  React.useEffect(() => {
+    if (submitStatus) statusRef.current?.focus();
+  }, [submitStatus]);
 
   // Click-to-copy for the email card. Prefer the async Clipboard API; fall back
   // to a hidden textarea + execCommand for non-secure contexts / older engines.
@@ -89,7 +106,28 @@ const ContactSection = () => {
       createRipple(e, submitButtonRef.current);
     }
 
-    if (!formData.name || !formData.email || !formData.message) {
+    // Mirror the Worker's own checks (worker.js reads the same LIMITS), and on the
+    // trimmed values, because that is what it validates — otherwise a message of
+    // ten spaces passes here and comes back 400.
+    //
+    // This used to test only for emptiness, so the form accepted input it had just
+    // finished telling the visitor was invalid: a nine-character message made a
+    // round trip to learn a rule stated on screen. The inputs now carry
+    // minLength/maxLength too, which catches it earlier still — this stays as the
+    // backstop for the paths native validation misses (a paste that trims short,
+    // and browsers that skip constraint validation on a scripted submit).
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const message = formData.message.trim();
+    const withinLimits =
+      name.length >= LIMITS.name.min &&
+      name.length <= LIMITS.name.max &&
+      email.length > 0 &&
+      email.length <= LIMITS.email.max &&
+      message.length >= LIMITS.message.min &&
+      message.length <= LIMITS.message.max;
+
+    if (!withinLimits) {
       setSubmitStatus('invalid');
       return;
     }
@@ -139,6 +177,55 @@ const ContactSection = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  /**
+   * What the counter beside the Message label says.
+   *
+   * Two different lengths bind at the two ends of the range, so the counter quotes
+   * whichever one the visitor is actually up against rather than picking one and
+   * being wrong at the other end:
+   *
+   * - The ceiling is the browser's. `maxLength` counts the raw value, whitespace
+   *   included, and stops accepting input there. Counting trimmed characters
+   *   towards it would show "10 left" on a message whose last ten characters are
+   *   trailing spaces — while the keyboard has already gone dead.
+   * - The floor is the Worker's. It trims before measuring, so eight characters
+   *   padded out to twelve still comes back rejected as eight.
+   *
+   * Stays quiet in the middle: an untouched field says nothing, a too-short one
+   * says how many more characters are needed, and only the last 100 before the
+   * ceiling count down. The alternative — a permanent "413 / 1000" — is a number
+   * nobody needs for most of the time it is on screen, and with aria-live it
+   * would also be a stream of announcements.
+   */
+  const messageCount = React.useMemo(() => {
+    const raw = formData.message.length;
+    const trimmed = formData.message.trim().length;
+    const remaining = LIMITS.message.max - raw;
+
+    // Ceiling first. At maxLength the field has stopped accepting characters, and
+    // telling someone who cannot type "2 more characters" is the worse of the two
+    // messages to show — silently refusing input is the confusion this counter
+    // exists to answer.
+    if (remaining < 0) {
+      // maxLength caps typing and pasting alike, so this is only reachable if the
+      // value is set programmatically. Counting "-24 left" would be the one thing
+      // worse than not saying anything.
+      return { tooShort: false, tooLong: true, label: `${-remaining} over the limit` };
+    }
+    if (remaining <= 100) {
+      return { tooShort: false, tooLong: remaining === 0, label: `${remaining} left` };
+    }
+    if (trimmed > 0 && trimmed < LIMITS.message.min) {
+      const needed = LIMITS.message.min - trimmed;
+      return {
+        tooShort: true,
+        tooLong: false,
+        label: `${needed} more character${needed === 1 ? '' : 's'}`,
+      };
+    }
+    return { tooShort: false, tooLong: false, label: '' };
+  }, [formData.message]);
+
   // Pre-fills the visitor's own mail client with what they already typed, so the fallback
   // costs them a click rather than retyping the message. encodeURIComponent is load-bearing
   // in both fields: an unencoded `&` or `?` in the body would otherwise terminate it and be
@@ -151,8 +238,15 @@ const ContactSection = () => {
     return `mailto:${EMAIL}?subject=${subject}&body=${body}`;
   }, [formData.name, formData.message]);
 
+  // `focus:outline-none` used to be here, replacing index.css's 2px brand-400
+  // outline with a 1px ring at 40% opacity. That was the only outline-none in the
+  // codebase, and it downgraded the focus indicator on the one part of the page
+  // where keyboard focus matters most — a form you fill in field by field. The
+  // border and background shift stay as the on-brand part of the treatment; the
+  // global ring now sits on top of them where it belongs, so these controls look
+  // focused the same way every other control on the site does.
   const fieldClass =
-    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:opacity-50';
+    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface disabled:opacity-50';
 
   return (
     <section
@@ -267,6 +361,8 @@ const ContactSection = () => {
 
               {submitStatus === 'success' && (
                 <div
+                  ref={statusRef}
+                  tabIndex={-1}
                   role='status'
                   className='flex items-start gap-3 rounded-xl border border-brand-500/30 bg-brand-500/10 p-4'
                 >
@@ -283,6 +379,8 @@ const ContactSection = () => {
 
               {submitStatus === 'invalid' && (
                 <div
+                  ref={statusRef}
+                  tabIndex={-1}
                   role='alert'
                   className='flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4'
                 >
@@ -291,10 +389,14 @@ const ContactSection = () => {
                     <p className='text-sm font-medium text-red-300'>
                       Couldn&apos;t send your message. Please check:
                     </p>
+                    {/* Interpolated from LIMIT_HINTS, not typed out. These bullets
+                        previously hardcoded "2–100" and "10–1000" next to inputs
+                        that enforced neither, which is how the copy came to
+                        describe rules the form did not apply. */}
                     <ul className='mt-1 list-inside list-disc text-sm text-slate-400'>
-                      <li>Name: letters and spaces (2–100 characters)</li>
-                      <li>Email: a valid email address</li>
-                      <li>Message: 10–1000 characters</li>
+                      <li>Name: {LIMIT_HINTS.name}</li>
+                      <li>Email: {LIMIT_HINTS.email}</li>
+                      <li>Message: {LIMIT_HINTS.message}</li>
                     </ul>
                   </div>
                 </div>
@@ -305,6 +407,8 @@ const ContactSection = () => {
                   contents; the mailto carries them across so nothing has to be retyped. */}
               {submitStatus === 'failed' && (
                 <div
+                  ref={statusRef}
+                  tabIndex={-1}
                   role='alert'
                   className='flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4'
                 >
@@ -344,6 +448,8 @@ const ContactSection = () => {
                   placeholder='Your full name'
                   className={fieldClass}
                   required
+                  minLength={LIMITS.name.min}
+                  maxLength={LIMITS.name.max}
                   disabled={isSubmitting}
                   autoComplete='name'
                 />
@@ -365,18 +471,42 @@ const ContactSection = () => {
                   placeholder='you@example.com'
                   className={fieldClass}
                   required
+                  maxLength={LIMITS.email.max}
                   disabled={isSubmitting}
                   autoComplete='email'
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor='contact-message'
-                  className='mb-2 block font-mono text-xs uppercase tracking-wider text-slate-400'
-                >
-                  Message
-                </label>
+                <div className='mb-2 flex items-baseline justify-between gap-3'>
+                  <label
+                    htmlFor='contact-message'
+                    className='block font-mono text-xs uppercase tracking-wider text-slate-400'
+                  >
+                    Message
+                  </label>
+                  {/*
+                    A live count, because maxLength enforces the ceiling silently:
+                    the browser simply stops accepting characters, which reads as a
+                    broken keyboard if you don't know why. This says what the limit
+                    is and how close you are.
+
+                    aria-live='polite' with a coarse update: announcing every
+                    keystroke would make the field unusable with a screen reader, so
+                    the text only changes identity at the two moments that matter —
+                    crossing the minimum, and nearing the ceiling.
+                  */}
+                  <span
+                    aria-live='polite'
+                    className={`font-mono text-xs tabular-nums ${
+                      messageCount.tooLong || messageCount.tooShort
+                        ? 'text-amber-400'
+                        : 'text-slate-600'
+                    }`}
+                  >
+                    {messageCount.label}
+                  </span>
+                </div>
                 <textarea
                   id='contact-message'
                   name='message'
@@ -386,8 +516,14 @@ const ContactSection = () => {
                   rows={5}
                   className={`${fieldClass} resize-none`}
                   required
+                  minLength={LIMITS.message.min}
+                  maxLength={LIMITS.message.max}
+                  aria-describedby='contact-message-hint'
                   disabled={isSubmitting}
                 />
+                <p id='contact-message-hint' className='mt-2 text-xs text-slate-600'>
+                  {LIMIT_HINTS.message}.
+                </p>
               </div>
 
               <motion.button

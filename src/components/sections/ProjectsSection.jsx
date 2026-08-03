@@ -143,6 +143,31 @@ const ProjectsSection = () => {
     setShowMore(v => !v);
   };
 
+  // Keep the button under the pointer across a collapse.
+  //
+  // Expanding is fine: cards appear below the button and nothing moves under you.
+  // Collapsing removes everything between the button and the viewport top, so the
+  // button jumps upward by the height of the cards that just left — on a phone
+  // that is several screens, and the control you just pressed ends up off-screen
+  // above you with no indication that the list shrank rather than the page broke.
+  //
+  // Runs after the DOM has the new card count, and only on the collapse, so the
+  // expand path stays a pure state change. `block: 'nearest'` scrolls the minimum
+  // needed, which is nothing at all when the button is already in view.
+  //
+  // The mount guard is load-bearing: showMore is already false on the first run,
+  // so without it every visitor would be scrolled down to this button on page
+  // load — the section is most of a screen below the fold, and 'nearest' would
+  // dutifully bring it into view.
+  const hasToggled = useRef(false);
+  React.useEffect(() => {
+    if (!hasToggled.current) {
+      hasToggled.current = true;
+      return;
+    }
+    if (!showMore) btnRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [showMore]);
+
   return (
     <section
       id='projects'
