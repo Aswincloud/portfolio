@@ -113,12 +113,23 @@ export const canonicalUrl = path => `${SITE_ORIGIN}${path === '/' ? '/' : path}`
 /**
  * The metadata for a pathname, or NOT_FOUND_META when nothing matches.
  *
- * Trailing slashes are tolerated even though Cloudflare redirects them away:
- * client-side navigation never touches the edge, so a <Link to='/privacy/'>
- * would otherwise fall through to the 404 metadata on a page that is plainly
- * rendering the privacy policy.
+ * Both spellings this normalises away are ones Cloudflare redirects at the edge,
+ * so neither reaches a browser in production. They still have to be handled
+ * here, because falling through to NOT_FOUND_META does not merely mislabel the
+ * page — it applies `noindex` to a document the server served as indexable, and
+ * Google executes JavaScript. The hook must never be able to downgrade a page.
+ *
+ *   - Trailing slash: client-side navigation never touches the edge, so a
+ *     <Link to='/privacy/'> would otherwise get the 404 metadata on a page
+ *     plainly rendering the privacy policy.
+ *   - `/index.html`: the directory index requested by its real filename. Any
+ *     static file server does this — Lighthouse CI's `staticDistDir` mode is
+ *     how it was caught, serving /terms/index.html and scoring the hydrated
+ *     result as "blocked from indexing".
  */
 export const metaForPath = pathname => {
-  const normalized = pathname !== '/' && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  const normalized = pathname
+    .replace(/\/index\.html$/i, '/')
+    .replace(/(.)\/$/, (_match, preceding) => preceding);
   return ROUTES.find(route => route.path === normalized) ?? NOT_FOUND_META;
 };

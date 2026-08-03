@@ -109,6 +109,40 @@ describe('useRouteMeta', () => {
     expect(at('/privacy/').title).toBe(privacy.title);
   });
 
+  // The failure mode this whole hook could introduce, and the one worth guarding
+  // hardest: hydration must never turn a page the server served as indexable
+  // into a noindex one. Anything unrecognised falls through to NOT_FOUND_META,
+  // which carries `noindex` — so every spelling of a real URL has to resolve.
+  //
+  // Caught by Lighthouse CI, which serves staticDistDir by real filename and
+  // scored /terms/index.html as "blocked from indexing" on a page whose served
+  // HTML had no robots meta at all. Cloudflare 307s these to the clean path in
+  // production, so no crawler lands on one — but "unreachable in production" is
+  // a weaker guarantee than "cannot downgrade a page", and Google runs the JS.
+  describe('never downgrades an indexable page', () => {
+    const spellings = path => {
+      const base = path === '/' ? '' : path;
+      return [path, `${base}/`, `${base}/index.html`];
+    };
+
+    it.each(ROUTES.flatMap(route => spellings(route.path).map(url => [url, route.path])))(
+      'serves %s as the metadata for %s',
+      (url, routePath) => {
+        const route = ROUTES.find(entry => entry.path === routePath);
+        const head = at(url);
+        expect(head.robots, `${url} was marked noindex`).toBeNull();
+        expect(head.title, url).toBe(route.title);
+        expect(head.canonical, url).toBe(canonicalUrl(routePath));
+      }
+    );
+
+    it('still 404s a path that merely ends in index.html', () => {
+      // The normalisation strips a `/index.html` *segment*, not a suffix — so
+      // this must not be mistaken for /privacy.
+      expect(at('/privacyindex.html').robots).toBe('noindex, follow');
+    });
+  });
+
   it('is actually mounted in the app, not merely exported', () => {
     // A hook nothing calls is the failure this whole file would otherwise miss:
     // every test above would still pass with the call site deleted. Asserted
