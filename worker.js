@@ -43,9 +43,12 @@ export const ALLOWED_ORIGIN_PATTERNS = [
 // list "Message: 10–1000 characters" while the textarea carried no maxlength at
 // all, which turned a rule the browser could apply instantly into a round trip.
 // Re-exported here because this module's tests and callers already reach for it
-// at this name, and the endpoint's own validation below reads it.
-export { LIMITS } from './src/data/contactLimits.js';
+// at this name, and the endpoint's own validation below reads it. One import, then
+// re-export the binding — naming the same specifier twice would trip
+// no-duplicate-imports if that rule is ever switched on.
 import { LIMITS } from './src/data/contactLimits.js';
+
+export { LIMITS };
 
 // Email validation function
 export function isValidEmail(email) {

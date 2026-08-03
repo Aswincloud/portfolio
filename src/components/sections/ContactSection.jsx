@@ -180,30 +180,48 @@ const ContactSection = () => {
   /**
    * What the counter beside the Message label says.
    *
-   * Counts the trimmed length, because that is the number the Worker checks — a
-   * counter reading 12 on a message that validates as 8 would be actively
-   * misleading at the boundary.
+   * Two different lengths bind at the two ends of the range, so the counter quotes
+   * whichever one the visitor is actually up against rather than picking one and
+   * being wrong at the other end:
    *
-   * Stays quiet in the middle of the range: an untouched field says nothing, a
-   * too-short one says how many more characters are needed, and only the last
-   * 100 characters before the ceiling start counting down. The alternative — a
-   * permanent "413 / 1000" — is a number nobody needs for most of the time it is
-   * on screen, and with aria-live it would also be a stream of announcements.
+   * - The ceiling is the browser's. `maxLength` counts the raw value, whitespace
+   *   included, and stops accepting input there. Counting trimmed characters
+   *   towards it would show "10 left" on a message whose last ten characters are
+   *   trailing spaces — while the keyboard has already gone dead.
+   * - The floor is the Worker's. It trims before measuring, so eight characters
+   *   padded out to twelve still comes back rejected as eight.
+   *
+   * Stays quiet in the middle: an untouched field says nothing, a too-short one
+   * says how many more characters are needed, and only the last 100 before the
+   * ceiling count down. The alternative — a permanent "413 / 1000" — is a number
+   * nobody needs for most of the time it is on screen, and with aria-live it
+   * would also be a stream of announcements.
    */
   const messageCount = React.useMemo(() => {
-    const length = formData.message.trim().length;
-    const tooShort = length > 0 && length < LIMITS.message.min;
-    const remaining = LIMITS.message.max - length;
-    if (tooShort) {
-      const needed = LIMITS.message.min - length;
+    const raw = formData.message.length;
+    const trimmed = formData.message.trim().length;
+    const remaining = LIMITS.message.max - raw;
+
+    // Ceiling first. At maxLength the field has stopped accepting characters, and
+    // telling someone who cannot type "2 more characters" is the worse of the two
+    // messages to show — silently refusing input is the confusion this counter
+    // exists to answer.
+    if (remaining < 0) {
+      // maxLength caps typing and pasting alike, so this is only reachable if the
+      // value is set programmatically. Counting "-24 left" would be the one thing
+      // worse than not saying anything.
+      return { tooShort: false, tooLong: true, label: `${-remaining} over the limit` };
+    }
+    if (remaining <= 100) {
+      return { tooShort: false, tooLong: remaining === 0, label: `${remaining} left` };
+    }
+    if (trimmed > 0 && trimmed < LIMITS.message.min) {
+      const needed = LIMITS.message.min - trimmed;
       return {
-        tooShort,
+        tooShort: true,
         tooLong: false,
         label: `${needed} more character${needed === 1 ? '' : 's'}`,
       };
-    }
-    if (remaining <= 100) {
-      return { tooShort: false, tooLong: remaining <= 0, label: `${remaining} left` };
     }
     return { tooShort: false, tooLong: false, label: '' };
   }, [formData.message]);

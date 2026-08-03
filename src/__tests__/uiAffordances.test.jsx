@@ -190,6 +190,31 @@ describe('contact form enforces the rules it prints', () => {
     expect(screen.getByText(`${LIMITS.message.min - 2} more characters`)).toBeTruthy();
   });
 
+  it('counts down against the raw length the browser actually caps', () => {
+    render(<ContactSection />);
+    const message = screen.getByLabelText(/^message$/i);
+
+    // 40 real characters short of maxLength, with 30 of them trailing spaces.
+    // Counting trimmed characters here would promise "70 left" on a field that
+    // stops accepting input after 40 — maxLength measures the raw value.
+    const value = 'a'.repeat(LIMITS.message.max - 40) + ' '.repeat(30);
+    fireEvent.change(message, { target: { value } });
+
+    expect(screen.getByText('10 left')).toBeTruthy();
+    expect(screen.queryByText('40 left')).toBeNull();
+  });
+
+  it('never shows a negative count if the value is set past the ceiling', () => {
+    render(<ContactSection />);
+    // maxLength stops typing and pasting, so only a programmatic set reaches here.
+    fireEvent.change(screen.getByLabelText(/^message$/i), {
+      target: { value: 'a'.repeat(LIMITS.message.max + 24) },
+    });
+
+    expect(screen.getByText('24 over the limit')).toBeTruthy();
+    expect(screen.queryByText(/-\d+ left/)).toBeNull();
+  });
+
   it('moves focus to the outcome panel so it cannot be off-screen', async () => {
     render(<ContactSection />);
 
