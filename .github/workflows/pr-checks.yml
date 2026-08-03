@@ -56,6 +56,11 @@ jobs:
         with:
           name: lighthouse-reports
           path: .lighthouseci/
+          # .lighthouseci starts with a dot, and upload-artifact skips hidden
+          # paths by default — every run so far logged "No files were found"
+          # and uploaded an empty artifact. Only reason it went unnoticed is
+          # that if-no-files-found defaults to `warn`, not `error`.
+          include-hidden-files: true
           retention-days: 7
 
   # ── Bundle size: report gzipped JS/CSS so bloat is visible on the PR ─────────
