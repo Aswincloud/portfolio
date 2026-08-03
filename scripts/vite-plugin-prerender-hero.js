@@ -20,7 +20,10 @@
  * back out afterwards would leave the build depending on the exact shape of
  * motion's SSR output. So this emits its own small, static markup, and the
  * words come from src/data/heroContent.js, which HeroSection also reads — there
- * is one copy of the sentences, not two.
+ * is one copy of the sentences, not two. That was true of the headline and
+ * intro but not the role line, which was typed out here and in HeroSection
+ * until a title change had to be made in both; it now comes from the module
+ * with the rest.
  *
  * React's createRoot() clears the container before its first render, so this
  * markup is replaced wholesale on mount. It is never hydrated and never has to
@@ -37,6 +40,7 @@
 import {
   HERO_HEADLINE_LINES,
   HERO_HEADLINE_ACCENT,
+  HERO_EYEBROW,
   HERO_INTRO,
   HERO_INTRO_EMPHASIS,
   splitAround,
@@ -71,7 +75,7 @@ export function renderHeroShell() {
 
   return (
     `<div id="hero-shell" style="max-width:56rem;margin:0 auto;padding:8rem 1.5rem 0;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif">` +
-    `<p style="font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:#34d399">Software Engineer · Pondicherry, India</p>` +
+    `<p style="font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:#34d399">${esc(HERO_EYEBROW)}</p>` +
     `<h1 style="margin:1.25rem 0 0;font-size:2.25rem;line-height:1.05;font-weight:700;color:#fff">${headlineHtml}</h1>` +
     `<p style="margin:1rem auto 0;max-width:42rem;line-height:1.625">${introHtml}</p>` +
     `</div>`

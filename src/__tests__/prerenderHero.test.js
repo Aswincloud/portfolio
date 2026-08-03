@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import prerenderHero, { renderHeroShell } from '../../scripts/vite-plugin-prerender-hero.js';
-import { HERO_HEADLINE_LINES, HERO_INTRO, splitAround } from '../data/heroContent.js';
+import { HERO_HEADLINE_LINES, HERO_EYEBROW, HERO_INTRO, splitAround } from '../data/heroContent.js';
 
 // Vite's transform does define __dirname here, so the earlier version worked —
 // but it only works under a bundler. Deriving the path from import.meta.url is
@@ -43,6 +43,14 @@ describe('renderHeroShell', () => {
 
   it('emits the intro copy verbatim', () => {
     expect(textOf(renderHeroShell())).toContain(HERO_INTRO);
+  });
+
+  it('emits the role line verbatim', () => {
+    // The prerendered eyebrow and HeroSection's were separate hardcoded strings
+    // until a job-title change had to be applied to both. Now both read
+    // HERO_EYEBROW, and the pair of assertions here and in "single source of
+    // copy" below is what keeps them from being re-typed apart.
+    expect(textOf(renderHeroShell())).toContain(HERO_EYEBROW);
   });
 
   it('ships nothing hidden — no opacity:0 or display:none', () => {
@@ -96,7 +104,16 @@ describe('single source of copy', () => {
       expect(code, `"${line}" is hardcoded in HeroSection`).not.toContain(line);
     }
     expect(code).not.toContain(HERO_INTRO.slice(0, 40));
+    expect(code, 'the role line is hardcoded in HeroSection').not.toContain(HERO_EYEBROW);
     expect(src).toContain("from '../../data/heroContent.js'");
+  });
+
+  it('the prerender plugin contains no hardcoded role line either', () => {
+    // The plugin is the other renderer, and it was the one holding the second
+    // copy — so guarding only HeroSection would leave the actual drift open.
+    const src = read('scripts/vite-plugin-prerender-hero.js');
+    const code = src.replace(/\/\*[\s\S]*?\*\//g, ''); // drop block comments
+    expect(code, 'the role line is hardcoded in the prerender plugin').not.toContain(HERO_EYEBROW);
   });
 });
 
