@@ -1,19 +1,26 @@
+# Cloudflare serves a managed robots.txt for this zone and appends the rules
+# below to it, so this file is a supplement rather than the whole policy. The
+# Content-Signal header and the AI-crawler blocks visitors see at
+# https://www.aswincloud.com/robots.txt sit above this point and are managed in
+# the Cloudflare dashboard, not here.
+
 User-agent: *
 Allow: /
 
-# Sitemap location
 Sitemap: https://www.aswincloud.com/sitemap.xml
 
-# Disallow admin and API endpoints
+# The contact endpoint — nothing to index, and it's rate-limited per IP.
 Disallow: /api/
-Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 
-# Allow important files
-Allow: /favicon.svg
-Allow: /sitemap.xml
-Allow: /robots.txt
-
-# Crawl delay (optional)
-Crawl-delay: 1 
+# Nothing else is disallowed. This file also used to block /admin/, /_next/ and
+# /static/: the last two are Next.js conventions on a site that has never been
+# Next.js, and none of the three exist, so all three resolved to the SPA
+# fallback and the rules were inert. They weren't harmless either — a Disallow
+# for /static/ would silently block real assets the day that directory appears.
+#
+# The `Allow:` lines for /favicon.svg, /sitemap.xml and /robots.txt are gone for
+# the same reason: `Allow: /` already permits them, and a redundant rule reads
+# like it's granting an exception to a Disallow that isn't there.
+#
+# Crawl-delay is gone too — Google has never supported it, and this is a static
+# site on a CDN with nothing to protect from crawl volume.

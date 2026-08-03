@@ -16,7 +16,11 @@
     <meta name="author" content="Aswin" />
     <link rel="canonical" href="https://www.aswincloud.com/" />
 
-    <!-- Structured Data (JSON-LD) -->
+    <!-- Structured Data (JSON-LD).
+         `alumniOf` is deliberately absent: the site publishes no education
+         anywhere, and structured data that isn't on the page is the kind of
+         claim Google treats as spam. Only facts stated in the visible content
+         belong here. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -25,6 +29,8 @@
         "jobTitle": "Senior Software Engineer",
         "description": "Senior software engineer optimizing the software that runs on AI accelerator hardware — profiling, benchmarking, and throughput optimization. Also builds modern websites and self-hosted cloud infrastructure. Based in Pondicherry, India.",
         "url": "https://www.aswincloud.com",
+        "image": "https://www.aswincloud.com/og-image.png",
+        "email": "mailto:contact@aswincloud.com",
         "sameAs": ["https://github.com/Aswincloud", "https://www.linkedin.com/in/aswin4122001/"],
         "worksFor": {
           "@type": "Organization",
