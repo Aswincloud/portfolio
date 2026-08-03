@@ -50,6 +50,27 @@ jobs:
         uses: browser-actions/setup-chrome@2e1d749697dd1612b833dba4a722266286fbefcd # v2.1.2
       - name: Run Lighthouse CI
         run: npx --yes @lhci/cli@0.14.x autorun
+        env:
+          # Posts the scores as a status check per URL, so a regression is
+          # readable on the PR instead of only inside this job's log. Purely
+          # additional reporting: the gate that actually fails the build is the
+          # assertMatrix in lighthouserc.cjs, and these contexts are not in
+          # main's required-checks ruleset, so they cannot block the queue.
+          #
+          # With the app token, lhci does not call api.github.com — it POSTs to
+          # Google's hosted relay (githubAppPostStatusCheck), which holds the
+          # app's key and sets the status on our behalf. That is the documented
+          # design; the payload is the scores plus repo slug and commit SHA.
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          # Without this the status lands on the wrong commit and never appears.
+          # lhci's getCurrentHash() knows Travis, Circle, GitLab and Drone but
+          # not GitHub Actions, so it falls back to
+          # `git rev-list --no-merges -n1 HEAD`. actions/checkout checks out a
+          # *merge* commit on pull_request, and --no-merges then walks to its
+          # first parent — main's tip, not this PR's head. Verified against that
+          # exact topology locally. This override is the first thing the
+          # function checks.
+          LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.event.pull_request.head.sha }}
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
         if: always()
