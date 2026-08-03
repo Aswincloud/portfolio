@@ -117,3 +117,55 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run E2E tests
         run: npm run test:e2e
+
+  # ── The single required check ────────────────────────────────────────────────
+  # main's ruleset used to name Lint / Test / Build / Security individually, so
+  # every new job here had to be added to the ruleset by hand — and a job nobody
+  # remembered to add was simply not enforced, which is a gap that reports green.
+  # This job aggregates them, so the ruleset names one context and adding a job
+  # above is enough to have it gate merges.
+  #
+  # `if: always()` is load-bearing, not defensive. Without it this job inherits
+  # the default `needs` behaviour and is *skipped* when any dependency fails —
+  # and GitHub counts a skipped required check as a passing one. The naive version
+  # of this job therefore inverts the protection it looks like it provides: lint
+  # goes red, the gate is skipped, the ruleset sees success, the PR merges. So it
+  # always runs, and inspects the results itself.
+  #
+  # Deliberately not `needs.*.result != 'success'`: a matrix or conditional job
+  # added later can legitimately report 'skipped', and the failure modes are
+  # enumerated so the reason is visible in the log rather than inferred from an
+  # inequality.
+  #
+  # Scope: `needs` only reaches jobs in this file. Cloudflare's "Workers Builds"
+  # is an external check with no job to depend on, so it stays separately
+  # required. pr-checks.yml cannot join either — it has no `merge_group` trigger,
+  # so in the queue its jobs never report at all.
+  ci:
+    name: ✅ CI
+    runs-on: ubuntu-latest
+    needs: [setup, lint, test, build, security, e2e]
+    if: always()
+    steps:
+      # Always print the results, pass or fail, so a red gate says which job was
+      # responsible without opening the other jobs.
+      - name: Report upstream results
+        run: |
+          echo "setup=${{ needs.setup.result }}"
+          echo "lint=${{ needs.lint.result }}"
+          echo "test=${{ needs.test.result }}"
+          echo "build=${{ needs.build.result }}"
+          echo "security=${{ needs.security.result }}"
+          echo "e2e=${{ needs.e2e.result }}"
+
+      # The condition is a step-level `if:` rather than a shell `if` around
+      # ${{ }}. Both work, but in a `run:` block the expression is text that bash
+      # parses *after* substitution, so a line-wrapped one relies on the expansion
+      # collapsing to valid shell. Here it is unambiguously an expression, and the
+      # step is simply skipped when everything passed.
+      - name: Fail if any upstream job did not succeed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') ||
+          contains(needs.*.result, 'skipped')
+        run: |
+          echo "::error::A CI job did not succeed — see the per-job results above."
+          exit 1
