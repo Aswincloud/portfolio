@@ -3,12 +3,16 @@ import react from '@vitejs/plugin-react';
 import securityHeaders from './scripts/vite-plugin-security-headers.js';
 import prerenderHero from './scripts/vite-plugin-prerender-hero.js';
 import sitemap from './scripts/vite-plugin-sitemap.js';
+import routePages from './scripts/vite-plugin-route-pages.js';
 
 export default defineConfig({
-  // prerenderHero writes the hero copy into the shell; securityHeaders hashes
-  // the final HTML at closeBundle, so it must stay last. sitemap only emits its
+  // Order matters for two of these. prerenderHero writes the hero copy into the
+  // shell (transformIndexHtml). routePages then derives the per-route documents
+  // from the *written* dist/index.html in closeBundle, so it has to run after
+  // Vite emits it and before securityHeaders — which is `enforce: 'post'` and
+  // hashes the final index.html, so it must stay last. sitemap only emits its
   // own file and reads nothing the others write, so its position is free.
-  plugins: [react(), prerenderHero(), sitemap(), securityHeaders()],
+  plugins: [react(), prerenderHero(), sitemap(), routePages(), securityHeaders()],
   server: {
     port: 3000,
     open: true,

@@ -15,3 +15,4 @@ export {
 export { default as usePageTransitions } from './usePageTransitions.js';
 export { useRipple } from './useRipple.jsx';
 export { useCountUp } from './useCountUp.js';
+export { default as useRouteMeta } from './useRouteMeta.js';

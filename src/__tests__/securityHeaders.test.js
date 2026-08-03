@@ -219,6 +219,54 @@ describe('buildHeadersFile', () => {
     expect(file).toContain('Cache-Control: public, max-age=31536000, immutable');
   });
 
+  /**
+   * The indented header lines belonging to one path rule, or null if absent.
+   *
+   * Comments are dropped first: `#` lines here name paths in prose, and an
+   * earlier version of this test sliced from the first mention of /og-image.png
+   * and ended up asserting against the comment's wording rather than the rule.
+   */
+  const ruleFor = path => {
+    const lines = file.split('\n').filter(line => !line.startsWith('#'));
+    const start = lines.indexOf(path);
+    if (start === -1) return null;
+    const body = [];
+    for (const line of lines.slice(start + 1)) {
+      if (!line.startsWith('  ')) break;
+      body.push(line.trim());
+    }
+    return body;
+  };
+
+  const FIXED_URL_ASSETS = [
+    '/og-image.png',
+    '/og-image.svg',
+    '/favicon.svg',
+    '/favicon-32.png',
+    '/apple-touch-icon.png',
+  ];
+
+  it('caches the icons and the social card, which are not content-hashed', () => {
+    // Without a rule of their own these inherit the /* block's
+    // `max-age=0, must-revalidate` — verified against production, where every
+    // scraper fetch of /og-image.png paid a full round trip. They can't be
+    // content-hashed: og:image publishes a fixed URL.
+    for (const path of FIXED_URL_ASSETS) {
+      const rule = ruleFor(path);
+      expect(rule, `${path} has no rule`).not.toBeNull();
+      expect(rule.join('\n'), path).toContain('Cache-Control: public, max-age=86400');
+    }
+  });
+
+  it('does not mark the fixed-URL assets immutable', () => {
+    // immutable tells the browser never to revalidate within max-age, which is
+    // wrong for a stable URL whose bytes can change — a regenerated OG card
+    // would be pinned for the full window with no way to expire it early.
+    for (const path of FIXED_URL_ASSETS) {
+      expect(ruleFor(path).join('\n'), path).not.toContain('immutable');
+    }
+  });
+
   it("stays within Cloudflare's _headers limits", () => {
     const lines = file.split('\n');
     for (const line of lines) expect(line.length).toBeLessThanOrEqual(2000);

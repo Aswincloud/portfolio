@@ -27,6 +27,7 @@ import {
   GlobalErrorHandler,
 } from './components/ErrorBoundary/';
 import ScrollProgress from './components/ScrollProgress.jsx';
+import useRouteMeta from './hooks/useRouteMeta.js';
 
 // Off-home routes are split into their own chunks — most visitors only ever
 // see the home page, so the legal pages and 404 shouldn't ride in the
@@ -198,6 +199,10 @@ const useHashScroll = () => {
 const Layout = ({ children }) => {
   useChatVisibility();
   useHashScroll();
+  // Keeps <title>, canonical and the description in step on client-side
+  // navigations. The served HTML for each route is already correct — see
+  // scripts/vite-plugin-route-pages.js — but a SPA navigation never fetches it.
+  useRouteMeta();
 
   return (
     <div className='min-h-screen bg-ink text-slate-300'>

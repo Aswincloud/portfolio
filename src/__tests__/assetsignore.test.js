@@ -41,8 +41,13 @@ describe('wrangler configuration', () => {
     expect(wrangler).toMatch(/run_worker_first\s*=\s*\[\s*"\/api\/\*"\s*\]/);
   });
 
-  it('serves index.html for client-side routes', () => {
-    expect(wrangler).toMatch(/not_found_handling\s*=\s*"single-page-application"/);
+  it('answers an unknown path with a real 404 document, not the home page', () => {
+    // Was "single-page-application", which returned index.html at HTTP 200 for
+    // every unknown path — so any typo'd URL was an indexable soft-404 titled
+    // "Aswin — Senior Software Engineer". "404-page" serves dist/404.html with a
+    // genuine 404; React still renders the client-side route from it, so deep
+    // links behave the same. See scripts/vite-plugin-route-pages.js.
+    expect(wrangler).toMatch(/not_found_handling\s*=\s*"404-page"/);
   });
 
   it('uses a compatibility_date new enough for SPA navigation optimization', () => {
