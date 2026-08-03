@@ -19,14 +19,23 @@ const read = relative => readFileSync(resolve(repoRoot, relative), 'utf8');
 
 const xml = renderSitemap(ROUTES, () => '2026-01-02');
 const parse = s => new DOMParser().parseFromString(s, 'application/xml');
-const locs = doc => [...doc.querySelectorAll('loc')].map(n => n.textContent);
+
+// getElementsByTagName, not querySelectorAll. Both work — an unprefixed CSS type
+// selector matches in any namespace unless a default @namespace is declared, and
+// this was verified returning the right counts in jsdom and in Chromium. But the
+// loop-based assertions below pass vacuously on an empty list, so the reader
+// can't tell "no fragments" from "matched nothing". getElementsByTagName is
+// namespace-agnostic by specification rather than by argument, which removes the
+// question; the explicit non-empty assertions remove the vacuous pass.
+const tags = (doc, name) => [...doc.getElementsByTagName(name)];
+const locs = doc => tags(doc, 'loc').map(n => n.textContent);
 
 describe('renderSitemap', () => {
   it('produces well-formed XML with one <url> per route', () => {
     const doc = parse(xml);
-    expect(doc.querySelector('parsererror')).toBeNull();
+    expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
     expect(doc.documentElement.tagName).toBe('urlset');
-    expect(doc.querySelectorAll('url')).toHaveLength(ROUTES.length);
+    expect(tags(doc, 'url')).toHaveLength(ROUTES.length);
   });
 
   it('lists no fragment URLs', () => {
@@ -34,7 +43,9 @@ describe('renderSitemap', () => {
     // /#projects, /#contact. Google discards everything from the '#', so all
     // five were duplicates of '/' — and the list had drifted anyway, missing
     // #technologies. A sitemap describes documents; this SPA has three.
-    for (const loc of locs(parse(xml))) expect(loc).not.toContain('#');
+    const found = locs(parse(xml));
+    expect(found).toHaveLength(ROUTES.length); // else the loop below proves nothing
+    for (const loc of found) expect(loc).not.toContain('#');
   });
 
   it('omits <lastmod> entirely when the date is unknown', () => {
@@ -45,14 +56,16 @@ describe('renderSitemap', () => {
     // either of which is an invalid date to a crawler.
     const undated = renderSitemap(ROUTES, () => null);
     expect(undated).not.toContain('lastmod');
-    expect(parse(undated).querySelector('parsererror')).toBeNull();
+    expect(parse(undated).getElementsByTagName('parsererror')).toHaveLength(0);
+    // The URLs must survive losing their dates — omitting <lastmod> should drop
+    // one element, not the entries around it.
     expect(locs(parse(undated))).toEqual(locs(parse(xml)));
   });
 
   it('emits dates in W3C YYYY-MM-DD form', () => {
-    for (const n of parse(xml).querySelectorAll('lastmod')) {
-      expect(n.textContent).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    }
+    const dates = tags(parse(xml), 'lastmod');
+    expect(dates).toHaveLength(ROUTES.length); // else the loop below proves nothing
+    for (const n of dates) expect(n.textContent).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
 
