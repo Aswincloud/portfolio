@@ -161,7 +161,9 @@ test('the submit button keeps its name in the submitting state', async ({ page }
   // matches the "Visit Email profile" social link further down the section.
   await page.locator('#contact-name').fill('Test');
   await page.locator('#contact-email').fill('test@example.com');
-  await page.locator('#contact-message').fill('Hello');
+  // Has to clear LIMITS.message.min (10) or the form now rejects it client-side
+  // and never reaches the in-flight state this test is about.
+  await page.locator('#contact-message').fill('Hello, this is a test message.');
   await send.click();
 
   const sending = page.getByRole('button', { name: /sending/i });

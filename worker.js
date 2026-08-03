@@ -38,12 +38,14 @@ export const ALLOWED_ORIGIN_PATTERNS = [
   /^http:\/\/127\.0\.0\.1:\d+$/,
 ];
 
-// Contact form limits. Kept here so validation and the tests agree on one source.
-export const LIMITS = {
-  name: { min: 2, max: 100 },
-  message: { min: 10, max: 1000 },
-  email: { max: 254 }, // RFC 5321 maximum forward-path length
-};
+// Contact form limits. These moved to src/data/contactLimits.js so the form can
+// enforce the same numbers this endpoint rejects on: the validation panel used to
+// list "Message: 10–1000 characters" while the textarea carried no maxlength at
+// all, which turned a rule the browser could apply instantly into a round trip.
+// Re-exported here because this module's tests and callers already reach for it
+// at this name, and the endpoint's own validation below reads it.
+export { LIMITS } from './src/data/contactLimits.js';
+import { LIMITS } from './src/data/contactLimits.js';
 
 // Email validation function
 export function isValidEmail(email) {
