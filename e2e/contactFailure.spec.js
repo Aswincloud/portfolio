@@ -27,7 +27,7 @@ const fillAndSubmit = async page => {
   await page.locator('#contact-name').fill(NAME);
   await page.locator('#contact-email').fill(EMAIL);
   await page.locator('#contact-message').fill(MESSAGE);
-  await page.getByRole('button', { name: /send contact message/i }).click();
+  await page.getByRole('button', { name: /send message/i }).click();
 };
 
 test.describe('contact form when delivery fails', () => {

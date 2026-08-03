@@ -83,7 +83,7 @@ describe('contact form honeypot', () => {
       document.getElementById('contact-message'),
       'Hello, I would like to discuss a project with you.'
     );
-    await user.click(screen.getByRole('button', { name: /send contact message/i }));
+    await user.click(screen.getByRole('button', { name: /send message/i }));
 
     expect(fetchMock).toHaveBeenCalled();
     const body = JSON.parse(fetchMock.mock.calls[0][1].body);

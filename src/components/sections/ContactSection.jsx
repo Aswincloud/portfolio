@@ -394,7 +394,8 @@ const ContactSection = () => {
                 ref={submitButtonRef}
                 type='submit'
                 disabled={isSubmitting}
-                aria-label='Send contact message'
+                /* Contains the visible "Send message" — WCAG 2.5.3. */
+                aria-label='Send message'
                 whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
                 className='relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-linear-to-r from-brand-500 to-cyan-500 px-6 py-3.5 font-semibold text-ink shadow-lg shadow-brand-500/20 transition-shadow hover:shadow-xl hover:shadow-brand-500/30 disabled:cursor-not-allowed disabled:opacity-60'
