@@ -146,6 +146,23 @@ export function buildHeadersFile(html) {
 # Content-hashed filenames, so these are safe to cache indefinitely.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Icons and the social card. Not content-hashed — /og-image.png is a fixed URL
+# published in the meta tags, so it can't be — but they change roughly never, and
+# without a rule they inherit the max-age=0 above and revalidate on every single
+# fetch. A day is short enough that a regenerated card propagates the same day
+# and long enough to stop every scraper paying a round trip. Deliberately not
+# marked immutable: these URLs are stable, so a stale copy must be able to expire.
+/og-image.png
+  Cache-Control: public, max-age=86400
+/og-image.svg
+  Cache-Control: public, max-age=86400
+/favicon.svg
+  Cache-Control: public, max-age=86400
+/favicon-32.png
+  Cache-Control: public, max-age=86400
+/apple-touch-icon.png
+  Cache-Control: public, max-age=86400
 `;
 }
 

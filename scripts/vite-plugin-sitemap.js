@@ -29,46 +29,13 @@
 
 import { execFileSync } from 'node:child_process';
 
-export const SITE_ORIGIN = 'https://www.aswincloud.com';
-
-/**
- * Every indexable route, mirroring the <Route> list in src/App.jsx.
- *
- * Fragment URLs are deliberately absent. A sitemap describes *documents*, and
- * this SPA serves one document per entry here; `/#about` is a scroll position
- * within `/`. Section discovery is the job of the in-page heading structure and
- * the JSON-LD, not of duplicate sitemap entries.
- *
- * `sources` are the paths whose git history dates the route. Keep them narrow:
- * they're the difference between a meaningful lastmod and HEAD's date wearing a
- * costume.
- */
-export const ROUTES = [
-  {
-    path: '/',
-    changefreq: 'weekly',
-    priority: '1.0',
-    sources: [
-      'index.html',
-      'src/App.jsx',
-      'src/data',
-      'src/components/sections',
-      'src/components/background',
-    ],
-  },
-  {
-    path: '/privacy',
-    changefreq: 'yearly',
-    priority: '0.3',
-    sources: ['src/components/PrivacyPolicy.jsx'],
-  },
-  {
-    path: '/terms',
-    changefreq: 'yearly',
-    priority: '0.3',
-    sources: ['src/components/TermsConditions.jsx'],
-  },
-];
+// The route list moved to src/data/routeMeta.js when each route gained a
+// canonical URL and a title of its own: the sitemap and the per-route <head>
+// have to agree on exactly which paths exist and how they're spelled, and two
+// lists that must agree are one list. Re-exported because this module's own
+// tests and importers already reach for them here.
+export { ROUTES, SITE_ORIGIN } from '../src/data/routeMeta.js';
+import { ROUTES, SITE_ORIGIN } from '../src/data/routeMeta.js';
 
 const git = (args, cwd) =>
   execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();

@@ -19,9 +19,23 @@ zone_name = "aswincloud.com"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
-# Deep links (/privacy, /terms, …) are client-side routes, so unmatched paths
-# must return index.html rather than 404.
-not_found_handling = "single-page-application"
+# Every route now has a real HTML document in dist (privacy/index.html,
+# terms/index.html, 404.html — see scripts/vite-plugin-route-pages.js), each with
+# its own canonical URL and title. So the SPA catch-all is no longer needed for
+# deep links, and it was actively harmful: it answered *every* unknown path with
+# the home page at HTTP 200, which makes typo'd URLs indexable soft-404s.
+#
+# "404-page" serves dist/404.html with a genuine 404 status. React still renders
+# the client-side route from that document, so the page behaves identically; only
+# the status line and the head differ.
+not_found_handling = "404-page"
+# Serve /privacy from privacy/index.html directly. The default,
+# "auto-trailing-slash", 307-redirects /privacy to /privacy/ once a
+# privacy/index.html exists — verified against `wrangler dev` — which would
+# change the site's URLs out from under the canonical tags and the sitemap.
+# "drop-trailing-slash" redirects the other way, so /privacy stays the one
+# spelling everything publishes.
+html_handling = "drop-trailing-slash"
 # Only the API needs the Worker. Assets are served directly and get their
 # security headers from dist/_headers (generated at build time), which is both
 # cheaper and lower-latency than routing every request through the script.
