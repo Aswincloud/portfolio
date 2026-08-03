@@ -88,10 +88,21 @@ export default function useRouteMeta() {
 
     // A noindex page shouldn't also name a canonical — the two instructions
     // contradict each other. Same rule the build applies to 404.html.
-    const url = meta.noindex ? null : canonicalUrl(meta.path);
-    setCanonical(url);
-    setMeta('property', 'og:url', url ?? canonicalUrl('/'));
-    setMeta('name', 'twitter:url', url ?? canonicalUrl('/'));
+    setCanonical(meta.noindex ? null : canonicalUrl(meta.path));
+
+    // og:url follows the page even when the canonical is dropped, because the
+    // two tags answer different questions: the canonical says "index this URL
+    // instead", which is why a noindex page must not name one, while og:url
+    // says "this is the page you are looking at" to an unfurler that does not
+    // consult robots at all. Sending the home page's URL there would make a
+    // pasted broken link render as the portfolio's own card.
+    //
+    // It also has to match what 404.html actually ships: the build writes
+    // og:url = /404 (NOT_FOUND_META.path), so a client-rendered 404 pointing at
+    // '/' would make the two halves of this pair disagree on the same route.
+    const socialUrl = canonicalUrl(meta.path);
+    setMeta('property', 'og:url', socialUrl);
+    setMeta('name', 'twitter:url', socialUrl);
     setRobots(Boolean(meta.noindex));
   }, [pathname]);
 }

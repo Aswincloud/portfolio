@@ -34,8 +34,8 @@ import { execFileSync } from 'node:child_process';
 // have to agree on exactly which paths exist and how they're spelled, and two
 // lists that must agree are one list. Re-exported because this module's own
 // tests and importers already reach for them here.
-export { ROUTES, SITE_ORIGIN } from '../src/data/routeMeta.js';
 import { ROUTES, SITE_ORIGIN } from '../src/data/routeMeta.js';
+export { ROUTES, SITE_ORIGIN };
 
 const git = (args, cwd) =>
   execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();

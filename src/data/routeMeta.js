@@ -13,13 +13,13 @@
  *   /privacy was published as "Aswin — Senior Software Engineer".
  *
  *   Four things now read this one list:
- *     - scripts/vite-plugin-prerender-hero.js, which emits a real HTML document
+ *     - scripts/vite-plugin-route-pages.js, which emits a real HTML document
  *       per route at build time with these values baked into the served markup
  *     - scripts/vite-plugin-sitemap.js, so the sitemap can't list a route that
  *       has no page or omit one that does
  *     - src/hooks/useRouteMeta.js, which keeps the live document in step across
  *       client-side navigations (the served HTML is only correct on first load)
- *     - src/__tests__/routeMeta.test.js
+ *     - src/__tests__/routePages.test.js and src/__tests__/useRouteMeta.test.jsx
  *
  *   Keep this module free of JSX and of any src/ import that pulls in React:
  *   the Vite plugins import it directly in Node, which has no JSX loader.

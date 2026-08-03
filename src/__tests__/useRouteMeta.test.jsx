@@ -109,6 +109,18 @@ describe('useRouteMeta', () => {
     expect(at('/privacy/').title).toBe(privacy.title);
   });
 
+  it('points og:url at the 404 itself, matching what 404.html ships', () => {
+    // The canonical is dropped on a noindex page, but og:url is not the same
+    // question: an unfurler never reads robots, so pointing it at '/' would
+    // render a pasted broken link as the portfolio's own card. The build writes
+    // og:url = /404 into 404.html, so the client must agree or the two halves
+    // of this pair disagree about the same route.
+    const head = at('/no-such-page');
+    expect(head.canonical).toBeNull();
+    expect(head.ogUrl).toBe(canonicalUrl(NOT_FOUND_META.path));
+    expect(head.ogUrl).not.toBe(canonicalUrl('/'));
+  });
+
   // The failure mode this whole hook could introduce, and the one worth guarding
   // hardest: hydration must never turn a page the server served as indexable
   // into a noindex one. Anything unrecognised falls through to NOT_FOUND_META,
