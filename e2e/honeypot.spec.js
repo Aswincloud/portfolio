@@ -75,7 +75,7 @@ test('a genuine submission posts the honeypot empty', async ({ page }) => {
   await page.locator('#contact-name').fill('Jane Doe');
   await page.locator('#contact-email').fill('jane@example.com');
   await page.locator('#contact-message').fill('Hello, I would like to discuss a project.');
-  await page.getByRole('button', { name: /send contact message/i }).click();
+  await page.getByRole('button', { name: /send message/i }).click();
 
   await expect(page.getByText(/message sent successfully/i)).toBeVisible();
   expect(posted).not.toBeNull();

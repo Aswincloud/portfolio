@@ -50,7 +50,7 @@ describe('contact form submission outcomes', () => {
     await user.type(f.name, NAME);
     await user.type(f.email, EMAIL);
     await user.type(f.message, MESSAGE);
-    await user.click(screen.getByRole('button', { name: /send contact message/i }));
+    await user.click(screen.getByRole('button', { name: /send message/i }));
     return user;
   };
 
@@ -138,7 +138,7 @@ describe('contact form submission outcomes', () => {
     it('re-enables the submit button so a retry is possible', async () => {
       await submit();
       await waitFor(() => expect(failureAlert()).not.toBeNull());
-      expect(screen.getByRole('button', { name: /send contact message/i })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: /send message/i })).not.toBeDisabled();
     });
   });
 
@@ -165,7 +165,7 @@ describe('contact form submission outcomes', () => {
       // `&` and `?` unencoded would terminate the body and be read as further
       // mailto headers — i.e. the visitor's own text could inject a cc/bcc.
       await user.type(f.message, 'A & B ? cc=someone@evil.test — does encoding hold up');
-      await user.click(screen.getByRole('button', { name: /send contact message/i }));
+      await user.click(screen.getByRole('button', { name: /send message/i }));
 
       await waitFor(() => expect(mailtoLink()).not.toBeNull());
       const href = mailtoLink().getAttribute('href');
@@ -195,7 +195,7 @@ describe('contact form submission outcomes', () => {
       const user = userEvent.setup();
       render(<ContactSection />);
       await user.type(fields().name, NAME);
-      await user.click(screen.getByRole('button', { name: /send contact message/i }));
+      await user.click(screen.getByRole('button', { name: /send message/i }));
 
       // The inputs carry `required`, so the browser blocks the submit event before
       // handleSubmit runs — hence no in-app message here. What matters either way is

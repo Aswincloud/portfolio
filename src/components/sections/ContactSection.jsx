@@ -394,7 +394,13 @@ const ContactSection = () => {
                 ref={submitButtonRef}
                 type='submit'
                 disabled={isSubmitting}
-                aria-label='Send contact message'
+                /* No aria-label deliberately. The visible text already *is* the
+                   accessible name (the icon is aria-hidden), so the label would
+                   be a second copy that has to be kept in sync — and it wasn't:
+                   the text swaps to "Sending…" while a static label would still
+                   read "Send message", which is the WCAG 2.5.3 mismatch all over
+                   again. Letting the content name the button makes that
+                   impossible by construction. */
                 whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
                 className='relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-linear-to-r from-brand-500 to-cyan-500 px-6 py-3.5 font-semibold text-ink shadow-lg shadow-brand-500/20 transition-shadow hover:shadow-xl hover:shadow-brand-500/30 disabled:cursor-not-allowed disabled:opacity-60'

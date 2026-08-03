@@ -68,7 +68,10 @@ const Navigation = React.memo(function Navigation() {
             to='/'
             viewTransition
             className='group flex items-center gap-2.5'
-            aria-label='Aswin — home'
+            /* Must contain the visible wordmark ("aswincloud"), not just the
+               person's name — WCAG 2.5.3. A voice-control user says what they
+               can see, and "click aswincloud" has to match. */
+            aria-label='aswincloud — home'
             onClick={e => handleNavClick(e, '#home')}
           >
             <span className='flex h-9 w-9 items-center justify-center rounded-lg border border-brand-500/30 bg-brand-500/10 text-brand-300 transition-colors group-hover:border-brand-400/60'>
