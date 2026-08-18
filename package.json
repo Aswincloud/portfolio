@@ -37,7 +37,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "lucide-react": "^1.30.0",
+    "lucide-react": "^1.31.0",
     "motion": "^13.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.8",
