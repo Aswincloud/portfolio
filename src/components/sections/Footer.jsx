@@ -42,7 +42,7 @@ const Footer = () => {
                 aswin<span className='text-brand-400'>cloud</span>
               </span>
             </div>
-            <p className='mt-4 text-sm leading-relaxed text-slate-500'>
+            <p className='mt-4 text-sm leading-relaxed text-slate-400'>
               Software engineer making AI accelerators go faster — and running a personal cloud for
               the fun of it.
             </p>
@@ -66,7 +66,7 @@ const Footer = () => {
           {/* -my-1 cancels the padding's contribution to the nav's own height so
               the column keeps its original rhythm while each row grows. */}
           <nav aria-label='Footer' className='-my-1 flex flex-col gap-1'>
-            <span className='mb-1 font-mono text-xs uppercase tracking-wider text-slate-600'>
+            <span className='mb-1 font-mono text-xs uppercase tracking-wider text-slate-400'>
               Links
             </span>
             {LINKS.map(link => {
@@ -98,14 +98,14 @@ const Footer = () => {
         </div>
 
         <div className='mt-12 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-6 sm:flex-row'>
-          <p className='font-mono text-xs text-slate-600'>
+          <p className='font-mono text-xs text-slate-400'>
             © {currentYear} Aswin. All rights reserved.
           </p>
           {/* -my-1.5 keeps the row's visual height unchanged while the padding
               lifts the 16px-tall link over the 24px WCAG 2.5.8 target floor. */}
           <a
             href='#home'
-            className='-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-mono text-xs text-slate-500 transition-colors hover:text-brand-300'
+            className='-my-1.5 inline-flex items-center gap-1.5 py-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-brand-300'
           >
             Back to top
             <ArrowUp size={13} />

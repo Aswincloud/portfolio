@@ -246,7 +246,7 @@ const ContactSection = () => {
   // global ring now sits on top of them where it belongs, so these controls look
   // focused the same way every other control on the site does.
   const fieldClass =
-    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-600 transition-colors focus:border-brand-500/60 focus:bg-surface disabled:opacity-50';
+    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-400 transition-colors focus:border-brand-500/60 focus:bg-surface disabled:opacity-50';
 
   return (
     <section
@@ -299,7 +299,7 @@ const ContactSection = () => {
                   {item.icon}
                 </span>
                 <div className='min-w-0 flex-1'>
-                  <h3 className='font-mono text-xs uppercase tracking-wider text-slate-500'>
+                  <h3 className='font-mono text-xs uppercase tracking-wider text-slate-400'>
                     {item.title}
                   </h3>
                   {item.link ? (
@@ -501,7 +501,7 @@ const ContactSection = () => {
                     className={`font-mono text-xs tabular-nums ${
                       messageCount.tooLong || messageCount.tooShort
                         ? 'text-amber-400'
-                        : 'text-slate-600'
+                        : 'text-slate-400'
                     }`}
                   >
                     {messageCount.label}
@@ -521,7 +521,7 @@ const ContactSection = () => {
                   aria-describedby='contact-message-hint'
                   disabled={isSubmitting}
                 />
-                <p id='contact-message-hint' className='mt-2 text-xs text-slate-600'>
+                <p id='contact-message-hint' className='mt-2 text-xs text-slate-400'>
                   {LIMIT_HINTS.message}.
                 </p>
               </div>

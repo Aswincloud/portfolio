@@ -19,7 +19,7 @@ const TermsConditions = () => (
   <div className='min-h-screen bg-ink py-24 px-4 sm:px-6'>
     <div className='max-w-3xl mx-auto card-surface p-6 sm:p-8'>
       <h1 className='text-3xl font-bold mb-2 text-white'>Terms &amp; Conditions</h1>
-      <p className='text-sm text-slate-500 mb-6'>Last updated: May 26, 2026</p>
+      <p className='text-sm text-slate-400 mb-6'>Last updated: May 26, 2026</p>
 
       <p className='text-slate-400 leading-relaxed'>
         These terms govern your use of <span className='font-medium'>aswincloud.com</span> (the
@@ -187,7 +187,7 @@ const TermsConditions = () => (
         </p>
       </Section>
 
-      <p className='mt-10 text-sm text-slate-500'>
+      <p className='mt-10 text-sm text-slate-400'>
         See also:{' '}
         <Link
           to='/privacy'
