@@ -61,7 +61,7 @@ const ProjectCard = ({ project, index, inView }) => {
 
       {/* Title + domain */}
       <h3 className='mt-6 text-xl font-bold leading-snug text-white'>{project.title}</h3>
-      <p className='mt-1 font-mono text-xs text-slate-500'>{project.domain}</p>
+      <p className='mt-1 font-mono text-xs text-slate-400'>{project.domain}</p>
 
       {/* Description */}
       <p className='mt-4 leading-relaxed text-slate-400'>{project.description}</p>

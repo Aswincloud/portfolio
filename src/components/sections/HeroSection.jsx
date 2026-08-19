@@ -46,7 +46,7 @@ const StatCell = ({ value, label, start }) => {
     // silently rendered label-over-number (the label's own mt-1 only makes sense
     // under a number, which is what gave the inversion away).
     <div className='flex flex-col bg-surface/70 px-2 py-3.5 text-center backdrop-blur-sm sm:px-4 sm:py-4'>
-      <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 sm:text-[11px]'>
+      <dt className='order-2 mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:text-[11px]'>
         {label}
       </dt>
       <dd className='order-1 font-display text-xl font-bold tabular-nums text-white sm:text-3xl'>
@@ -263,7 +263,7 @@ const HeroSection = React.memo(function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: showScrollIndicator ? 1 : 0 }}
         transition={{ duration: 0.4 }}
-        className='relative z-10 mx-auto hidden shrink-0 flex-col items-center gap-1 pb-4 pt-3 text-slate-500 transition-colors hover:text-slate-300 md:flex'
+        className='relative z-10 mx-auto hidden shrink-0 flex-col items-center gap-1 pb-4 pt-3 text-slate-400 transition-colors hover:text-slate-300 md:flex'
       >
         <span className='font-mono text-[10px] uppercase tracking-[0.2em]'>Scroll</span>
         <motion.span

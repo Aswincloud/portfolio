@@ -83,14 +83,14 @@ function ExperienceEntryComponent({
           <div className='min-w-0 flex-1'>
             <h3 className='text-xl font-bold text-white sm:text-2xl'>{title}</h3>
             <p className={`mt-0.5 font-medium ${theme.tag}`}>{company}</p>
-            <div className='mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500'>
+            <div className='mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400'>
               {location && (
                 <span className='inline-flex items-center gap-1.5'>
                   <MapPin size={13} />
                   {location}
                 </span>
               )}
-              <span className='font-mono text-xs text-slate-500'>{experience}</span>
+              <span className='font-mono text-xs text-slate-400'>{experience}</span>
             </div>
           </div>
         </div>

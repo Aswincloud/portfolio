@@ -143,7 +143,7 @@ const SkillsSection = () => {
                 {skill.proof.map(line => (
                   <li
                     key={line}
-                    className='flex items-start gap-2 font-mono text-[11px] leading-relaxed text-slate-500'
+                    className='flex items-start gap-2 font-mono text-[11px] leading-relaxed text-slate-400'
                   >
                     <span className={`mt-1.5 h-1 w-1 shrink-0 rounded-full ${skill.dot}`} />
                     <span>{line}</span>

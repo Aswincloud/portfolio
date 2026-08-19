@@ -103,7 +103,7 @@ const AboutSection = React.memo(() => {
                 <span className='relative inline-flex h-2 w-2 rounded-full bg-brand-400' />
               </span>
               <span>
-                <span className='text-slate-500'>Currently</span> — profiling tensor ops on AI
+                <span className='text-slate-400'>Currently</span> — profiling tensor ops on AI
                 silicon at MulticoreWare
               </span>
             </p>

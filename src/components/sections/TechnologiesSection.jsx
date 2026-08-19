@@ -198,7 +198,7 @@ const TechnologiesSection = () => {
                         </span>
                         <div className='min-w-0'>
                           <span className='font-medium text-slate-200'>{item.name}</span>
-                          <span className='ml-2 text-sm text-slate-500'>{item.description}</span>
+                          <span className='ml-2 text-sm text-slate-400'>{item.description}</span>
                         </div>
                       </motion.li>
                     );
