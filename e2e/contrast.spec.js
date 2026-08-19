@@ -43,6 +43,18 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
+// Block third-party analytics/chat, matching smoke.spec.js and
+// contactFailure.spec.js. It matters more here than in those: the Chatwoot
+// widget injects its own DOM into the page (measured: 6 elements unblocked
+// versus 3 blocked), and axe audits whatever it finds. Without this the gate
+// can fail on markup from a service we do not control and cannot fix, and it
+// makes an accessibility assertion depend on that service being reachable —
+// support.aswincloud.com currently answers 502 for the widget iframe, so its
+// contribution to the DOM is not even stable run to run.
+test.beforeEach(async ({ page }) => {
+  await page.route(/googletagmanager\.com|google-analytics\.com|chatwoot|widget/i, r => r.abort());
+});
+
 const AXE = readFileSync(
   resolve(dirname(fileURLToPath(import.meta.url)), '../node_modules/axe-core/axe.min.js'),
   'utf8'
