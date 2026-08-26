@@ -1,12 +1,54 @@
 version: 2
 updates:
+  # ── npm ────────────────────────────────────────────────────────────────────
+  # Grouped, because ungrouped this repo opened 6–7 PRs every week (35 of the
+  # last 60 merged PRs were Dependabot) and each one costs a full CI matrix plus
+  # a merge-queue cycle to land something like a patch bump of a test runner.
+  #
+  # Grouping is not only about volume, though — it is a correctness fix. vitest
+  # and @vitest/coverage-v8 declare an *exact* peer on each other
+  # (coverage-v8 -> "vitest": "4.1.11", not a range), so they can only move
+  # together. Ungrouped they arrived as two PRs whose lockfiles rewrote the same
+  # nine @vitest/* entries; the second to be queued would have been ejected on
+  # conflict, and in the event Dependabot closed it as redundant once the first
+  # landed. Same-group means one PR, one lockfile, no lockstep to hand-manage.
+  #
+  # Split dev/production rather than one bucket: a devDependency bump is checked
+  # by CI running it (eslint is exercised by the Lint job, vitest by the Test
+  # job), whereas a runtime bump ships to visitors and deserves to be read on its
+  # own. Keeping them apart means a `motion` upgrade never rides in on the back
+  # of a test-runner patch.
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        dependency-type: 'production'
+        update-types:
+          - 'minor'
+          - 'patch'
+      development-dependencies:
+        dependency-type: 'development'
+        update-types:
+          - 'minor'
+          - 'patch'
+    # Majors stay ungrouped deliberately. They are the ones that need reading in
+    # isolation, and bundling a breaking change with routine patches is how it
+    # gets waved through on the strength of a green check.
+
+  # ── GitHub Actions ─────────────────────────────────────────────────────────
+  # One group: every action here is SHA-pinned, so review is the same mechanical
+  # check each time — dereference the tag to its commit and confirm it matches
+  # the pin. That is the one thing CI cannot verify, and it is no harder to do
+  # for four actions in one PR than for four PRs.
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - '*'

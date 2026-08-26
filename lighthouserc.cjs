@@ -54,7 +54,24 @@ module.exports = {
             // none of them depend on timing — they read the DOM and the response
             // headers. Nothing is gained by leaving slack under a number that
             // does not move, so they are pinned at exactly where they are: any
-            // drop is a real regression, not weather.
+            // drop they can see is a real regression, not weather.
+            //
+            // "can see" is doing real work in that sentence. This accessibility
+            // assertion is necessary but NOT sufficient, and it is worth knowing
+            // where the blind spot is before trusting a green run: @lhci/cli@0.14.x
+            // resolves to Lighthouse 12.1.0, which bundles axe-core ^4.9.1 — too
+            // old to resolve `oklch()`. Tailwind v4 emits every colour as oklch, so
+            // the `color-contrast` audit evaluates almost nothing here. This
+            // assertion reported a clean 1.0 while 47 genuine contrast violations
+            // were on the page; standalone Lighthouse 12.8.2 scored that same page
+            // 0.96, and axe-core 4.12.1 directly reported all 47.
+            //
+            // Contrast is gated by e2e/contrast.spec.js instead, which pins its own
+            // axe-core rather than inheriting whatever a downstream tool bundles,
+            // and which runs inside the required `✅ CI` check — this job is not
+            // required, so it could not block a merge on its own even once its axe
+            // can see oklch. Bumping the pin is worth doing, but it moves the
+            // performance thresholds too, so it wants its own PR.
             'categories:accessibility': ['error', { minScore: 1 }],
             'categories:best-practices': ['error', { minScore: 1 }],
             'categories:seo': ['error', { minScore: 1 }],
