@@ -87,6 +87,20 @@ jobs:
           name: dist
           path: dist/
           retention-days: 7
+      # Asserts the gzipped budgets in scripts/bundle-size.js, and writes the
+      # size table to the job summary. It lives here rather than in
+      # pr-checks.yml's bundle-size job because that workflow is not a required
+      # check and has no merge_group trigger — a red budget there is visible on
+      # the PR page and merges anyway, which is the same dead gate as the
+      # Lighthouse job described in e2e/contrast.spec.js. Running it in a job
+      # the "✅ CI" aggregate depends on is what gives it teeth, and it reuses
+      # this job's existing build instead of paying for a second one.
+      #
+      # Ordered after the upload on purpose: the artifact is the thing you
+      # want in hand when a size regression needs explaining, so it should
+      # exist even on the run that goes red.
+      - name: Bundle size budget
+        run: npm run size
 
   security:
     name: 🔒 Security

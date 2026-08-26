@@ -34,7 +34,8 @@
     "clean": "rm -rf dist node_modules/.cache",
     "analyze": "npm run build:analyze && npx vite-bundle-analyzer dist",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "size": "node scripts/bundle-size.js"
   },
   "dependencies": {
     "lucide-react": "^1.31.0",
