@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const Section = ({ title, children }) => (
   <div className='mt-8'>
@@ -16,8 +17,22 @@ const Section = ({ title, children }) => (
 );
 
 const PrivacyPolicy = () => (
-  <div className='min-h-screen bg-ink py-24 px-4 sm:px-6'>
+  // min-h-dvh, as the hero: `min-h-screen` is 100vh, which on a phone includes
+  // the space under the browser's toolbar, so the page's background fell short
+  // of the bottom of the viewport once the toolbar collapsed.
+  <div className='min-h-dvh bg-ink py-24 px-4 sm:px-6'>
     <div className='max-w-3xl mx-auto card-surface p-6 sm:p-8'>
+      {/* The nav's wordmark also goes home, but nothing on this page said so;
+          a legal page reached from the footer is a dead end without an explicit
+          way back. */}
+      <Link
+        to='/'
+        viewTransition
+        className='mb-6 inline-flex items-center gap-1.5 font-mono text-[13px] text-slate-400 transition-colors hover:text-brand-300'
+      >
+        <ArrowLeft size={14} aria-hidden='true' />
+        Back to site
+      </Link>
       <h1 className='text-3xl font-bold mb-2 text-white'>Privacy Policy</h1>
       <p className='text-sm text-slate-400 mb-6'>Last updated: May 26, 2026</p>
 

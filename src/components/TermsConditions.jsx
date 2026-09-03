@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const Section = ({ title, children }) => (
   <div className='mt-8'>
@@ -16,8 +17,17 @@ const Section = ({ title, children }) => (
 );
 
 const TermsConditions = () => (
-  <div className='min-h-screen bg-ink py-24 px-4 sm:px-6'>
+  // min-h-dvh and the back link, for the reasons given in PrivacyPolicy.jsx.
+  <div className='min-h-dvh bg-ink py-24 px-4 sm:px-6'>
     <div className='max-w-3xl mx-auto card-surface p-6 sm:p-8'>
+      <Link
+        to='/'
+        viewTransition
+        className='mb-6 inline-flex items-center gap-1.5 font-mono text-[13px] text-slate-400 transition-colors hover:text-brand-300'
+      >
+        <ArrowLeft size={14} aria-hidden='true' />
+        Back to site
+      </Link>
       <h1 className='text-3xl font-bold mb-2 text-white'>Terms &amp; Conditions</h1>
       <p className='text-sm text-slate-400 mb-6'>Last updated: May 26, 2026</p>
 

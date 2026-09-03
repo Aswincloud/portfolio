@@ -113,6 +113,61 @@ describe('mobile menu dismissal', () => {
   });
 });
 
+describe('the active nav item is marked, not just coloured', () => {
+  /** Give navigateToSection a target to find; jsdom has no layout, so offsetTop is 0. */
+  const withSection = id => {
+    const el = document.createElement('section');
+    el.id = id;
+    document.body.appendChild(el);
+    return el;
+  };
+
+  it('sets aria-current on the item for the section in view', async () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const about = withSection('about');
+    renderNav();
+
+    // Nothing is current on the hero: none of the items point at it.
+    expect(document.querySelectorAll('[aria-current]')).toHaveLength(0);
+
+    // The desktop button — the first match; the mobile sheet is not open.
+    fireEvent.click(screen.getAllByRole('button', { name: 'About' })[0]);
+
+    // The colour and the pill said which item was active; the accessibility
+    // tree said nothing. `location`, because these are places in one document.
+    await waitFor(() =>
+      expect(screen.getAllByRole('button', { name: 'About' })[0].getAttribute('aria-current')).toBe(
+        'location'
+      )
+    );
+    expect(document.querySelectorAll('[aria-current="location"]')).toHaveLength(1);
+
+    about.remove();
+    scrollTo.mockRestore();
+  });
+});
+
+describe('copying the email address is announced', () => {
+  it('fills a live region when the address is copied', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+    render(<ContactSection />);
+
+    const status = screen.getByRole('status');
+    // Present before the click — a region inserted along with its text is not
+    // reliably announced — and silent until there is something to say.
+    expect(status.textContent).toBe('');
+
+    fireEvent.click(screen.getByRole('button', { name: /copy email address/i }));
+
+    await waitFor(() => expect(status.textContent).toMatch(/copied/i));
+    expect(writeText).toHaveBeenCalledWith('contact@aswincloud.com');
+  });
+});
+
 describe('contact form enforces the rules it prints', () => {
   const fill = ({ name, email, message }) => {
     fireEvent.change(screen.getByLabelText(/^name$/i), { target: { value: name } });
@@ -213,6 +268,72 @@ describe('contact form enforces the rules it prints', () => {
 
     expect(screen.getByText('24 over the limit')).toBeTruthy();
     expect(screen.queryByText(/-\d+ left/)).toBeNull();
+  });
+
+  it('marks the field that failed and says why, under that field', async () => {
+    render(<ContactSection />);
+
+    fill({ name: 'Ada Lovelace', email: 'ada@example.com', message: 'too short' });
+    fireEvent.submit(screen.getByRole('button', { name: /send message/i }).closest('form'));
+
+    await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+
+    // The panel used to recite all three rules for any failure. Only the
+    // message broke one, so only the message is flagged.
+    const message = screen.getByLabelText(/^message$/i);
+    expect(message.getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByLabelText(/^name$/i).getAttribute('aria-invalid')).toBeNull();
+    expect(screen.getByLabelText(/^email$/i).getAttribute('aria-invalid')).toBeNull();
+
+    // The error takes the standing hint's place — same rule, said once — and
+    // aria-describedby follows it so nothing points at an id that is gone.
+    expect(message.getAttribute('aria-describedby')).toBe('contact-message-error');
+    expect(document.getElementById('contact-message-hint')).toBeNull();
+    expect(document.getElementById('contact-message-error').textContent).toMatch(
+      new RegExp(`${LIMITS.message.min}–${LIMITS.message.max}`)
+    );
+
+    // The summary names the same single problem — and not the rules for fields
+    // that passed.
+    expect(screen.getByRole('alert').querySelectorAll('li')).toHaveLength(1);
+  });
+
+  it('withdraws a field error as soon as the field is edited', async () => {
+    render(<ContactSection />);
+
+    fill({ name: 'A', email: 'ada@example.com', message: 'too short' });
+    fireEvent.submit(screen.getByRole('button', { name: /send message/i }).closest('form'));
+    await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+    expect(screen.getByRole('alert').querySelectorAll('li')).toHaveLength(2);
+
+    fireEvent.change(screen.getByLabelText(/^name$/i), { target: { value: 'Ada' } });
+    expect(screen.getByLabelText(/^name$/i).getAttribute('aria-invalid')).toBeNull();
+    // One problem left, so the panel stays and shrinks to it.
+    expect(screen.getByRole('alert').querySelectorAll('li')).toHaveLength(1);
+
+    fireEvent.change(screen.getByLabelText(/^message$/i), { target: { value: 'long enough now' } });
+    // The last error is gone, and with it the panel — "please check" above an
+    // empty list would claim the form is still broken — and the hint is back.
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByLabelText(/^message$/i).getAttribute('aria-describedby')).toBe(
+      'contact-message-hint'
+    );
+  });
+
+  it('rejects a malformed email address without a network call', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    render(<ContactSection />);
+
+    // The form is noValidate so the browser's own type=email check no longer
+    // runs; the handler has to apply the Worker's regex itself.
+    fill({ name: 'Ada Lovelace', email: 'not-an-email', message: 'long enough to pass' });
+    fireEvent.submit(screen.getByRole('button', { name: /send message/i }).closest('form'));
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/^email$/i).getAttribute('aria-invalid')).toBe('true')
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 
   it('moves focus to the outcome panel so it cannot be off-screen', async () => {

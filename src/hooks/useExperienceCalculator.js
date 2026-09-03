@@ -13,33 +13,31 @@ import { useState, useEffect } from 'react';
 // hero stat and the card's tenure by a year for the first half of every year.
 export const EXPERIENCE_START = '2023-06-01';
 
+/** Whole calendar months since the start, rendered as the site shows tenure. */
+const formatExperience = (now = new Date()) => {
+  const startDate = new Date(EXPERIENCE_START);
+
+  const diffInMonths =
+    (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth());
+
+  const years = Math.floor(diffInMonths / 12);
+  const months = diffInMonths % 12;
+
+  if (years > 0) return `${years}+ year${years > 1 ? 's' : ''}`;
+  if (months > 0) return `${months} month${months > 1 ? 's' : ''}`;
+  return 'Less than a month';
+};
+
 export const useExperienceCalculator = () => {
-  const [experience, setExperience] = useState('');
+  // Computed for the first render, not in an effect. The value was '' until
+  // the effect ran, which the hero's stat strip showed as "—" for a frame and
+  // then counted up from — a visible flicker on every load, for a number that
+  // is a pure function of the clock and costs nothing to have at mount.
+  const [experience, setExperience] = useState(() => formatExperience());
 
   useEffect(() => {
-    const calculateExperience = () => {
-      const startDate = new Date(EXPERIENCE_START);
-      const currentDate = new Date();
-
-      const diffInMonths =
-        (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (currentDate.getMonth() - startDate.getMonth());
-
-      const years = Math.floor(diffInMonths / 12);
-      const months = diffInMonths % 12;
-
-      if (years > 0) {
-        setExperience(`${years}+ year${years > 1 ? 's' : ''}`);
-      } else if (months > 0) {
-        setExperience(`${months} month${months > 1 ? 's' : ''}`);
-      } else {
-        setExperience('Less than a month');
-      }
-    };
-
-    calculateExperience();
-    const interval = setInterval(calculateExperience, 24 * 60 * 60 * 1000);
-
+    // Keep it current across a tab left open past midnight on the 1st.
+    const interval = setInterval(() => setExperience(formatExperience()), 24 * 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 

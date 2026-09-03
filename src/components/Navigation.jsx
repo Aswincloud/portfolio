@@ -112,6 +112,10 @@ const Navigation = React.memo(function Navigation() {
                   key={item.section}
                   onClick={e => handleNavClick(e, `#${item.section}`)}
                   className={cls}
+                  /* The active item was colour-and-pill only. `location` rather
+                     than `page`: these point at sections of one document, and
+                     a screen reader reads it as "current location". */
+                  aria-current={isActive ? 'location' : undefined}
                 >
                   {isActive && (
                     <motion.span
@@ -136,6 +140,10 @@ const Navigation = React.memo(function Navigation() {
               target='_blank'
               rel='noopener noreferrer'
               className='hidden rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-2 font-mono text-[13px] font-medium text-brand-300 transition-colors hover:bg-brand-500/20 hover:text-brand-200 sm:inline-flex'
+              /* Same label the hero's résumé button already carries. Must still
+                 contain the visible word — WCAG 2.5.3, checked by
+                 e2e/labelInName.spec.js. */
+              aria-label='Résumé (opens in a new tab)'
             >
               Résumé
             </a>
@@ -180,6 +188,7 @@ const Navigation = React.memo(function Navigation() {
                       key={item.section}
                       onClick={e => handleNavClick(e, `#${item.section}`)}
                       className={cls}
+                      aria-current={isActive ? 'location' : undefined}
                     >
                       {item.label}
                     </button>
@@ -199,6 +208,7 @@ const Navigation = React.memo(function Navigation() {
                   target='_blank'
                   rel='noopener noreferrer'
                   className='mt-2 flex items-center rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-3 font-mono text-sm font-medium text-brand-300'
+                  aria-label='View Résumé (opens in a new tab)'
                 >
                   View Résumé
                 </a>
