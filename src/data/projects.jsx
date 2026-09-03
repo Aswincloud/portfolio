@@ -8,7 +8,7 @@ import { Brain, Zap, Gamepad2, Activity, Gauge, Globe } from 'lucide-react';
 // Literal class strings, never interpolated. Tailwind finds classes by scanning
 // source text, so `bg-${kind}-500/10` is emitted as nothing at all and the
 // failure shows up as an invisible accent rather than a build error. Same
-// constraint as SkillsSection's `edge`/`dot`.
+// constraint as AboutSection's `edge`/`dot`.
 export const PROJECT_KINDS = {
   web: {
     tile: 'border-brand-500/20 bg-brand-500/10 text-brand-300',

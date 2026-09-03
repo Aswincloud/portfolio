@@ -4,7 +4,7 @@
  * @copyright © 2025 Aswin. All rights reserved.
  * @description Every section actually becomes visible when scrolled to.
  *
- *   Nine components gate their content on `useInView` from
+ *   Eight components gate their content on `useInView` from
  *   react-intersection-observer, and each renders at opacity 0 until it fires.
  *   If the hook regresses, the sections never reveal and the site is a mostly
  *   blank page.
@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
   await page.route(/googletagmanager\.com|google-analytics\.com|chatwoot|widget/i, r => r.abort());
 });
 
-const SECTIONS = ['about', 'experience', 'skills', 'projects', 'technologies', 'contact'];
+const SECTIONS = ['about', 'experience', 'projects', 'technologies', 'contact'];
 
 /** Laid-out descendants, and how many of them are still fully transparent. */
 const measure = el => {

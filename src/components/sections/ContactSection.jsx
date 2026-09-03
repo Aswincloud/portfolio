@@ -251,7 +251,7 @@ const ContactSection = () => {
   return (
     <section
       id='contact'
-      className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-ink`}
+      className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-canvas`}
     >
       {/* soft glow behind the form */}
       <div
@@ -264,7 +264,7 @@ const ContactSection = () => {
         <SectionHeader
           innerRef={ref}
           inView={inView}
-          number='06'
+          number='05'
           label='Contact'
           accent='brand'
           size='major'

@@ -63,7 +63,6 @@ const Navigation = React.memo(function Navigation() {
     () => [
       { section: 'about', label: 'About' },
       { section: 'experience', label: 'Experience' },
-      { section: 'skills', label: 'Skills' },
       { section: 'projects', label: 'Projects' },
       { section: 'technologies', label: 'Stack' },
       { section: 'contact', label: 'Contact' },

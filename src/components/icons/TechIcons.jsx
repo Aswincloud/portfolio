@@ -12,11 +12,9 @@
  *   icons, and would land whole in the vendor chunk. The thirteen marks actually
  *   used cost ~5 KB gzipped inlined here.
  *
- *   Not every Stack entry gets a mark. Microsoft's trademark policy is the reason
- *   simple-icons ships no Azure or Windows icon, and hand-drawing a replacement
- *   would defeat the point of respecting it — those two, plus the four entries
- *   that are disciplines rather than products, fall back to generic lucide glyphs
- *   at the call site.
+ *   Not every Stack entry gets a mark. The two entries that are disciplines
+ *   rather than products (server admin, DevOps) fall back to generic lucide
+ *   glyphs at the call site.
  */
 
 import React from 'react';

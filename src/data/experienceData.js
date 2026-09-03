@@ -9,7 +9,7 @@ export const getExperienceData = experience => [
     location: 'Chennai, India',
     logo: '/MulticoreWare_Logo.jpg',
     description:
-      'Performance engineering for AI accelerator hardware — making tensor operations faster on next-generation AI silicon.',
+      "Performance engineering on Tenstorrent's TT-Metal stack: profiling tensor operations, finding where the time goes, and getting it back.",
     achievements: [
       'Profile and benchmark tensor operations on AI accelerator hardware, turning the measurements into concrete optimization work.',
       'Trace bottlenecks across the software stack to find where the time actually goes before changing anything.',

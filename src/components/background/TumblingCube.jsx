@@ -39,7 +39,7 @@ import {
 //
 // Literal class values, not assembled at runtime: Tailwind scans source text, so
 // a computed class name would never be emitted and the sticker would render
-// plain. Same constraint as the edge/dot values in SkillsSection.
+// plain. Same constraint as the edge/dot values in AboutSection's FOCUS cards.
 const ACCENTS = {
   '-1,-1,1|z1': 'cube-sticker-em',
   '1,-1,1|x1': 'cube-sticker-cy',

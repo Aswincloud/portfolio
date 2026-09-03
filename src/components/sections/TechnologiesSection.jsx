@@ -11,18 +11,7 @@ import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import SectionHeader from '../SectionHeader.jsx';
 import { sectionAccent } from '../../data/sectionAccents.js';
-import {
-  Cloud,
-  Monitor,
-  Wifi,
-  Code2,
-  CloudCog,
-  Server,
-  Workflow,
-  AppWindow,
-  ShieldCheck,
-  Network,
-} from 'lucide-react';
+import { Cloud, Code2, Server, Workflow, SquareTerminal } from 'lucide-react';
 import {
   Python,
   ReactMark,
@@ -40,10 +29,18 @@ import {
 } from '../icons/TechIcons.jsx';
 
 // Each item carries its own mark so the list reads as a recognisable stack
-// rather than eighteen identical bullets. Products get their real logo; the
-// entries that are disciplines rather than products (server admin, DevOps, VPN,
-// network admin) get a generic lucide glyph, as do Azure and Windows — see the
-// header note in TechIcons.jsx for why those two have no brand mark.
+// rather than fifteen identical bullets. Products get their real logo; the two
+// entries that are disciplines rather than products (server admin, DevOps) get
+// a generic lucide glyph.
+//
+// Every entry here has to survive the closing card's claim — that each one has
+// something in production behind it. Four did not and were cut: Azure, VPN,
+// Windows and "Network Administration" had descriptions that were dictionary
+// definitions ("Cloud computing services and solutions", "Virtual Private
+// Network setup and management") and nothing on the site to point at. A
+// shorter list that is all provable reads stronger than a longer one that
+// isn't. Their departure left Operating Systems and Networking at three and
+// two items, so those merged into one systems category.
 const TECHNOLOGIES = [
   {
     category: 'Languages & Frameworks',
@@ -65,11 +62,6 @@ const TECHNOLOGIES = [
     icon: Cloud,
     items: [
       { name: 'Cloudflare', description: 'CDN, DNS, Workers, and edge compute', icon: Cloudflare },
-      {
-        name: 'Microsoft Azure',
-        description: 'Cloud computing services and solutions',
-        icon: CloudCog,
-      },
       { name: 'Vercel', description: 'Frontend and preview deployments', icon: Vercel },
       { name: 'Koyeb', description: 'Serverless app and API hosting', icon: Koyeb },
       {
@@ -81,42 +73,25 @@ const TECHNOLOGIES = [
     ],
   },
   {
-    category: 'Operating Systems',
-    icon: Monitor,
+    category: 'Systems & Networking',
+    icon: SquareTerminal,
     items: [
       {
         name: 'Ubuntu',
         description: 'Linux server administration and development',
         icon: Ubuntu,
       },
-      { name: 'Windows', description: 'Desktop and server environments', icon: AppWindow },
       {
         name: 'macOS',
         description: 'Apple ecosystem development and administration',
         icon: Apple,
       },
       { name: 'Android', description: 'Mobile development and customization', icon: Android },
-    ],
-  },
-  {
-    category: 'Networking & Security',
-    icon: Wifi,
-    items: [
       { name: 'Tailscale', description: 'Zero-config VPN and mesh networking', icon: Tailscale },
-      {
-        name: 'VPN',
-        description: 'Virtual Private Network setup and management',
-        icon: ShieldCheck,
-      },
       {
         name: 'OpenWrt',
         description: 'Open-source router firmware and networking',
         icon: OpenWrt,
-      },
-      {
-        name: 'Network Administration',
-        description: 'Network infrastructure and protocols',
-        icon: Network,
       },
     ],
   },
@@ -130,13 +105,13 @@ const TechnologiesSection = () => {
   return (
     <section
       id='technologies'
-      className={`section-padding relative overflow-hidden ${sectionAccent('indigo')} bg-canvas`}
+      className={`section-padding relative overflow-hidden ${sectionAccent('indigo')} bg-ink`}
     >
       <div className='container-custom relative z-10'>
         <SectionHeader
           innerRef={ref}
           inView={inView}
-          number='05'
+          number='04'
           label='Stack'
           accent='indigo'
           title={
@@ -151,7 +126,11 @@ const TechnologiesSection = () => {
           </p>
         </SectionHeader>
 
-        <div className='grid gap-5 md:grid-cols-2'>
+        {/* Three categories of five. One column until lg rather than two at
+            md: three cards in a two-column grid leave an orphan, and at 768px
+            a third of the container is too narrow for "name  description" to
+            stay on one line anyway. */}
+        <div className='grid gap-5 lg:grid-cols-3'>
           {TECHNOLOGIES.map((cat, catIndex) => {
             const Icon = cat.icon;
             return (

@@ -20,7 +20,7 @@ import { SECTION_ACCENTS } from '../data/sectionAccents.js';
  * Two headline scales. Every section headline was rendering at exactly 48px/700,
  * so scrolling the page felt metronomic — six beats of identical weight with no
  * sense of where you were in the arc. `major` opens and closes the page (About,
- * Contact); the four sections in between step down to `minor`, which reads as
+ * Contact); the sections in between step down to `minor`, which reads as
  * body-of-the-argument rather than as another opening statement.
  *
  * Literal strings for the same reason as ACCENTS: Tailwind scans source text.

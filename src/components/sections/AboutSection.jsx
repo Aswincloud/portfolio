@@ -3,25 +3,37 @@
  * @author Aswin
  * @copyright © 2025 Aswin. All rights reserved.
  * @description About section — dark editorial two-column with narrative copy
- *   and a focus-areas panel.
+ *   and a focus-areas panel that carries its own evidence.
+ *
+ *   This panel absorbed the Skills section. The page used to cover the same four
+ *   themes three times in a row — here as focus areas, again as Skills cards
+ *   (Software Development / Performance / System Analysis / Cloud), then a third
+ *   time as the Stack — and a reader skimming for what I do hit the same
+ *   message three sections running. The Skills cards' one distinct asset was
+ *   their `proof` lines, which grounded each claim in something that exists
+ *   elsewhere on the site; those moved here, and the section went.
  */
 
 import React from 'react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Cpu, Cloud, Gauge, Palette } from 'lucide-react';
+import { Cpu, Cloud, Gauge, Palette, ArrowRight } from 'lucide-react';
 import SectionHeader from '../SectionHeader.jsx';
 import { sectionAccent } from '../../data/sectionAccents.js';
 
+// Each paragraph says something the hero did not. The first used to restate
+// the headline ("the software that runs on AI accelerator hardware"), which
+// with the hero, the Approach band, the experience card and the footer made
+// five tellings of one sentence on one page.
 const PARAGRAPHS = [
   {
     body: (
       <>
         I&apos;m a <span className='font-semibold text-slate-100'>senior software engineer</span>{' '}
-        based in Pondicherry, working at MulticoreWare on the software that runs on{' '}
-        <span className='font-semibold text-slate-100'>AI accelerator hardware</span>. Most days
-        that means profiling tensor operations, hunting bottlenecks, and turning benchmark numbers
-        into something faster.
+        based in Pondicherry. At MulticoreWare I work on{' '}
+        <span className='font-semibold text-slate-100'>Tenstorrent&apos;s TT-Metal stack</span>, and
+        a typical day is a profiler trace, a table of kernel timings, and one question: where did
+        the time go?
       </>
     ),
   },
@@ -38,7 +50,7 @@ const PARAGRAPHS = [
   {
     body: (
       <>
-        Off the clock, I run <span className='font-semibold text-slate-100'>my own cloud</span> —
+        Evenings go to <span className='font-semibold text-slate-100'>a personal cloud</span> —
         self-hosted services behind Cloudflare tunnels, from this site to a support desk to an AI
         chat. It&apos;s where I get to be the ops team, the security team, and the person who gets
         paged, all at once.
@@ -47,26 +59,55 @@ const PARAGRAPHS = [
   },
 ];
 
+// `proof` grounds each area in work that actually exists elsewhere on the site,
+// so a claim is followed by evidence rather than a description. `tint`, `edge`
+// and `dot` must stay literal class strings — Tailwind scans source text, so a
+// class assembled at runtime would never be emitted.
 const FOCUS = [
   {
     icon: <Gauge size={20} />,
     title: 'Profiling & benchmarking',
     desc: 'Measure first. Find the bottleneck. Prove the win with numbers.',
+    tint: 'text-cyan-300 border-cyan-500/20 bg-cyan-500/10',
+    edge: 'via-cyan-400/60',
+    dot: 'bg-cyan-300',
+    proof: [
+      'ttperf — CLI profiler for device kernel timings, on PyPI',
+      'TTNN eltwise tracker — regressions correlated back to the commit',
+    ],
   },
   {
     icon: <Cpu size={20} />,
     title: 'Close-to-the-metal optimization',
     desc: 'Data layout, kernel choice, and scheduling on AI silicon.',
+    tint: 'text-indigo-300 border-indigo-500/20 bg-indigo-500/10',
+    edge: 'via-indigo-400/60',
+    dot: 'bg-indigo-300',
+    proof: [
+      'Throughput work on TT-Metal tensor ops at MulticoreWare',
+      'Bottlenecks traced across the stack before anything changes',
+    ],
   },
   {
     icon: <Cloud size={20} />,
     title: 'Self-hosted infrastructure',
-    desc: 'A personal cloud of services behind Cloudflare tunnels.',
+    desc: 'A personal cloud behind Cloudflare tunnels — deploys, uptime, and the pager.',
+    tint: 'text-brand-300 border-brand-500/20 bg-brand-500/10',
+    edge: 'via-brand-400/60',
+    dot: 'bg-brand-300',
+    proof: [
+      'Live chat, support desk, résumé and dashboards, all self-hosted',
+      'Edge deploys on Cloudflare Workers',
+    ],
   },
   {
     icon: <Palette size={20} />,
     title: 'Web design & development',
     desc: "Fast, modern, hand-built sites — like the one you're on.",
+    tint: 'text-emerald-300 border-emerald-500/20 bg-emerald-500/10',
+    edge: 'via-emerald-400/60',
+    dot: 'bg-emerald-300',
+    proof: ['This site — hand-built design system, no UI kit', 'Lighthouse 96 / 100 / 100 / 100'],
   },
 ];
 
@@ -79,7 +120,11 @@ const AboutSection = React.memo(() => {
       className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-canvas`}
     >
       <div className='container-custom relative z-10'>
-        <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:gap-20'>
+        {/* lg:items-center: the focus column grew by four proof blocks when it
+            absorbed Skills and is now taller than the narrative. Top-aligned,
+            that left ~250px of empty column under the last paragraph; centred,
+            the copy sits in the middle of the cards it describes. */}
+        <div className='grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:gap-20'>
           {/* Narrative */}
           <SectionHeader
             innerRef={ref}
@@ -103,8 +148,8 @@ const AboutSection = React.memo(() => {
                 <span className='relative inline-flex h-2 w-2 rounded-full bg-brand-400' />
               </span>
               <span>
-                <span className='text-slate-400'>Currently</span> — profiling tensor ops on AI
-                silicon at MulticoreWare
+                <span className='text-slate-400'>Currently</span> — performance engineering on
+                TT-Metal at MulticoreWare
               </span>
             </p>
 
@@ -123,12 +168,12 @@ const AboutSection = React.memo(() => {
             </div>
           </SectionHeader>
 
-          {/* Focus areas */}
+          {/* Focus areas, each with its evidence */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className='flex flex-col gap-4 lg:pt-16'
+            className='flex flex-col gap-4'
           >
             {FOCUS.map((f, i) => (
               <motion.div
@@ -136,19 +181,51 @@ const AboutSection = React.memo(() => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                className='group card-surface card-lift p-6'
+                className='group card-surface card-lift relative overflow-hidden p-6'
               >
+                {/* Accent edge — the same centre-weighted hairline as the
+                    section seams and the project cards, recoloured per card. */}
+                <span
+                  aria-hidden='true'
+                  className={`absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent ${f.edge}`}
+                />
                 <div className='flex items-start gap-4'>
-                  <span className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10 text-brand-300 transition-transform duration-300 group-hover:scale-105'>
+                  <span
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-105 ${f.tint}`}
+                  >
                     {f.icon}
                   </span>
-                  <div>
+                  <div className='min-w-0 flex-1'>
                     <h3 className='text-base font-semibold text-white'>{f.title}</h3>
                     <p className='mt-1 text-sm leading-relaxed text-slate-400'>{f.desc}</p>
+                    <ul className='mt-3 space-y-1.5 border-t border-hairline pt-3'>
+                      {f.proof.map(line => (
+                        <li
+                          key={line}
+                          className='flex items-start gap-2 font-mono text-[11px] leading-relaxed text-slate-400'
+                        >
+                          <span className={`mt-1.5 h-1 w-1 shrink-0 rounded-full ${f.dot}`} />
+                          <span>{line}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </motion.div>
             ))}
+
+            {/* The tools behind these live one section system away; this is the
+                pointer the old Skills sub-copy used to carry. */}
+            <a
+              href='#technologies'
+              className='group/link inline-flex w-fit items-center gap-1.5 self-end py-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-brand-300'
+            >
+              The tools behind these — see the Stack
+              <ArrowRight
+                size={13}
+                className='transition-transform duration-200 group-hover/link:translate-x-0.5'
+              />
+            </a>
           </motion.div>
         </div>
       </div>
