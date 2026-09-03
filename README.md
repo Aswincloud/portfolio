@@ -22,7 +22,6 @@ A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 - **Fast Loading**: Deployed on Cloudflare Workers edge network
 - **Custom Domain**: Live at [www.aswincloud.com](https://www.aswincloud.com)
 - **Accessibility**: ARIA labels, keyboard navigation, and screen reader support
-- **Search Functionality**: Global search with keyboard shortcuts (Cmd/Ctrl + K)
 - **Error Handling**: React Error Boundary for graceful error handling
 - **Custom 404 Page**: Beautiful error page with helpful navigation
 - **Loading States**: Smooth loading animations and transitions
@@ -33,7 +32,7 @@ A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 ## 🛠️ Technology Stack
 
 - **Frontend**: React 19, Vite, Tailwind CSS v4, Motion
-- **Backend**: Cloudflare Workers, MailChannels
+- **Backend**: Cloudflare Workers, Resend
 - **Deployment**: Cloudflare Workers with Workers Assets
 - **Version Control**: Git + GitHub
 - **CI/CD**: GitHub Actions for automated deployment
@@ -83,7 +82,7 @@ GitHub Actions runs CI only (`.github/workflows/ci.yml`): lint, format check, co
 
 ## 📧 Email Configuration
 
-The contact form uses MailChannels for sending emails:
+The contact form uses Resend for sending emails:
 
 - **Notifications**: Sent to `contact@aswincloud.com`
 - **Auto-replies**: Sent to form submitters
@@ -97,7 +96,6 @@ Additional setup and integration guides live in [`docs/`](./docs/):
 - [Contact form setup](./docs/contact-form-setup.md)
 - [Email setup](./docs/email-setup.md) · [Email deliverability](./docs/email-deliverability-guide.md)
 - [Telegram setup](./docs/telegram-setup.md)
-- [Enhancements / roadmap](./docs/enhancements.md)
 
 ## 🌐 Live Website
 

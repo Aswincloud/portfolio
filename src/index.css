@@ -117,7 +117,7 @@
   html {
     scroll-behavior: smooth;
     /* Keep in step with HEADER_OFFSET in usePageTransitions.js and the same
-       constant in App.jsx's useHashScroll. Those two intercept every hash we
+       constant in hooks/useRouteScroll.js. Those two intercept every hash we
        currently produce — nav clicks and cold-loaded hashed URLs alike — and
        scroll manually, so this declaration governs nothing today: raising it to
        300px in a built stylesheet moved neither path, while raising the JS
