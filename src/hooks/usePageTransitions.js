@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 // Every section the nav can point at, in document order. ApproachBand is
 // deliberately absent: it has no id and is not a nav destination.
-const SECTIONS = ['home', 'about', 'experience', 'skills', 'projects', 'technologies', 'contact'];
+const SECTIONS = ['home', 'about', 'experience', 'projects', 'technologies', 'contact'];
 
 // Matches `scroll-padding-top` in index.css (and the same constant in
 // useRouteScroll.js), so a nav click, a hashed URL, and a native hash jump all

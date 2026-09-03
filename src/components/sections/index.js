@@ -9,7 +9,6 @@ export { default as HeroSection } from './HeroSection.jsx';
 export { default as AboutSection } from './AboutSection.jsx';
 export { default as ApproachBand } from './ApproachBand.jsx';
 export { default as ExperienceSection } from './ExperienceSection.jsx';
-export { default as SkillsSection } from './SkillsSection.jsx';
 export { default as ProjectsSection } from './ProjectsSection.jsx';
 export { default as TechnologiesSection } from './TechnologiesSection.jsx';
 export { default as ContactSection } from './ContactSection.jsx';

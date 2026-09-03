@@ -461,7 +461,7 @@
 /* Per-section accent tints. Each is a separate literal utility rather than one
    parameterised class because Tailwind finds classes by scanning source text —
    a name assembled at runtime is never emitted, and the failure mode is an
-   invisible seam rather than an error. Same constraint as SkillsSection's
+   invisible seam rather than an error. Same constraint as AboutSection's
    per-card `edge` values.
 
    Mixed against transparent rather than hardcoded: a 1px line at full

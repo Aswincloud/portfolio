@@ -35,7 +35,7 @@ describe('App', () => {
     // Check for specific navigation items. These labels appear in both the
     // nav and the corresponding section eyebrow, so match on ≥1 occurrence.
     expect(screen.getAllByText('About').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Skills').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Projects').length).toBeGreaterThan(0);
   });
 
   it('renders contact section', async () => {

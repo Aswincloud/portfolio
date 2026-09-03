@@ -29,7 +29,10 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className='relative overflow-hidden border-t border-hairline bg-canvas'>
+    // ink, so the canvas/ink alternation that runs down the page ends on a
+    // beat: Contact is canvas, and canvas-on-canvas here left the footer
+    // separated from it by nothing but the hairline.
+    <footer className='relative overflow-hidden border-t border-hairline bg-ink'>
       <div className='container-custom py-14'>
         <div className='flex flex-col gap-10 md:flex-row md:items-start md:justify-between'>
           {/* Brand + tagline */}
@@ -42,9 +45,11 @@ const Footer = () => {
                 aswin<span className='text-brand-400'>cloud</span>
               </span>
             </div>
+            {/* Not the hero headline again — by this point the page has said
+                "AI accelerators go faster" in the hero, and the footer is the
+                one place a different register fits. */}
             <p className='mt-4 text-sm leading-relaxed text-slate-400'>
-              Software engineer making AI accelerators go faster — and running a personal cloud for
-              the fun of it.
+              Performance engineer by day, one-person ops team by night. Pondicherry, India.
             </p>
             <div className='mt-5 flex items-center gap-2.5'>
               {SOCIALS.map(social => (

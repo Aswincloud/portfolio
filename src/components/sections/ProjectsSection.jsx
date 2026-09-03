@@ -27,7 +27,7 @@ const ProjectCard = ({ project, index, inView }) => {
       className='group relative flex h-full flex-col overflow-hidden card-surface card-lift p-7 lg:p-8'
     >
       {/* Accent edge, keyed to the project's kind — the same centre-weighted
-          hairline the skills cards and the section seams use. */}
+          hairline the About focus cards and the section seams use. */}
       <span
         aria-hidden='true'
         className={`absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent ${kind.edge}`}
@@ -171,15 +171,19 @@ const ProjectsSection = () => {
   return (
     <section
       id='projects'
-      className={`section-padding relative overflow-hidden ${sectionAccent('cyan')} bg-ink`}
+      className={`section-padding relative overflow-hidden ${sectionAccent('brand')} bg-canvas`}
       ref={ref}
     >
       <div className='container-custom relative z-10'>
+        {/* brand, not cyan: Experience (cyan) is now the immediate neighbour,
+            and two cyan seams in a row read as one long section. The per-kind
+            card accents below are unaffected — they never took the section's
+            hue. */}
         <SectionHeader
           inView={inView}
-          number='04'
+          number='03'
           label='Projects'
-          accent='cyan'
+          accent='brand'
           title={<>Things I&apos;ve built</>}
         >
           <p className='mt-4 text-lg leading-relaxed text-slate-400'>

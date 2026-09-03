@@ -24,7 +24,7 @@
  *
  * Every value is a literal class string. Tailwind scans source text, so a class
  * built by interpolating a variable is never emitted and the accent silently
- * renders as nothing — the same constraint documented on SkillsSection's `edge`
+ * renders as nothing — the same constraint documented on AboutSection's `edge`
  * and `dot` fields. Reading a whole literal out of this map is fine; building
  * one from a fragment is not.
  */
