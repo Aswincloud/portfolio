@@ -82,16 +82,23 @@ function ExperienceEntryComponent({
           </div>
           <div className='min-w-0 flex-1'>
             <h3 className='text-xl font-bold text-white sm:text-2xl'>{title}</h3>
-            <p className={`mt-0.5 font-medium ${theme.tag}`}>{company}</p>
-            <div className='mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400'>
+            {/* The city belongs to the employer, so it sits on the company line
+                — "MulticoreWare · Chennai" — the way the résumé writes it. In its
+                own row beside the tenure it read as where *I* am, which put
+                "Chennai" here against "Pondicherry" in the hero and the About
+                copy: two cities for one person, on one page. */}
+            <p className='mt-0.5 flex flex-wrap items-baseline gap-x-2.5 font-medium'>
+              <span className={theme.tag}>{company}</span>
+              {/* The pin is the separator. A "·" before it looked right on one
+                  line but led the line when the location wrapped at 390px. */}
               {location && (
-                <span className='inline-flex items-center gap-1.5'>
-                  <MapPin size={13} />
+                <span className='inline-flex items-center gap-1 text-sm font-normal text-slate-400'>
+                  <MapPin size={13} aria-hidden='true' />
                   {location}
                 </span>
               )}
-              <span className='font-mono text-xs text-slate-400'>{experience}</span>
-            </div>
+            </p>
+            <p className='mt-1.5 font-mono text-xs text-slate-400'>{experience}</p>
           </div>
         </div>
 
