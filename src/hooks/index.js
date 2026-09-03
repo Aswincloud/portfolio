@@ -17,3 +17,4 @@ export { useRipple } from './useRipple.jsx';
 export { useCountUp } from './useCountUp.js';
 export { default as useRouteMeta } from './useRouteMeta.js';
 export { useDismissable } from './useDismissable.js';
+export { useRouteScroll } from './useRouteScroll.js';

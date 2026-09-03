@@ -28,6 +28,7 @@ import {
 } from './components/ErrorBoundary/';
 import ScrollProgress from './components/ScrollProgress.jsx';
 import useRouteMeta from './hooks/useRouteMeta.js';
+import useRouteScroll from './hooks/useRouteScroll.js';
 
 // Off-home routes are split into their own chunks — most visitors only ever
 // see the home page, so the legal pages and 404 shouldn't ride in the
@@ -164,41 +165,11 @@ const useChatVisibility = () => {
   }, [pathname]);
 };
 
-// When we land on a hashed URL (e.g. /#projects from the 404 page, the footer,
-// or an external link), the target section may not exist yet at the moment the
-// hash is set. Wait for it via rAF, then scroll with the fixed-header offset.
-// Pathname is a dependency so navigating away and back to the home route with a
-// hash re-triggers the scroll.
-//
-// Because this runs on every hash change, it — not `scroll-padding-top` — is
-// what decides where a hash lands, on a cold load as much as an in-app one.
-// Keep HEADER_OFFSET in step with the constant of the same name in
-// usePageTransitions.js and `scroll-padding-top` in index.css; all three
-// describe the same fixed header, and this is the one that actually applies.
-const HEADER_OFFSET = 80;
-
-const useHashScroll = () => {
-  const { pathname, hash } = useLocation();
-
-  useEffect(() => {
-    if (!hash) return undefined;
-    let raf = 0;
-    const attempt = (tries = 0) => {
-      const el = document.getElementById(hash.slice(1));
-      if (el) {
-        window.scrollTo({ top: el.offsetTop - HEADER_OFFSET, behavior: 'smooth' });
-      } else if (tries < 20) {
-        raf = requestAnimationFrame(() => attempt(tries + 1));
-      }
-    };
-    raf = requestAnimationFrame(() => attempt());
-    return () => cancelAnimationFrame(raf);
-  }, [pathname, hash]);
-};
-
 const Layout = ({ children }) => {
   useChatVisibility();
-  useHashScroll();
+  // Hashed URLs land on their section (header-offset); a route change without
+  // a hash starts at the top instead of wherever the previous page left off.
+  useRouteScroll();
   // Keeps <title>, canonical and the description in step on client-side
   // navigations. The served HTML for each route is already correct — see
   // scripts/vite-plugin-route-pages.js — but a SPA navigation never fetches it.
