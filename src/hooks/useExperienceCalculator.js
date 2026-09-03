@@ -7,12 +7,18 @@
 
 import { useState, useEffect } from 'react';
 
+// First day at MulticoreWare. Must agree with the "June 2023 – Present" period
+// on the experience card and the résumé; the hooks test checks the month. This
+// was '2023-01-06' — a DD-MM slip that read as 6 January — which overstated the
+// hero stat and the card's tenure by a year for the first half of every year.
+export const EXPERIENCE_START = '2023-06-01';
+
 export const useExperienceCalculator = () => {
   const [experience, setExperience] = useState('');
 
   useEffect(() => {
     const calculateExperience = () => {
-      const startDate = new Date('2023-01-06');
+      const startDate = new Date(EXPERIENCE_START);
       const currentDate = new Date();
 
       const diffInMonths =

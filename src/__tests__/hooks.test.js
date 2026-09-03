@@ -13,8 +13,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCountUp } from '../hooks/useCountUp.js';
-import { useExperienceCalculator } from '../hooks/useExperienceCalculator.js';
+import { useExperienceCalculator, EXPERIENCE_START } from '../hooks/useExperienceCalculator.js';
 import { useThrottledScroll } from '../hooks/useThrottledScroll.js';
+import { getExperienceData } from '../data/experienceData.js';
 
 /** Point matchMedia at a fixed answer for (prefers-reduced-motion: reduce). */
 const setReducedMotion = reduce => {
@@ -290,7 +291,7 @@ describe('useThrottledScroll', () => {
 });
 
 describe('useExperienceCalculator', () => {
-  const START = '2023-01-06';
+  const START = EXPERIENCE_START;
 
   afterEach(() => {
     vi.useRealTimers();
@@ -304,29 +305,48 @@ describe('useExperienceCalculator', () => {
     return result.current;
   };
 
+  it('starts in the month the experience card says it does', () => {
+    // The hook and the card used to disagree — '2023-01-06' against "June
+    // 2023" — and the previous tests here pinned the wrong constant. Reading
+    // the month back from the card's own period string is what stops the two
+    // drifting apart again.
+    const [current] = getExperienceData('');
+    // An ISO date-only string parses as UTC midnight; read the month back in
+    // UTC too, or a west-of-Greenwich machine would report the day before.
+    const startMonth = new Date(START).toLocaleString('en-US', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
+    expect(current.period.startsWith(startMonth)).toBe(true);
+  });
+
   it.each([
     // Same month as the start date: nothing has elapsed yet.
     [START, 'Less than a month'],
-    ['2023-02-06', '1 month'],
-    ['2023-04-06', '3 months'],
+    ['2023-07-01', '1 month'],
+    ['2023-09-01', '3 months'],
     // The singular/plural split is the easiest thing to get wrong here.
-    ['2024-01-06', '1+ year'],
-    ['2025-01-06', '2+ years'],
+    ['2024-06-01', '1+ year'],
+    ['2025-06-01', '2+ years'],
     ['2026-07-06', '3+ years'],
+    // The dates the old constant got wrong: January–May, when it had already
+    // rolled over to the next year while the real anniversary was months away.
+    ['2026-03-15', '2+ years'],
   ])('reads %s as "%s"', (now, expected) => {
     expect(atDate(now)).toBe(expected);
   });
 
   it('counts whole months, so a partial month does not round up', () => {
-    // 5 days short of the 1-month mark, but the month number has changed.
-    expect(atDate('2023-02-01')).toBe('1 month');
+    // 29 days in, still the same calendar month: not a month yet.
+    expect(atDate('2023-06-30')).toBe('Less than a month');
   });
 
   it('recalculates on its daily interval without remounting', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-11-30'));
     const { result } = renderHook(() => useExperienceCalculator());
-    expect(result.current).toBe('10 months');
+    expect(result.current).toBe('5 months');
 
     // Cross into a new month while mounted; the interval should pick it up.
     act(() => {
@@ -334,7 +354,7 @@ describe('useExperienceCalculator', () => {
       vi.advanceTimersByTime(24 * 60 * 60 * 1000);
     });
 
-    expect(result.current).toBe('11 months');
+    expect(result.current).toBe('6 months');
   });
 
   it('clears its interval on unmount', () => {
