@@ -321,6 +321,21 @@ describe('useExperienceCalculator', () => {
     expect(current.period.startsWith(startMonth)).toBe(true);
   });
 
+  it('has the value on the first render, not after an effect', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-06'));
+    // renderHook flushes effects, so read what the initial render produced
+    // instead: a render function that records the value it was handed.
+    const seen = [];
+    renderHook(() => {
+      const value = useExperienceCalculator();
+      seen.push(value);
+      return value;
+    });
+    // '' here was a "—" in the hero's stat strip for a frame on every load.
+    expect(seen[0]).toBe('3+ years');
+  });
+
   it.each([
     // Same month as the start date: nothing has elapsed yet.
     [START, 'Less than a month'],

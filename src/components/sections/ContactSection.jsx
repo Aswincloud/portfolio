@@ -48,6 +48,42 @@ class SubmitError extends Error {
   }
 }
 
+// Mirrors worker.js's isValidEmail — the same shape, so the form can't accept an
+// address the Worker will 400.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Per-field problems with the trimmed values, keyed by field name; an empty
+ * object means the form can be sent. The Worker validates the same way (trim,
+ * then LIMITS), so anything that passes here passes there.
+ *
+ * Field-level rather than a single boolean because the panel used to answer
+ * every failure with all three rules — "Name: 2–100 characters, Email: a valid
+ * email address, Message: 10–1000 characters" — and left the visitor to work out
+ * which one they had broken. Now each field says what is wrong with it, under
+ * the field.
+ */
+const validate = ({ name, email, message }) => {
+  const errors = {};
+  const n = name.trim();
+  const e = email.trim();
+  const m = message.trim();
+
+  if (!n) errors.name = 'Please enter your name.';
+  else if (n.length < LIMITS.name.min || n.length > LIMITS.name.max)
+    errors.name = `Name must be ${LIMIT_HINTS.name}.`;
+
+  if (!e) errors.email = 'Please enter your email address.';
+  else if (e.length > LIMITS.email.max || !EMAIL_PATTERN.test(e))
+    errors.email = `Please enter ${LIMIT_HINTS.email}.`;
+
+  if (!m) errors.message = 'Please enter a message.';
+  else if (m.length < LIMITS.message.min || m.length > LIMITS.message.max)
+    errors.message = `Message must be ${LIMIT_HINTS.message}.`;
+
+  return errors;
+};
+
 const ContactSection = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   // `company` is a honeypot — see the hidden field in the form below. It is part of
@@ -56,6 +92,10 @@ const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // null | 'success' | 'invalid' (visitor can fix it) | 'failed' (delivery failed)
   const [submitStatus, setSubmitStatus] = useState(null);
+  // Which fields failed the last submit, and why. Empty when 'invalid' came back
+  // from the Worker rather than from `validate` — the 400 carries no field, so
+  // the panel falls back to listing every rule.
+  const [fieldErrors, setFieldErrors] = useState({});
   const { createRipple } = useRipple();
   const submitButtonRef = React.useRef(null);
   const [copied, setCopied] = useState(false);
@@ -110,30 +150,23 @@ const ContactSection = () => {
     // trimmed values, because that is what it validates — otherwise a message of
     // ten spaces passes here and comes back 400.
     //
-    // This used to test only for emptiness, so the form accepted input it had just
-    // finished telling the visitor was invalid: a nine-character message made a
-    // round trip to learn a rule stated on screen. The inputs now carry
-    // minLength/maxLength too, which catches it earlier still — this stays as the
-    // backstop for the paths native validation misses (a paste that trims short,
-    // and browsers that skip constraint validation on a scripted submit).
-    const name = formData.name.trim();
-    const email = formData.email.trim();
-    const message = formData.message.trim();
-    const withinLimits =
-      name.length >= LIMITS.name.min &&
-      name.length <= LIMITS.name.max &&
-      email.length > 0 &&
-      email.length <= LIMITS.email.max &&
-      message.length >= LIMITS.message.min &&
-      message.length <= LIMITS.message.max;
-
-    if (!withinLimits) {
+    // This is the validation, not a backstop: the form is `noValidate`, so the
+    // browser's own bubbles never fire. They were the previous first line —
+    // grey-on-white tooltips in the browser's UI font, one field at a time,
+    // gone on the next click — and they meant the styled messages below were
+    // only ever reached by a paste that trimmed short. The inputs keep their
+    // minLength/maxLength attributes: maxLength still caps typing regardless of
+    // noValidate, and both still describe the field to assistive tech.
+    const errors = validate(formData);
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setSubmitStatus('invalid');
       return;
     }
 
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setFieldErrors({});
 
     try {
       const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/contact' : '/api/contact';
@@ -174,8 +207,46 @@ const ContactSection = () => {
   };
 
   const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Editing a field withdraws its error rather than re-validating on every
+    // keystroke — "Please enter a message" flashing under a textarea someone has
+    // just started typing into is the noisy version of this. Once the last
+    // error is withdrawn the summary panel goes too; a heading of "please check"
+    // over an empty list would say the form is still broken when it isn't.
+    if (fieldErrors[name]) {
+      const rest = { ...fieldErrors };
+      delete rest[name];
+      setFieldErrors(rest);
+      if (Object.keys(rest).length === 0 && submitStatus === 'invalid') setSubmitStatus(null);
+    }
   };
+
+  /**
+   * `aria-invalid` plus a pointer at the message under the field, so a screen
+   * reader hears the problem when focus lands on the input rather than only when
+   * the summary panel is announced. A field with a standing hint (`hintId`) is
+   * described by the hint until it fails, then by the error instead — the error
+   * restates the same rule, so showing both would print "10–1000 characters."
+   * twice in a row under the textarea.
+   */
+  const invalidProps = (field, hintId) => {
+    const error = fieldErrors[field];
+    return {
+      'aria-invalid': error ? 'true' : undefined,
+      'aria-describedby': error ? `contact-${field}-error` : hintId,
+    };
+  };
+
+  // A plain helper, not a nested component: a component declared inside render
+  // is a new type every render, which unmounts and remounts its subtree.
+  const fieldError = field =>
+    fieldErrors[field] ? (
+      <p id={`contact-${field}-error`} className='mt-2 text-xs text-red-300'>
+        {fieldErrors[field]}
+      </p>
+    ) : null;
 
   /**
    * What the counter beside the Message label says.
@@ -246,7 +317,7 @@ const ContactSection = () => {
   // global ring now sits on top of them where it belongs, so these controls look
   // focused the same way every other control on the site does.
   const fieldClass =
-    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-400 transition-colors focus:border-brand-500/60 focus:bg-surface disabled:opacity-50';
+    'w-full rounded-xl border border-hairline bg-surface-2 px-4 py-3 text-slate-100 placeholder:text-slate-400 transition-colors focus:border-brand-500/60 focus:bg-surface disabled:opacity-50 aria-invalid:border-red-500/60';
 
   return (
     <section
@@ -314,14 +385,24 @@ const ContactSection = () => {
                   )}
                 </div>
                 {item.copyValue && (
-                  <button
-                    type='button'
-                    onClick={copyEmail}
-                    aria-label={copied ? 'Email copied to clipboard' : 'Copy email address'}
-                    className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-surface-2 text-slate-400 transition-colors hover:border-brand-500/40 hover:text-brand-300'
-                  >
-                    {copied ? <Check size={15} className='text-brand-400' /> : <Copy size={15} />}
-                  </button>
+                  <>
+                    <button
+                      type='button'
+                      onClick={copyEmail}
+                      aria-label={copied ? 'Email copied to clipboard' : 'Copy email address'}
+                      className='mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-surface-2 text-slate-400 transition-colors hover:border-brand-500/40 hover:text-brand-300'
+                    >
+                      {copied ? <Check size={15} className='text-brand-400' /> : <Copy size={15} />}
+                    </button>
+                    {/* A label that changes on the button you just pressed is
+                        not announced — screen readers read a name on focus, not
+                        on change. This live region is; it is always in the DOM
+                        (regions inserted with their content are unreliable) and
+                        only ever carries text for the two seconds the icon does. */}
+                    <span role='status' className='sr-only'>
+                      {copied ? 'Email address copied to clipboard' : ''}
+                    </span>
+                  </>
                 )}
               </motion.div>
             ))}
@@ -334,7 +415,7 @@ const ContactSection = () => {
             transition={{ duration: 0.7, delay: 0.25 }}
             className='card-surface p-6 sm:p-8'
           >
-            <form onSubmit={handleSubmit} className='space-y-5'>
+            <form onSubmit={handleSubmit} className='space-y-5' noValidate>
               {/*
                 Honeypot. Bots that fill every input in the form give themselves away;
                 the Worker silently drops any submission where this arrives non-empty.
@@ -389,14 +470,23 @@ const ContactSection = () => {
                     <p className='text-sm font-medium text-red-300'>
                       Couldn&apos;t send your message. Please check:
                     </p>
-                    {/* Interpolated from LIMIT_HINTS, not typed out. These bullets
-                        previously hardcoded "2–100" and "10–1000" next to inputs
-                        that enforced neither, which is how the copy came to
-                        describe rules the form did not apply. */}
+                    {/* The summary lists only what failed; the same text sits
+                        under each field. When the rejection came from the Worker
+                        (a 400 names no field) it falls back to every rule —
+                        interpolated from LIMIT_HINTS, not typed out, so the
+                        advice can't drift from the enforcement again. */}
                     <ul className='mt-1 list-inside list-disc text-sm text-slate-400'>
-                      <li>Name: {LIMIT_HINTS.name}</li>
-                      <li>Email: {LIMIT_HINTS.email}</li>
-                      <li>Message: {LIMIT_HINTS.message}</li>
+                      {Object.keys(fieldErrors).length > 0 ? (
+                        Object.entries(fieldErrors).map(([field, message]) => (
+                          <li key={field}>{message}</li>
+                        ))
+                      ) : (
+                        <>
+                          <li>Name: {LIMIT_HINTS.name}</li>
+                          <li>Email: {LIMIT_HINTS.email}</li>
+                          <li>Message: {LIMIT_HINTS.message}</li>
+                        </>
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -452,7 +542,9 @@ const ContactSection = () => {
                   maxLength={LIMITS.name.max}
                   disabled={isSubmitting}
                   autoComplete='name'
+                  {...invalidProps('name')}
                 />
+                {fieldError('name')}
               </div>
 
               <div>
@@ -474,7 +566,9 @@ const ContactSection = () => {
                   maxLength={LIMITS.email.max}
                   disabled={isSubmitting}
                   autoComplete='email'
+                  {...invalidProps('email')}
                 />
+                {fieldError('email')}
               </div>
 
               <div>
@@ -518,12 +612,14 @@ const ContactSection = () => {
                   required
                   minLength={LIMITS.message.min}
                   maxLength={LIMITS.message.max}
-                  aria-describedby='contact-message-hint'
                   disabled={isSubmitting}
+                  {...invalidProps('message', 'contact-message-hint')}
                 />
-                <p id='contact-message-hint' className='mt-2 text-xs text-slate-400'>
-                  {LIMIT_HINTS.message}.
-                </p>
+                {fieldError('message') ?? (
+                  <p id='contact-message-hint' className='mt-2 text-xs text-slate-400'>
+                    {LIMIT_HINTS.message}.
+                  </p>
+                )}
               </div>
 
               <motion.button

@@ -197,12 +197,16 @@ describe('contact form submission outcomes', () => {
       await user.type(fields().name, NAME);
       await user.click(screen.getByRole('button', { name: /send message/i }));
 
-      // The inputs carry `required`, so the browser blocks the submit event before
-      // handleSubmit runs — hence no in-app message here. What matters either way is
-      // that nothing was sent and nothing claimed success.
+      // The inputs still carry `required` (checkValidity reports it), but the
+      // form is noValidate, so handleSubmit runs and answers with its own
+      // field-level messages instead of the browser's bubble. Either way nothing
+      // was sent and nothing claimed success.
       expect(document.querySelector('form').checkValidity()).toBe(false);
       expect(fetchMock).not.toHaveBeenCalled();
       expect(successText()).toBeNull();
+      expect(document.getElementById('contact-email-error').textContent).toMatch(
+        /please enter your email address/i
+      );
     });
   });
 });

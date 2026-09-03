@@ -58,7 +58,11 @@ const Footer = () => {
                   href={social.href}
                   target={social.href.startsWith('http') ? '_blank' : undefined}
                   rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  aria-label={social.label}
+                  aria-label={
+                    social.href.startsWith('http')
+                      ? `${social.label} (opens in a new tab)`
+                      : social.label
+                  }
                   className='flex h-10 w-10 items-center justify-center rounded-lg border border-hairline bg-surface text-slate-400 transition-colors hover:border-brand-500/40 hover:text-brand-300'
                 >
                   <social.icon size={18} />
@@ -90,6 +94,9 @@ const Footer = () => {
                   target='_blank'
                   rel='noopener noreferrer'
                   className={cls}
+                  // Contains the visible label (WCAG 2.5.3) and says what the
+                  // hero's résumé button already says about leaving the page.
+                  aria-label={`${link.label} (opens in a new tab)`}
                 >
                   {link.label}
                 </a>
