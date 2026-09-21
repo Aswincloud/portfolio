@@ -44,6 +44,10 @@ const GA_BEACONS = [
   'https://*.google-analytics.com',
   'https://*.analytics.google.com',
   'https://*.googletagmanager.com',
+  // gtag.js started sending page_view hits to www.google.com/g/collect (Sept
+  // 2026). Without this the beacon is refused by connect-src on every visit and
+  // e2e/csp.spec.js fails on "no CSP violations".
+  'https://www.google.com',
 ];
 
 const sha256 = source => `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;

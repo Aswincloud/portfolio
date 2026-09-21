@@ -175,8 +175,16 @@
       // adds the `woot--hide` class when closed and removes it when open. (An
       // earlier `.woot-widget-bubble--expanded` selector never matched in this
       // SDK version, so outside-click close silently never fired.)
+      //
+      // Anything marked data-chat-trigger (the hero's mobile "Live chat" button)
+      // is excluded too: its own handler calls toggle('open') during the same
+      // click, which then bubbles here, reads the panel as open, and would close
+      // it again before it ever painted. That was the "live chat button does
+      // nothing on mobile" bug.
       document.addEventListener('click', function (e) {
         if (!window.$chatwoot) return;
+        var t = e.target;
+        if (t && t.closest && t.closest('[data-chat-trigger]')) return;
         var holder = document.querySelector('#cw-widget-holder, .woot-widget-holder');
         if (!holder || holder.classList.contains('woot--hide')) return; // panel not open
         var bubble = document.querySelector('#cw-bubble-holder, .woot-widget-bubble');
