@@ -81,6 +81,8 @@ const HeroSection = React.memo(function HeroSection() {
   // would float over the stat strip), so this button is the top-of-page entry
   // point to live chat. Open the panel directly; if the SDK is blocked or still
   // loading, fall back to the contact form so the action is never a dead end.
+  // The button carries data-chat-trigger so index.html's outside-click closer
+  // ignores this very click instead of closing the panel it just opened.
   const openLiveChat = React.useCallback(e => {
     if (window.$chatwoot?.toggle) {
       e.preventDefault();
@@ -203,6 +205,7 @@ const HeroSection = React.memo(function HeroSection() {
               <motion.a
                 href='#contact'
                 onClick={openLiveChat}
+                data-chat-trigger
                 whileHover={buttonMotion.hover}
                 whileTap={buttonMotion.tap}
                 className='group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-hairline bg-surface/60 px-5 py-3.5 font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:border-brand-500/40 hover:bg-surface hover:text-brand-200 sm:hidden'
