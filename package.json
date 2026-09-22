@@ -38,12 +38,12 @@
     "size": "node scripts/bundle-size.js"
   },
   "dependencies": {
-    "lucide-react": "^1.31.0",
-    "motion": "^13.1.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.8",
-    "react-intersection-observer": "^11.0.0",
-    "react-router-dom": "^7.18.0"
+    "lucide-react": "^1.47.0",
+    "motion": "^13.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-intersection-observer": "^11.0.1",
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -52,8 +52,8 @@
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.6",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.9",
     "axe-core": "^4.13.0",
