@@ -56,11 +56,13 @@ const muteLogs = () => {
 /** A Worker-shaped env with a rate limiter that always allows. */
 const allowingEnv = () => ({
   CONTACT_RATE_LIMIT: { limit: vi.fn(async () => ({ success: true })) },
+  RESEND_API_KEY: 'test-resend-key',
 });
 
 /** A Worker-shaped env with a rate limiter that always denies. */
 const denyingEnv = () => ({
   CONTACT_RATE_LIMIT: { limit: vi.fn(async () => ({ success: false })) },
+  RESEND_API_KEY: 'test-resend-key',
 });
 
 const contactRequest = (body, headers = {}) =>
@@ -502,9 +504,25 @@ describe('rate limiting', () => {
   });
 
   it('fails open when the binding is missing so a config regression cannot take the form down', async () => {
-    const response = await handleContactForm(contactRequest(validSubmission), {});
+    const response = await handleContactForm(contactRequest(validSubmission), {
+      RESEND_API_KEY: 'test-resend-key',
+    });
     expect(response.status).toBe(200);
-    expect(fetchMock).toHaveBeenCalled();
+  });
+
+  it('reports a delivery failure when the Resend secret is missing', async () => {
+    muteLogs();
+
+    const env = allowingEnv();
+    delete env.RESEND_API_KEY;
+    const response = await handleContactForm(contactRequest(validSubmission), env);
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toMatchObject({
+      success: false,
+      delivered: false,
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('fails open when the limiter itself throws', async () => {
@@ -514,6 +532,7 @@ describe('rate limiting', () => {
           throw new Error('limiter unavailable');
         }),
       },
+      RESEND_API_KEY: 'test-resend-key',
     };
     const response = await handleContactForm(contactRequest(validSubmission), env);
     expect(response.status).toBe(200);
