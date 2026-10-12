@@ -277,8 +277,10 @@ async function sendEmail(to, subject, html, text, hostname = 'aswincloud.com', e
       textLength: text.length,
     });
 
-    // You'll need to add your Resend API key as a secret
-    const RESEND_API_KEY = env.RESEND_API_KEY || 're_placeholder_key';
+    const RESEND_API_KEY = env.RESEND_API_KEY;
+    if (!RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY environment variable is required');
+    }
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
