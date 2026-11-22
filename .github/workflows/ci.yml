@@ -1,7 +1,7 @@
 name: Check Secret
 
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   check:
@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Verify secret
         env:
-          MY_SECRET: ${{ secrets.MY_SECRET }}
+          MY_SECRET: ${{ secrets.FEEDBACK_EMAIL }}
         run: |
           if [ -n "$MY_SECRET" ]; then
             echo "Secret is configured"
