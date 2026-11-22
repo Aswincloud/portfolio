@@ -29,7 +29,7 @@ const TermsConditions = () => (
         Back to site
       </Link>
       <h1 className='text-3xl font-bold mb-2 text-white'>Terms &amp; Conditions</h1>
-      <p className='text-sm text-slate-400 mb-6'>Last updated: May 26, 2026</p>
+      <p className='text-sm text-slate-400 mb-6'>Last updated: November 22, 2026</p>
 
       <p className='text-slate-400 leading-relaxed'>
         These terms govern your use of <span className='font-medium'>aswincloud.com</span> (the
