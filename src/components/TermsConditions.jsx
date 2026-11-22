@@ -29,7 +29,7 @@ const TermsConditions = () => (
         Back to site
       </Link>
       <h1 className='text-3xl font-bold mb-2 text-white'>Terms &amp; Conditions</h1>
-      <p className='text-sm text-slate-400 mb-6'>Last updated: May 26, 2026</p>
+      <p className='text-sm text-slate-400 mb-6'>Last updated: November 22, 2026</p>
 
       <p className='text-slate-400 leading-relaxed'>
         These terms govern your use of <span className='font-medium'>aswincloud.com</span> (the
@@ -82,9 +82,8 @@ const TermsConditions = () => (
         <p>
           Logos and company names referenced on the site (e.g.{' '}
           <span className='font-medium'>MulticoreWare</span>,{' '}
-          <span className='font-medium'>Lenovo</span>,{' '}
-          <span className='font-medium'>Tenstorrent</span>) are the property of their respective
-          owners and are used here for identification only.
+          <span className='font-medium'>Lenovo</span>) are the property of their respective owners
+          and are used here for identification only.
         </p>
       </Section>
 

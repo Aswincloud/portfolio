@@ -9,7 +9,7 @@ export const getExperienceData = experience => [
     location: 'Chennai, India',
     logo: '/MulticoreWare_Logo.jpg',
     description:
-      "Performance engineering on Tenstorrent's TT-Metal stack: profiling tensor operations, finding where the time goes, and getting it back.",
+      'Performance engineering on the TT-Metal stack for a leading AI silicon company: profiling tensor operations, finding where the time goes, and getting it back.',
     achievements: [
       'Profile and benchmark tensor operations on AI accelerator hardware, turning the measurements into concrete optimization work.',
       'Trace bottlenecks across the software stack to find where the time actually goes before changing anything.',

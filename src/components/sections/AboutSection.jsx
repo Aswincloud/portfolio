@@ -30,10 +30,10 @@ const PARAGRAPHS = [
     body: (
       <>
         I&apos;m a <span className='font-semibold text-slate-100'>senior software engineer</span>{' '}
-        based in Pondicherry. At MulticoreWare I work on{' '}
-        <span className='font-semibold text-slate-100'>Tenstorrent&apos;s TT-Metal stack</span>, and
-        a typical day is a profiler trace, a table of kernel timings, and one question: where did
-        the time go?
+        based in Pondicherry. At MulticoreWare I work on the{' '}
+        <span className='font-semibold text-slate-100'>TT-Metal stack</span> for a leading AI
+        silicon company, and a typical day is a profiler trace, a table of kernel timings, and one
+        question: where did the time go?
       </>
     ),
   },
