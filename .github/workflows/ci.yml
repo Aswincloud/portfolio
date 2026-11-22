@@ -2,6 +2,7 @@ name: Check Secret
 
 on:
   push:
+  pull_request:
 
 jobs:
   check:
