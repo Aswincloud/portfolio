@@ -82,9 +82,8 @@ const TermsConditions = () => (
         <p>
           Logos and company names referenced on the site (e.g.{' '}
           <span className='font-medium'>MulticoreWare</span>,{' '}
-          <span className='font-medium'>Lenovo</span>,{' '}
-          <span className='font-medium'>Tenstorrent</span>) are the property of their respective
-          owners and are used here for identification only.
+          <span className='font-medium'>Lenovo</span>) are the property of their respective owners
+          and are used here for identification only.
         </p>
       </Section>
 

@@ -58,8 +58,8 @@ export const featuredProjects = [
     title: 'ttperf — TT-Metal Performance Profiler',
     domain: 'ttperf.aswincloud.com',
     description:
-      "A CLI that wraps Tenstorrent's TT-Metal profiler with pytest, parses the result CSVs, and reports total device kernel duration. Published on PyPI (pip install ttperf).",
-    technologies: ['Python', 'CLI', 'pytest', 'PyPI', 'Tenstorrent TT-Metal'],
+      'A CLI that wraps the TT-Metal profiler with pytest, parses the result CSVs, and reports total device kernel duration. Published on PyPI (pip install ttperf).',
+    technologies: ['Python', 'CLI', 'pytest', 'PyPI', 'TT-Metal'],
     features: [
       'Automated profiler runs via pytest, per operation',
       'CSV parsing → total device kernel duration',
@@ -78,7 +78,7 @@ export const featuredProjects = [
     title: 'TTNN Eltwise Performance Tracker',
     domain: 'ttnn-eltwise-performance.aswincloud.com',
     description:
-      "Day-by-day performance monitoring for Tenstorrent's TTNN eltwise operations. Tracks trends against a baseline, correlates regressions back to the git commit, and colour-codes the deltas.",
+      'Day-by-day performance monitoring for TTNN eltwise operations. Tracks trends against a baseline, correlates regressions back to the git commit, and colour-codes the deltas.',
     technologies: ['React', 'Vite', 'Tailwind CSS', 'Recharts', 'Python', 'Cloudflare Workers'],
     features: [
       'Day-by-day comparison against a baseline',
